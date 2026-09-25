@@ -89,24 +89,36 @@ class Track:
         return best
 
 
+# tracker group -> (category reported, id offset keeping ids unique within the category)
+GROUPS = {"vehicle": ("vehicle", 0), "two_wheeler": ("vehicle", 1_000_000),
+          "person": ("person", 0), "animal": ("animal", 0)}
+
+
+def _group(cls: int) -> str:
+    if cls in C.COCO_TWO_WHEELER:
+        return "two_wheeler"
+    return C.CATEGORY_OF_CLASS.get(cls, "")
+
+
 class MultiTracker:
-    """One ByteTrack per category, so a person can never inherit a car's ID."""
+    """One ByteTrack per kind of road user, so a person can never inherit a car's ID."""
 
     def __init__(self, fps: float):
         buf = max(1, int(round(C.TRACK_BUFFER_SEC * fps)))
-        self.trackers = {c: sv.ByteTrack(track_activation_threshold=C.TRACK_ACTIVATION, lost_track_buffer=buf,
+        self.trackers = {g: sv.ByteTrack(track_activation_threshold=C.TRACK_ACTIVATION, lost_track_buffer=buf,
                                          minimum_matching_threshold=0.8, frame_rate=max(1, int(round(fps))))
-                         for c in CATEGORIES}
+                         for g in GROUPS}
         self.records: dict[tuple[str, int], list] = defaultdict(list)
 
     def update(self, t: float, det: Detections) -> list[tuple[str, int, np.ndarray, int]]:
         """Feed one frame; returns [(category, track_id, box, coco_cls)] for this frame."""
         out = []
-        cats = np.array([C.CATEGORY_OF_CLASS.get(int(c), "") for c in det.cls])
-        for cat, tracker in self.trackers.items():
-            m = cats == cat
+        groups = np.array([_group(int(c)) for c in det.cls])
+        for group, tracker in self.trackers.items():
+            m = groups == group
+            cat, id_base = GROUPS[group]
             boxes = det.xyxy[m].astype(np.float32)
-            b = C.TRACK_IOU_BUFFER.get(cat, 0.0)
+            b = C.TRACK_IOU_BUFFER.get(group, 0.0)
             wh = np.tile(boxes[:, 2:] - boxes[:, :2], 2) * np.array([-b, -b, b, b], np.float32)
             sd = sv.Detections(xyxy=boxes + wh, confidence=det.conf[m], class_id=det.cls[m], data={"box": boxes})
             tracked = tracker.update_with_detections(sd)
@@ -114,8 +126,8 @@ class MultiTracker:
                 continue
             for box, tid, cls, conf in zip(tracked.data["box"], tracked.tracker_id, tracked.class_id,
                                            tracked.confidence):
-                self.records[(cat, int(tid))].append((t, box.astype(np.float32), int(cls), float(conf)))
-                out.append((cat, int(tid), box, int(cls)))
+                self.records[(cat, id_base + int(tid))].append((t, box.astype(np.float32), int(cls), float(conf)))
+                out.append((cat, id_base + int(tid), box, int(cls)))
         return out
 
     def tracks(self, min_samples: int = 3) -> list[Track]:
