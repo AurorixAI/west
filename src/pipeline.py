@@ -11,6 +11,7 @@ import numpy as np
 from src import config as C
 from src import rules
 from src.detection import Detector, pick_device
+from src.registration import median_frame, register
 from src.scene import FlowField, SceneGeometry
 from src.signal_state import SignalTimeline, bulb_pixels
 from src.tracking import MultiTracker, Track, stitch
@@ -56,6 +57,9 @@ class Observation:
     tracks: list[Track]
     signal: SignalTimeline
     seconds: float
+    transform: np.ndarray | None = None   # reference view -> this video (None: plain scaling)
+    camera_known: bool = True             # False: another camera, zones switched off
+    registration: str = ""
 
 
 @dataclass
@@ -90,7 +94,8 @@ def observe(path: str, profile: Profile | None = None,
     t_start = time.perf_counter()
     profile = profile or default_profile()
     info = probe(path)
-    geom = SceneGeometry(info.width, info.height)
+    reg = register(median_frame(path), info.width, info.height)
+    geom = SceneGeometry(info.width, info.height, reg.transform, reg.known)
     stride = stride_for(info.fps, profile.analysis_fps)
     detector = Detector(weights=profile.weights, imgsz=profile.detect_width)
     tracker = MultiTracker(info.fps / stride)
@@ -128,13 +133,13 @@ def observe(path: str, profile: Profile | None = None,
     tracks = stitch([t.finalize() for t in tracker.tracks()])
     signal = SignalTimeline.from_counts(np.array(sig_t), np.array(sig_counts).reshape(-1, 2),
                                         info.width * info.height)
-    return Observation(info, tracks, signal, time.perf_counter() - t_start)
+    return Observation(info, tracks, signal, time.perf_counter() - t_start, reg.transform, reg.known, reg.note)
 
 
 def interpret(obs: Observation, enabled=C.ENABLED_CLASSES) -> Analysis:
     """Scene model + rules: cheap, so thresholds can be tuned on cached observations."""
     info = obs.info
-    geom = SceneGeometry(info.width, info.height)
+    geom = SceneGeometry(info.width, info.height, obs.transform, obs.camera_known)
     flow = FlowField(info.width, info.height)
     if PRIOR_PATH.exists():
         flow.add_prior(PRIOR_PATH)

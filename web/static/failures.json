@@ -1,5 +1,22 @@
 [
-  {"video": "sample_test.mp4", "time": "0:00–0:20", "text": "Two cars stand at the kerb by the bus stop for the whole clip while traffic passes them, and are reported as stopped_vehicle. That fits the definition literally; whether the annotators count a car waiting at a bus stop is the open question, to be settled with dev labels."},
-  {"video": "sample_test.mp4", "time": "0:12–0:16", "text": "Jaywalker #1 is caught, but only after the traced carriageway was added: the carriageway learned from 20 s of a red phase did not yet cover the middle of the intersection. Short clips depend on the traced mask."},
-  {"video": "sample_test.mp4", "time": "0:01–0:15", "text": "A car waits on the right-hand crossing for about 15 s while people walk around it. No rule fires; it is yielding, but a longer wait would become a stopped_vehicle."}
+ {
+  "video": "sample_test.mp4",
+  "time": "0:00–0:20",
+  "text": "Two cars stand at the kerb by the bus stop for the whole clip while traffic passes them, and are reported as stopped_vehicle. That fits the definition literally; whether the annotators count a car waiting at a bus stop is open until the dev labels settle it."
+ },
+ {
+  "video": "sample_test.mp4",
+  "time": "0:01–0:17",
+  "text": "A car stands on the right-hand zebra for about 15 s while people walk round it, then pulls away right behind one of them. No event class fits (it neither drove through nor braked hard), so the video shows operator warnings instead: PEDESTRIAN AHEAD, then CLOSE PASS, and the risk curve rises to 0.28 without an alarm. An annotator may still call it a failure to yield."
+ },
+ {
+  "video": "sample_test.mp4",
+  "time": "0:18–0:20",
+  "text": "Two separate incidents, a car crossing the corner zebra at speed past a pedestrian and cars creeping through the right-hand zebra as a woman steps onto it, merge into one failure_to_yield segment, because concurrent events of one class are reported as one (the annotation convention)."
+ },
+ {
+  "video": "sample_test.mp4",
+  "time": "0:12–0:16",
+  "text": "Jaywalker 1 is caught only thanks to the traced carriageway: 20 s at a red light are not enough for the learned carriageway to cover the middle of the intersection."
+ }
 ]

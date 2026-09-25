@@ -107,20 +107,27 @@ def analyse_upload(path: Path, report) -> dict:
         "official": an.events,
         "risk": risk,
         "signal": [[round(a, 2), round(b, 2), st] for a, b, st in obs.signal.phases()],
-        "overlay": _overlay(obs.tracks, info.width, info.height),
+        "overlay": _overlay(obs.tracks, an.geom, info.width, info.height),
+        "camera": {"known": obs.camera_known, "note": obs.registration},
         "seconds": round(obs.seconds, 1),
         "profile": {"weights": profile.weights, "analysis_fps": profile.analysis_fps},
     }
 
 
-def _overlay(tracks, w: int, h: int) -> dict:
-    """Per analysed frame: [x1, y1, x2, y2 (0..10000), track id, category code]."""
+WARNING_CODE = {"PEDESTRIAN AHEAD": 1, "CLOSE PASS": 2}
+
+
+def _overlay(tracks, geom, w: int, h: int) -> dict:
+    """Per analysed frame: [x1, y1, x2, y2 (0..10000), track id, category code, warning code]."""
     index = viz.TrackIndex(tracks)
     frames = []
     for key in index.keys:
+        samples = index.by_time[int(key)]
+        warn = viz.crossing_conflicts(samples, geom)
         frames.append([[int(tr.box[i, 0] / w * 1e4), int(tr.box[i, 1] / h * 1e4), int(tr.box[i, 2] / w * 1e4),
-                        int(tr.box[i, 3] / h * 1e4), tr.tid, CATEGORY_CODE[tr.category]]
-                       for tr, i in index.by_time[int(key)]])
+                        int(tr.box[i, 3] / h * 1e4), tr.tid, CATEGORY_CODE[tr.category],
+                        WARNING_CODE.get(warn.get(tr.tid), 0)]
+                       for tr, i in samples])
     return {"t": [round(k / 1000, 3) for k in index.keys.tolist()], "boxes": frames}
 
 
@@ -138,6 +145,7 @@ def _thumbnails(path: Path, an) -> dict[int, str]:
         scale = full.shape[1] / 960
         img = cv2.resize(full, (960, int(full.shape[0] / scale)), interpolation=cv2.INTER_AREA)
         viz.draw_geometry(img, an.geom, scale)
+        viz.draw_signals(img, full, an.geom, scale)
         viz.draw_objects(img, index.at(t), scale, {a: lbl for a in actors})
         ok, buf = cv2.imencode(".jpg", img, [cv2.IMWRITE_JPEG_QUALITY, 80])
         if ok:

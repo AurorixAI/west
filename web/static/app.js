@@ -24,9 +24,9 @@ const RULES = [
   ["stop_line", "A vehicle that came from behind the line stands for 2 s or more between the stop line and the far edge of the crossing, on red.", "Stops to signal turns green"],
   ["wrong_way", "For 2 s or more and 3 sizes of travel, the vehicle drives against the dominant heading of the cells it is in (cos < −0.5); the cell must be coherent, and the vehicle's own votes are removed.", "First to last opposing sample"],
   ["illegal_u_turn", "Heading turns by 150° or more within 20 s, with no track teleports. Legality cannot be read from signs, so every U-turn is reported.", "Heading leaves the start direction to reaching the opposite one"],
-  ["stopped_vehicle", "Stationary 10 s or more on the learned carriageway while at least two vehicles overtake it; queues get no overtakers. Anything stationary 90 s counts regardless.", "Stops to moves again or disappears"],
-  ["jaywalking", "A pedestrian (not a rider) stands well inside the carriageway, outside the crossings grown by half a person's height, for 1.5 s or more.", "Steps onto the road to leaves it"],
-  ["failure_to_yield", "A vehicle drives through a crossing without slowing while a pedestrian is on the carriageway part of the same crossing within 3 vehicle sizes.", "Enters to leaves the crossing"],
+  ["stopped_vehicle", "A car or truck stands 10 s or more on the carriageway while at least two vehicles overtake it; queues get no overtakers. Buses at a stop are left out.", "Stops to moves again or disappears"],
+  ["jaywalking", "A pedestrian walks on the carriageway (0.6 heights inside the kerb, off the islands) outside the zebra for 1.5 s or more. Riders, and figures standing still in a lane, are traffic.", "Steps off the kerb or zebra to leaves the road"],
+  ["failure_to_yield", "A vehicle moves across a zebra (any part of its footprint on the stripes) while a pedestrian is on the carriageway part of it within 3 vehicle sizes. Stopping on the zebra is not yielding; a scooter wheeled at walking pace is not traffic.", "Enters to leaves the crossing"],
   ["congestion", "In one traffic direction, 6 or more vehicles with 80% below crawling speed for 45 s, lasting through at least 15 s of green (90 s if the signal is unreadable).", "Queue stops moving to clears"],
   ["road_obstacle", "A confidently detected animal (median confidence ≥ 0.5) on the carriageway for 2 s, not sitting on a person's box.", "Appears to leaves the road"],
 ];
@@ -320,8 +320,11 @@ function showDemo(res) {
   const rc = riskChart($("demoRisk"), res.risk, dur, (t) => seek(t));
   const seek = linkPlayer(video, [tl, rc]);
   eventCards($("demoEvents"), res.events, seek);
+  const cam = res.camera && !res.camera.known
+    ? " This is not the competition camera, so crossings, the stop line and the signal are unknown here: zone rules are off; detection, tracking and lane rules still run."
+    : " Camera recognised: the crossings and stop line are aligned to this video automatically.";
   $("demoNote").textContent = `${res.events.length} events in ${fmt(dur)} of video; analysed in ${res.seconds} s ` +
-    `with ${res.profile.weights} at ${res.profile.analysis_fps} fps. Boxes are drawn from our tracks; highlighted ones are event actors.`;
+    `with ${res.profile.weights} at ${res.profile.analysis_fps} fps. Boxes are drawn from our tracks; highlighted ones are event actors.` + cam;
   canvas.hidden = false;
   video.onerror = () => {
     canvas.hidden = true;
@@ -330,11 +333,26 @@ function showDemo(res) {
   drawOverlayLoop(video, canvas, res);
 }
 
+// Canvas cannot read CSS variables: the same family colours as the charts and the renderer.
+const FAMILY_HEX = { collision: "#eb6834", vehicle: "#3987e5", pedestrian: "#1baf7a", flow: "#eda100" };
+const hexOf = (label) => FAMILY_HEX[CLASS_FAMILY[label] || "flow"];
+
+function plaque(ctx, text, x, y, bg, font) {
+  ctx.font = font;
+  const w = ctx.measureText(text).width + 12, h = parseInt(font, 10) + 10;
+  x = Math.max(0, Math.min(x, ctx.canvas.width - w));
+  y = Math.max(h, y);
+  ctx.fillStyle = bg;
+  ctx.fillRect(x, y - h, w, h);
+  ctx.fillStyle = "#16181c";
+  ctx.fillText(text, x + 6, y - 6);
+}
+
 function drawOverlayLoop(video, canvas, res) {
   demo.frameLoop = (demo.frameLoop || 0) + 1;
   const loopId = demo.frameLoop;
   const ctx = canvas.getContext("2d"), ov = res.overlay;
-  const catColor = ["#3cbeeb", "#6edc5a", "#ffc800"];
+  const catColor = ["rgba(150,196,214,0.9)", "rgba(160,214,150,0.9)", "rgba(240,200,120,0.9)"];
   const draw = () => {
     if (loopId !== demo.frameLoop) return;          // a newer upload replaced this one
     const w = video.clientWidth, h = video.clientHeight;
@@ -351,30 +369,37 @@ function drawOverlayLoop(video, canvas, res) {
     const hl = new Map();
     active.forEach((e) => e.actors.forEach((a) => hl.set(a, e.label)));
     if (ov.t.length && Math.abs(ov.t[lo] - t) < 0.3) {
-      ctx.font = "12px system-ui, sans-serif";
-      for (const [x1, y1, x2, y2, id, cat] of ov.boxes[lo]) {
+      const actors = [];
+      ctx.lineWidth = 1.2;
+      for (const [x1, y1, x2, y2, id, cat, warn] of ov.boxes[lo]) {
         const X = ox + (x1 / 1e4) * vw, Y = oy + (y1 / 1e4) * vh, BW = ((x2 - x1) / 1e4) * vw, BH = ((y2 - y1) / 1e4) * vh;
-        const label = hl.get(id);
-        ctx.strokeStyle = label ? "#ff3b3b" : catColor[cat];
-        ctx.lineWidth = label ? 3 : 1;
-        ctx.strokeRect(X, Y, BW, BH);
-        if (label) {
-          const text = `${id} ${pretty(label)}`;
-          ctx.fillStyle = "#ff3b3b";
-          ctx.fillRect(X, Y - 16, ctx.measureText(text).width + 8, 16);
-          ctx.fillStyle = "#fff";
-          ctx.fillText(text, X + 4, Y - 4);
+        if (hl.has(id)) { actors.push([X, Y, BW, BH, id, hl.get(id), cat]); continue; }
+        if (warn) {                                     // operator warning, not an event
+          ctx.strokeStyle = "#fab219";
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(X, Y, BW, BH);
+          plaque(ctx, warn === 1 ? "PEDESTRIAN AHEAD" : "CLOSE PASS", X, Y - 3, "#fab219", "600 11px Barlow, system-ui, sans-serif");
+          continue;
         }
+        const L = Math.max(4, 0.28 * Math.min(BW, BH));
+        ctx.strokeStyle = catColor[cat];
+        ctx.beginPath();
+        for (const [cx, cy, dx, dy] of [[X, Y, 1, 1], [X + BW, Y, -1, 1], [X, Y + BH, 1, -1], [X + BW, Y + BH, -1, -1]]) {
+          ctx.moveTo(cx + dx * L, cy); ctx.lineTo(cx, cy); ctx.lineTo(cx, cy + dy * L);
+        }
+        ctx.stroke();
+      }
+      for (const [X, Y, BW, BH, id, label, cat] of actors) {
+        ctx.strokeStyle = hexOf(label);
+        ctx.lineWidth = 2.5;
+        ctx.strokeRect(X, Y, BW, BH);
+        // in failure_to_yield the person is the one not given way, not the offender
+        const text = label === "failure_to_yield" && cat === 1 ? "PEDESTRIAN" : pretty(label).toUpperCase();
+        plaque(ctx, `${text}  ${id}`, X, Y - 3, hexOf(label), "600 12px Barlow, system-ui, sans-serif");
       }
     }
-    active.forEach((e, k) => {
-      ctx.font = "bold 14px system-ui, sans-serif";
-      const text = pretty(e.label).toUpperCase(), tw = ctx.measureText(text).width;
-      ctx.fillStyle = "rgba(208,59,59,0.92)";
-      ctx.fillRect(ox + 10, oy + 10 + k * 30, tw + 16, 24);
-      ctx.fillStyle = "#fff";
-      ctx.fillText(text, ox + 18, oy + 27 + k * 30);
-    });
+    active.forEach((e, k) => plaque(ctx, pretty(e.label).toUpperCase(), ox + 12, oy + 34 + k * 30, hexOf(e.label),
+      "600 15px Barlow, system-ui, sans-serif"));
     requestAnimationFrame(draw);
   };
   requestAnimationFrame(draw);
@@ -393,7 +418,6 @@ async function setupSamples() {
   tabs($("sampleTabs"), ok, ([v, d]) => showSample(v, d));
   tabs($("edaTabs"), ok, ([v, d]) => showEda(v, d));
   dashboard(ok);
-  heroTiles(ok);
   failures();
 }
 
@@ -446,15 +470,6 @@ function dashboard(items) {
   eventCards(gal, firsts, () => { location.hash = "#results"; });
 }
 
-function heroTiles(items) {
-  const t = $("heroTiles");
-  const tile = (v, k) => t.append(el("div", { class: "tile" }, el("div", { class: "v" }, v), el("div", { class: "k" }, k)));
-  tile("10 of 14", "classes emitted");
-  tile("37", "unit and end-to-end tests");
-  tile("0.95×", "real time, 4K on a 4-core CPU");
-  tile(items.length || "–", "sample videos annotated");
-}
-
 async function failures() {
   let list = [];
   try { list = await loadJSON("failures.json"); } catch (_) { /* optional */ }
@@ -462,7 +477,7 @@ async function failures() {
   box.innerHTML = "";
   if (!list.length) { box.append(el("p", { class: "muted" }, "Failure cases are listed once the dev labels are scored (scripts/dev_eval.py).")); return; }
   const ul = el("ul");
-  for (const f of list) ul.append(el("li", {}, el("strong", {}, `${f.video} ${f.time || ""}: `), f.text));
+  for (const f of list) ul.append(el("li", {}, el("strong", {}, [f.video, f.time].filter(Boolean).join(" · ")), f.text));
   box.append(ul);
 }
 
@@ -502,36 +517,31 @@ function showEda(v, d) {
 
 /* ----------------------------------------------------------- approach, team */
 function diagram() {
-  const steps = [["Video", "4K, 25–30 fps", false], ["Frame reader", "strided, prefetched", false],
-    ["YOLOv8", "COCO-pretrained", true], ["ByteTrack", "per category", false], ["Smooth + stitch", "offline tracks", false],
-    ["Scene model", "lanes, carriageway", true], ["Rules", "10 classes", false], ["Merge", "segments", false]];
-  const W = 1060, H = 190, bw = 118, gap = (W - steps.length * bw) / (steps.length - 1);
-  const s = svg("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Pipeline diagram" });
+  const W = 1080, bh = 58;
+  const s = svg("svg", { viewBox: `0 0 ${W} 250`, role: "img", "aria-label": "Pipeline diagram: Part A and Part B" });
   const defs = svg("defs", {}, s);
   const mk = svg("marker", { id: "arrowhead", viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: "auto" }, defs);
   svg("path", { d: "M0,0 L10,5 L0,10 z", fill: "var(--muted)" }, mk);
-  steps.forEach(([name, sub, learned], i) => {
-    const x = i * (bw + gap);
-    svg("rect", { class: `box${learned ? " learned" : ""}`, x, y: 20, width: bw, height: 54, rx: 8 }, s);
-    svg("text", { x: x + bw / 2, y: 43, "text-anchor": "middle" }, s).textContent = name;
-    svg("text", { class: "sub", x: x + bw / 2, y: 61, "text-anchor": "middle" }, s).textContent = sub;
-    if (i) svg("path", { class: "arrow", d: `M${x - gap + 2},47 L${x - 3},47` }, s);
-  });
-  svg("text", { x: W - bw / 2, y: 100, "text-anchor": "middle" }, s).textContent = "Part A events";
-  svg("path", { class: "arrow", d: `M${W - bw / 2},74 L${W - bw / 2},86` }, s);
-  // Part B lane
-  const y2 = 124, partB = [["Every frame", "harness order", false], ["YOLOv8 + ByteTrack", "own, causal", true],
-    ["Closest approach", "every pair", false], ["Hard braking", "near others", false], ["Hold + map", "P(accident ≤ 5 s)", false]];
-  const bw2 = 150, gap2 = (W - partB.length * bw2) / (partB.length - 1);
-  partB.forEach(([name, sub, learned], i) => {
-    const x = i * (bw2 + gap2);
-    svg("rect", { class: `box${learned ? " learned" : ""}`, x, y: y2, width: bw2, height: 54, rx: 8 }, s);
-    svg("text", { x: x + bw2 / 2, y: y2 + 23, "text-anchor": "middle" }, s).textContent = name;
-    svg("text", { class: "sub", x: x + bw2 / 2, y: y2 + 41, "text-anchor": "middle" }, s).textContent = sub;
-    if (i) svg("path", { class: "arrow", d: `M${x - gap2 + 2},${y2 + 27} L${x - 3},${y2 + 27}` }, s);
-  });
-  svg("text", { class: "sub", x: 0, y: 12 }, s).textContent = "Part A: offline, whole video (blue outline = learned model)";
-  svg("text", { class: "sub", x: 0, y: y2 - 8 }, s).textContent = "Part B: causal, frame by frame, never sees Part A";
+  const lane = (y, label, steps, bw) => {
+    svg("text", { class: "lane", x: 0, y: y - 12 }, s).textContent = label;
+    const gap = (W - steps.length * bw) / (steps.length - 1);
+    steps.forEach(([name, sub, learned], i) => {
+      const x = i * (bw + gap);
+      svg("rect", { class: `box${learned ? " learned" : ""}`, x, y, width: bw, height: bh, rx: 10 }, s);
+      svg("text", { x: x + bw / 2, y: y + 25, "text-anchor": "middle" }, s).textContent = name;
+      svg("text", { class: "sub", x: x + bw / 2, y: y + 43, "text-anchor": "middle" }, s).textContent = sub;
+      if (i) svg("path", { class: "arrow", d: `M${x - gap + 3},${y + bh / 2} L${x - 3},${y + bh / 2}` }, s);
+    });
+  };
+  lane(26, "PART A · OFFLINE, WHOLE VIDEO", [["Video", "25–30 fps", false], ["Frame reader", "strided", false],
+    ["YOLOv8", "COCO-pretrained", true], ["ByteTrack", "per category", false], ["Smooth + stitch", "whole tracks", false],
+    ["Scene model", "lanes, kerbs", true], ["10 rules", "per class", false], ["Events", "segments", false]], 116);
+  lane(160, "PART B · CAUSAL, FRAME BY FRAME, NEVER SEES PART A", [["Every frame", "in order", false],
+    ["YOLOv8 + ByteTrack", "its own, causal", true], ["Closest approach", "every pair", false],
+    ["× braking needed", "DRAC urgency", false], ["Risk", "P(accident ≤ 5 s)", false]], 168);
+  const legend = svg("g", {}, s);
+  svg("rect", { class: "box learned", x: W - 170, y: 0, width: 14, height: 14, rx: 3 }, legend);
+  svg("text", { class: "sub", x: W - 150, y: 11 }, legend).textContent = "learned model";
   $("diagram").append(s);
   const tb = $("rulesTable").querySelector("tbody");
   for (const [c, when, seg] of RULES) tb.append(el("tr", {}, el("td", {}, el("code", {}, c)), el("td", {}, when), el("td", {}, seg)));
@@ -544,7 +554,10 @@ async function team() {
   for (const m of data.members) {
     const links = el("div", { class: "links" });
     for (const [k, url] of Object.entries(m.links || {})) if (url) links.append(el("a", { href: url, rel: "noopener" }, k));
-    box.append(el("div", { class: "member" }, el("h3", {}, m.name), el("div", { class: "role" }, m.role),
+    const initials = m.name.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+    box.append(el("div", { class: "member" },
+      el("div", { class: "member-head" }, el("div", { class: "avatar", "aria-hidden": "true" }, initials),
+        el("div", {}, el("h3", {}, m.name), el("div", { class: "role" }, m.role))),
       el("ul", {}, ...(m.did || []).map((x) => el("li", {}, x))),
       m.projects && m.projects.length ? el("p", { class: "muted" }, `Proud of: ${m.projects.join("; ")}`) : null, links,
       m.todo ? el("p", { class: "todo" }, m.todo) : null));

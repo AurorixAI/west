@@ -171,6 +171,22 @@ def test_failure_to_yield(quiet_scene):
     assert len(ev) == 1 and abs(ev[0][0] - inside[0]) < 0.3 and abs(ev[0][1] - inside[-1]) < 0.3
 
 
+def test_car_standing_on_the_zebra_then_driving_on_past_a_pedestrian(quiet_scene):
+    """Regression (real clip): the car stopped on the crossing and people walked round it."""
+    scene = quiet_scene
+    scene.path("vehicle", CAR, 60.0, [(900, 600), (900, 1280), (900, 2100)], 400, dwell={1: 10})
+    scene.path("person", PERSON, 62.0, [(700, 1300), (1150, 1240)], 30, size=150)
+    ev = labels(rules.failure_to_yield(scene.context()), "failure_to_yield")
+    assert len(ev) == 1 and ev[0][0] < 61.8 and ev[0][1] > 71.7
+
+
+def test_queued_car_over_the_zebra_that_waits_for_people_is_not_failure_to_yield(quiet_scene):
+    scene = quiet_scene
+    scene.path("vehicle", CAR, 55.0, [(900, 600), (900, 1280), (900, 2100)], 400, dwell={1: 25})
+    scene.path("person", PERSON, 58.0, [(700, 1300), (1150, 1240), (1400, 1100)], 60, size=150)
+    assert rules.failure_to_yield(scene.context()) == []
+
+
 def test_no_failure_to_yield_when_crossing_is_empty(scene):
     assert rules.failure_to_yield(scene.context()) == []
 

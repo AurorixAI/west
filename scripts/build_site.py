@@ -131,8 +131,9 @@ def build(video: Path, pred: dict | None, render: bool) -> dict:
         if writer is not None or (thumbs_due and t >= thumbs_due[0][0]):
             frame = small.copy()
             viz.draw_geometry(frame, an.geom, scale)
+            viz.draw_signals(frame, full, an.geom, scale)
             samples = index.at(t)
-            viz.draw_objects(frame, samples, scale, highlight)
+            viz.draw_objects(frame, samples, scale, highlight, viz.crossing_conflicts(samples, an.geom))
             r = float(risk_v[min(np.searchsorted(risk_t, t), len(risk_v) - 1)]) if len(risk_v) else None
             viz.draw_hud(frame, t, obs.signal.at(t), sum(tr.category == "vehicle" for tr, _ in samples),
                          sum(tr.category == "person" for tr, _ in samples),

@@ -50,9 +50,11 @@ CROSSWALK_MAIN = np.array(
 CROSSWALK_RIGHT = np.array(
     [[2580, 996], [3720, 924], [3740, 984], [2660, 1096]], dtype=np.float32)
 
-# Zebra crossing in the bottom-left corner.
+# Zebra crossing in the bottom-left corner. Lens distortion bends it at this corner of
+# the frame, so both edges are traced point by point.
 CROSSWALK_CORNER = np.array(
-    [[350, 1564], [670, 1472], [1780, 2160], [1240, 2160]], dtype=np.float32)
+    [[356, 1562], [674, 1474], [874, 1586], [1250, 1748], [1500, 1868], [1612, 1980], [1724, 2080], [1780, 2160], [1200, 2160], [1162, 2080], [1100, 1980], [906, 1848], [612, 1692]],
+    dtype=np.float32)
 
 # Between the stop line and the far edge of the main crossing: a vehicle that
 # stops here on red has passed the line without entering the intersection.
@@ -77,6 +79,12 @@ NOT_CARRIAGEWAY = [
               [1480, 1830], [1380, 1760]], np.float32),                                          # island
 ]
 
+# For the rendered video only: signal heads that face the camera, and the road
+# signs, as (x1, y1, x2, y2) boxes. The camera is fixed, so they are mapped
+# once, not detected; each head's colour is read from its own lamps per frame.
+SIGNAL_HEADS = {"island": (2300, 722, 2350, 834), "kerb": (510, 1010, 540, 1086)}
+ROAD_SIGNS = {"pedestrian crossing": (2434, 708, 2498, 780), "keep right": (2550, 994, 2610, 1064)}
+
 # Traffic-signal head facing the camera: (ymin, ymax, xmin, xmax).
 TL_ROI = (680, 880, 2260, 2380)
 
@@ -95,6 +103,7 @@ COCO_PERSON = 0
 COCO_TWO_WHEELER = (1, 3)                 # bicycle, motorcycle
 COCO_VEHICLE = (2, 5, 7)                  # car, bus, truck
 COCO_BUS = 5
+COCO_BICYCLE = 1
 COCO_ANIMAL = (15, 16, 17, 18, 19)        # cat, dog, horse, sheep, cow
 CATEGORY_OF_CLASS = {COCO_PERSON: "person"}
 CATEGORY_OF_CLASS.update({c: "vehicle" for c in COCO_VEHICLE + COCO_TWO_WHEELER})
@@ -134,6 +143,8 @@ KERB_INSET = 0.6             # a pedestrian must be this many heights inside the
 ISLAND_MARGIN = 0.2          # ... and this many heights off an island
 
 YIELD_MAX_DIST = 3.0         # vehicle-pedestrian distance on the crossing, in vehicle sizes
+YIELD_KERB_INSET = 0.3       # pedestrian heights inside the kerb: stepping onto the road, not waiting
+WALKING_PACE = 1.0           # sizes/s; a two-wheeler slower than this is being wheeled
 
 RED_MIN_SEC = 1.0            # signal must have been red this long (no amber cases)
 RED_EVENT_MAX_SEC = 6.0      # red_light ends when the vehicle leaves the frame or after this
@@ -157,4 +168,4 @@ OBSTACLE_MIN_CONF = 0.5
 
 # Temporal post-processing: same-class segments closer than this are merged.
 MERGE_GAP_SEC = 0.5
-MIN_EVENT_SEC = 0.5
+MIN_EVENT_SEC = 0.3          # a car at speed crosses a zebra in about this long

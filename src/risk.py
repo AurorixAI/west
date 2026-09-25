@@ -38,7 +38,8 @@ MISS_SCALE = 0.25         # sizes: passing in the next lane misses by ~0.4 at th
 # Deceleration rate to avoid the collision (DRAC, sizes/s^2): a normal approach
 # to a queue needs gentle braking and scores 0; only harder-than-normal counts.
 DRAC_LOW, DRAC_HIGH = 0.4, 1.2
-WALKING_PACE = 1.0        # sizes/s: two users both slower than this cannot crash hard
+WALKING_PACE = 1.0        # sizes/s: two users both slower than this cannot crash hard...
+SLOW_PAIR_WEIGHT = 0.35   # ...so their conflicts raise the risk a little, never to the alarm
 FOLLOW_WEIGHT = 0.35      # same-direction pairs
 DECAY_SEC = 1.5
 BRAKING_HAZARD = 0.4      # on its own a hard stop is suspicious, not an alarm
@@ -53,10 +54,12 @@ def fit_velocity(t: np.ndarray, xy: np.ndarray) -> np.ndarray:
     return (tc[:, None] * (xy - xy.mean(0))).sum(0) / (tc ** 2).sum()
 
 
-def pair_hazard(p: np.ndarray, v: np.ndarray, size: float) -> tuple[float, float, float]:
+def pair_hazard(p: np.ndarray, v: np.ndarray, size: float, urgency: bool = True) -> tuple[float, float, float]:
     """Hazard in [0, 1], time of closest approach (s) and miss distance (sizes).
 
-    ``p`` is the relative position, ``v`` the relative velocity (pixels, px/s)."""
+    ``p`` is the relative position, ``v`` the relative velocity (pixels, px/s).
+    ``urgency=False`` drops the braking (DRAC) factor: slow pairs never need
+    hard braking, but a close pass between them is still worth a little risk."""
     vv = float(v @ v)
     if vv < 1e-9:
         return 0.0, np.inf, np.inf
@@ -69,8 +72,8 @@ def pair_hazard(p: np.ndarray, v: np.ndarray, size: float) -> tuple[float, float
     closing = -float(p @ v) / max(dist, 1e-9) / size             # sizes/s
     gap = max(dist / size - 0.5, 0.25)                              # sizes to contact
     drac = closing ** 2 / (2 * gap)
-    urgency = float(np.clip((drac - DRAC_LOW) / (DRAC_HIGH - DRAC_LOW), 0.0, 1.0))
-    return float(urgency * np.exp(-t_star / TTC_SCALE) * np.exp(-(miss / MISS_SCALE) ** 2)), t_star, miss
+    weight = float(np.clip((drac - DRAC_LOW) / (DRAC_HIGH - DRAC_LOW), 0.0, 1.0)) if urgency else 1.0
+    return float(weight * np.exp(-t_star / TTC_SCALE) * np.exp(-(miss / MISS_SCALE) ** 2)), t_star, miss
 
 
 def to_probability(raw: float) -> float:
@@ -164,8 +167,10 @@ class CausalRiskEstimator:
                 if np.linalg.norm(rel) > np.linalg.norm(vrel) * HORIZON_SEC + 2 * size:
                     continue                  # cannot meet within the horizon
                 ni, nj = np.linalg.norm(vi) / si, np.linalg.norm(vj) / sj
-                if max(ni, nj) < WALKING_PACE:
-                    continue                  # people and a walked scooter, a creeping queue
+                if max(ni, nj) < WALKING_PACE:   # a car creeping past people, a walked scooter
+                    hz, _, _ = pair_hazard(rel, vrel, size, urgency=False)
+                    raw = max(raw, SLOW_PAIR_WEIGHT * hz)
+                    continue
                 hz, _, _ = pair_hazard(rel, vrel, size)
                 if hz > 0 and "person" not in (hi.category, hj.category):
                     if ni > C.MOVE_SPEED and nj > C.MOVE_SPEED and vi @ vj / (np.linalg.norm(vi) * np.linalg.norm(vj)) > 0.9:
