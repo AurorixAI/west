@@ -155,6 +155,13 @@ def test_cyclist_on_the_road_is_not_a_pedestrian(scene):
     assert rules.jaywalking(scene.context()) == []
 
 
+def test_rider_waiting_in_a_lane_without_a_detected_bike_is_not_jaywalking(scene):
+    """Regression (real clip, CPU model): the courier was found, his scooter was not."""
+    t = times(10.0, 30.0)
+    scene.add("person", PERSON, t, np.tile([[3000.0, 1800.0]], (len(t), 1)), 120)
+    assert rules.jaywalking(scene.context()) == []
+
+
 def test_failure_to_yield(quiet_scene):
     scene = quiet_scene
     scene.path("person", PERSON, 58.0, [(700, 1300), (1150, 1240)], 60, size=150)

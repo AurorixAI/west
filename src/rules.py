@@ -179,8 +179,13 @@ def jaywalking(ctx: Context) -> list[Segment]:
             continue
         off_crossing = ctx.geom.crosswalk_index(p.foot, margin=C.CROSSWALK_MARGIN * p.size) < 0
         for i0, i1 in runs(on_road & off_crossing, p.t, 0.5):
-            if p.t[i1] - p.t[i0] >= C.JAYWALK_MIN_SEC:
-                out.append((p.t[i0], p.t[i1], "jaywalking", (p.tid,)))
+            if p.t[i1] - p.t[i0] < C.JAYWALK_MIN_SEC:
+                continue
+            # A figure standing still in a traffic lane is a rider waiting at the
+            # light whose scooter the detector missed; people on the road walk.
+            if np.median(p.speed[i0:i1 + 1]) < C.JAYWALK_MIN_SPEED:
+                continue
+            out.append((p.t[i0], p.t[i1], "jaywalking", (p.tid,)))
     return out
 
 

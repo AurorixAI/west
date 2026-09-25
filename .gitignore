@@ -11,3 +11,4 @@ env/
 *.bak
 .cache/
 .pytest_cache/
+predictions.json

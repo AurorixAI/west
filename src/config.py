@@ -128,6 +128,7 @@ STOPPED_MIN_PASSERS = 2      # moving vehicles passing a stopped one -> not a qu
 STOPPED_QUEUE_EXEMPT_SEC = 90.0
 
 JAYWALK_MIN_SEC = 1.5
+JAYWALK_MIN_SPEED = 0.25     # heights/s; walking is ~0.6-0.8
 CROSSWALK_MARGIN = 0.15      # crossing polygons are grown by this many person heights (box jitter)
 KERB_INSET = 0.6             # a pedestrian must be this many heights inside the outer kerb
 ISLAND_MARGIN = 0.2          # ... and this many heights off an island
