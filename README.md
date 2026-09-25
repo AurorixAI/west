@@ -69,6 +69,17 @@ every class.
 | `web/` | website and live demo (FastAPI + static page) |
 | `tests/` | rule tests on synthetic trajectories, component tests, and an end-to-end harness run |
 
+## Sample videos
+
+- `samples/sample_test.mp4`: a 20 s, 1080p cut of the camera, used to calibrate the scene geometry
+  (crossings, stop line, carriageway and islands in `src/config.py`) and to generate
+  `predictions_samples.json`.
+- `samples/annotated_preview_15s.mp4`: a rendering from our first pipeline (boxes burned in). It is
+  not an input: run the harness on `samples/sample_test.mp4` (or the organisers' originals), not on
+  the whole folder.
+- The organisers' four full-length 4K sample videos are linked from their Drive folder and are too
+  large for git.
+
 ## Development loop
 
 ```bash
