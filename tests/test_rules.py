@@ -204,6 +204,18 @@ def test_side_impact_accident(scene):
     assert abs(ev[0][0] - 72.0) < 0.3 and 1.0 <= ev[0][1] - ev[0][0] < 3.0
 
 
+def test_accident_shortly_before_the_video_ends():
+    """The wrecks can only be seen standing for the 4 s the video has left."""
+    s = Scene(76.0)
+    s.background(0, 40, every=2.0)
+    s.path("vehicle", CAR, 72.0 - 930 / 400, [(2000, 1800), (2930, 1800), (2940, 1800), (2941, 1800)],
+           400, dwell={2: 30})
+    s.path("vehicle", CAR, 72.0 - 490 / 300, [(3000, 1300), (3000, 1790), (3003, 1800), (3004, 1800)],
+           300, dwell={2: 30})
+    ev = labels(rules.accident(s.context()), "accident")
+    assert len(ev) == 1 and abs(ev[0][0] - 72.0) < 0.3
+
+
 def test_joining_a_queue_is_not_an_accident(quiet_scene):
     s = quiet_scene
     s.path("vehicle", CAR, 40.0, [(2000, 1800), (2600, 1800), (3800, 1800)], 400, dwell={1: 40})

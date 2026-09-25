@@ -97,6 +97,11 @@ DETECT_WIDTH = 1280          # frames are resized to this width before YOLO
 DETECT_CONF = 0.10           # low: ByteTrack uses low-score boxes for its second pass
 TRACK_ACTIVATION = 0.30
 TRACK_BUFFER_SEC = 3.0
+# Buffered IoU (Yang et al. 2021): boxes are widened by this share of their
+# size on every side before association, so a car that moves more than its
+# own length between two samples still overlaps its predicted box. The
+# tracker hands back the original boxes.
+TRACK_IOU_BUFFER = {"vehicle": 0.5, "person": 0.0, "animal": 0.0}
 BATCH_SIZE = 8
 
 COCO_PERSON = 0
@@ -162,6 +167,7 @@ CONGESTION_MIN_SEC = 45.0
 
 ACCIDENT_DROP_RATIO = 0.35   # speed after contact <= ratio * speed before
 ACCIDENT_STAY_SEC = 5.0      # involved vehicles stay stationary this long afterwards
+ACCIDENT_TAIL_SEC = 1.5      # ...or, near the end of a video, over at least this much of what is left
 
 OBSTACLE_MIN_SEC = 2.0
 OBSTACLE_MIN_CONF = 0.5

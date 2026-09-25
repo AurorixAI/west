@@ -105,9 +105,15 @@ class MultiTracker:
         cats = np.array([C.CATEGORY_OF_CLASS.get(int(c), "") for c in det.cls])
         for cat, tracker in self.trackers.items():
             m = cats == cat
-            sd = sv.Detections(xyxy=det.xyxy[m].astype(np.float32), confidence=det.conf[m], class_id=det.cls[m])
+            boxes = det.xyxy[m].astype(np.float32)
+            b = C.TRACK_IOU_BUFFER.get(cat, 0.0)
+            wh = np.tile(boxes[:, 2:] - boxes[:, :2], 2) * np.array([-b, -b, b, b], np.float32)
+            sd = sv.Detections(xyxy=boxes + wh, confidence=det.conf[m], class_id=det.cls[m], data={"box": boxes})
             tracked = tracker.update_with_detections(sd)
-            for box, tid, cls, conf in zip(tracked.xyxy, tracked.tracker_id, tracked.class_id, tracked.confidence):
+            if len(tracked) == 0:
+                continue
+            for box, tid, cls, conf in zip(tracked.data["box"], tracked.tracker_id, tracked.class_id,
+                                           tracked.confidence):
                 self.records[(cat, int(tid))].append((t, box.astype(np.float32), int(cls), float(conf)))
                 out.append((cat, int(tid), box, int(cls)))
         return out

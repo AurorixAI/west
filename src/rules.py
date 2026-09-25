@@ -404,14 +404,14 @@ def accident(ctx: Context) -> list[Segment]:
             if ground > 0.8:
                 continue
             t = key / 1000.0
-            if _collision(ta, fast[id(ta)], tb, fast[id(tb)], t):
+            if _collision(ta, fast[id(ta)], tb, fast[id(tb)], t, ctx.duration):
                 done.add(pair)
                 settle = max(_settle_time(ta, t), _settle_time(tb, t))
                 out.append((t, max(settle, t + 1.0), "accident", pair))
     return out
 
 
-def _collision(ta: Track, sa: np.ndarray, tb: Track, sb: np.ndarray, t: float) -> bool:
+def _collision(ta: Track, sa: np.ndarray, tb: Track, sb: np.ndarray, t: float, end: float) -> bool:
     def mean_in(tr, s, lo, hi):
         m = (tr.t >= t + lo) & (tr.t <= t + hi)
         return float(s[m].mean()) if m.any() else np.nan
@@ -423,9 +423,16 @@ def _collision(ta: Track, sa: np.ndarray, tb: Track, sb: np.ndarray, t: float) -
             struck = True
     if not struck:
         return False
-    for tr in (ta, tb):                       # both are seen standing where they collided
-        m = (tr.t >= t + 3.0) & (tr.t <= t + 3.0 + C.ACCIDENT_STAY_SEC)
-        if m.sum() < 2 or tr.t[m][-1] - tr.t[m][0] < 0.5 * C.ACCIDENT_STAY_SEC \
+    # both are seen standing where they collided; when the video ends soon
+    # after the impact, whatever is left of it has to show them standing
+    lo, hi = t + 3.0, min(t + 3.0 + C.ACCIDENT_STAY_SEC, end)
+    if hi - lo < 0.5 * C.ACCIDENT_STAY_SEC:
+        lo, hi = t + 1.5, end
+        if hi - lo < C.ACCIDENT_TAIL_SEC:
+            return False
+    for tr in (ta, tb):
+        m = (tr.t >= lo) & (tr.t <= hi)
+        if m.sum() < 2 or tr.t[m][-1] - tr.t[m][0] < 0.5 * (hi - lo) \
                 or np.median(tr.speed[m]) > C.STOP_SPEED:
             return False
     return True

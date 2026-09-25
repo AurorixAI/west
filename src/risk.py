@@ -42,6 +42,13 @@ WALKING_PACE = 1.0        # sizes/s: two users both slower than this cannot cras
 SLOW_PAIR_WEIGHT = 0.35   # ...so their conflicts raise the risk a little, never to the alarm
 FOLLOW_WEIGHT = 0.35      # same-direction pairs
 DECAY_SEC = 1.5
+# At a few detections per second a fast car moves more than its own length
+# between samples, its boxes stop overlapping and the tracker restarts it
+# under a new id. A new track that appears where a just-lost one of the same
+# kind and size was heading continues that one's history.
+RELINK_SEC = 1.0          # a lost track can be continued for this long
+RELINK_GATE = 0.8         # sizes: prediction error allowed for a track with a velocity...
+RELINK_GATE_STILL = 2.0   # ...and distance allowed for one seen only once
 BRAKING_HAZARD = 0.4      # on its own a hard stop is suspicious, not an alarm
 MAX_REAL_TIME_SHARE = 0.5 # step() may spend this share of video time before thinning
 
@@ -131,8 +138,11 @@ class CausalRiskEstimator:
         live = []
         for cat, tid, box, cls in self.tracker.update(t, det):
             key = (cat, tid)
-            hs = self.hist.get(key) or self.hist.setdefault(key, _Hist(cat, cls))
             b = np.asarray(box, float)[None]
+            hs = self.hist.get(key)
+            if hs is None:
+                hs = self._relink(cat, b, t) or _Hist(cat, cls)
+                self.hist[key] = hs
             hs.t.append(t)
             hs.foot.append(np.array([(b[0, 0] + b[0, 2]) / 2, b[0, 3]]))
             hs.size.append(float(object_size(b, cat)[0]))
@@ -145,7 +155,7 @@ class CausalRiskEstimator:
 
         users = []
         for hs in live:
-            if hs.category == "animal" or len(hs.t) < 4:
+            if hs.category == "animal" or len(hs.t) < 3:
                 continue
             tt, ff = np.array(hs.t), np.array(hs.foot)
             recent = tt >= t - 1.0
@@ -183,3 +193,27 @@ class CausalRiskEstimator:
                         if before > 1.5 and now < 0.4 * before:
                             raw = max(raw, BRAKING_HAZARD)
         return raw
+
+    def _relink(self, cat: str, b: np.ndarray, t: float) -> "_Hist | None":
+        """The recently lost track of this category whose motion leads to box ``b``."""
+        foot = np.array([(b[0, 0] + b[0, 2]) / 2, b[0, 3]])
+        size = float(object_size(b, cat)[0])
+        best, best_err = None, 1.0
+        for key, hs in list(self.hist.items()):
+            dt = t - hs.last
+            if hs.category != cat or not 0 < dt <= RELINK_SEC or not hs.t:
+                continue
+            s_old = float(np.median(hs.size))
+            if not 0.6 < size / max(s_old, 1e-9) < 1.6:
+                continue
+            tt, ff = np.array(hs.t), np.array(hs.foot)
+            if len(tt) >= 2:
+                v = fit_velocity(tt, ff) if len(tt) >= 3 else (ff[-1] - ff[0]) / max(tt[-1] - tt[0], 1e-3)
+                gate = max(RELINK_GATE * s_old, 0.5 * float(np.linalg.norm(v)) * dt)
+                err = float(np.linalg.norm(ff[-1] + v * dt - foot)) / gate
+            else:
+                err = float(np.linalg.norm(ff[-1] - foot)) / (RELINK_GATE_STILL * s_old)
+            if err < best_err:
+                best, best_err = key, err
+        return self.hist.pop(best) if best is not None else None
+
