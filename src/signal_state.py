@@ -10,9 +10,11 @@ UNKNOWN, RED, GREEN = 0, 1, 2
 NAMES = {UNKNOWN: "UNKNOWN", RED: "RED", GREEN: "GREEN"}
 
 
-def bulb_pixels(full_frame: np.ndarray, roi: tuple[int, int, int, int]) -> tuple[int, int]:
+def bulb_pixels(full_frame: np.ndarray, roi: tuple[int, int, int, int] | None) -> tuple[int, int]:
     """Count lit red and lit green pixels in the signal ROI of a full-resolution frame."""
-    y0, y1, x0, x1 = roi
+    if roi is None:                               # another camera: no known signal head
+        return 0, 0
+    y0, y1, x0, x1 = (max(0, v) for v in roi)
     crop = full_frame[y0:y1, x0:x1]
     if crop.size == 0:
         return 0, 0

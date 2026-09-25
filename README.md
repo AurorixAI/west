@@ -50,7 +50,7 @@ Part B (causal, frame by frame; never sees Part A)
 |---|---|---|
 | Detection | YOLOv8s/n, COCO-pretrained (`src/detection.py`) | learned, not fine-tuned |
 | Tracking | ByteTrack from `supervision`, one tracker per category (vehicle, person, animal); offline centred smoothing, speeds in object sizes per second, stitching of fragments of one object (`src/tracking.py`) | algorithmic |
-| Scene | carriageway mask, per-cell lane heading and main traffic directions, all from each video's moving vehicles; crossings, stop line and signal ROI placed by hand in 3840×2160 coordinates (`src/scene.py`, `src/config.py`) | estimated from data (no labels) + hand geometry |
+| Scene | crossings, stop line, carriageway, signal heads and signs placed once on a reference frame (`src/config.py`), then aligned to every video by ORB feature matching and a RANSAC homography (`src/registration.py`, reference image `weights/scene_reference.jpg`); another camera switches the zone rules off. Lane headings and main traffic directions learned from each video's moving vehicles (`src/scene.py`) | hand geometry, auto-aligned; estimated from data (no labels) |
 | Signal | lit red/green pixels in the ROI, 1 s majority vote; signal rules switch off if red and green are never both seen (`src/signal_state.py`) | rule |
 | Events | one function per class over complete trajectories; boundaries follow the annotation conventions (`src/rules.py`) | rules |
 | Risk | constant-velocity closest approach for every nearby pair, same-direction pairs down-weighted, hard-braking cue (`src/risk.py`) | hand-calibrated model |
@@ -93,7 +93,7 @@ every class.
 
 ```bash
 pip install -r requirements-web.txt
-python -m pytest                                   # 40 tests, about 15 s on CPU
+python -m pytest                                   # 51 tests, about 20 s on CPU
 python scripts/dev_eval.py --videos samples/ --gt labels/dev_labels.json      # per-class F1
 python scripts/dev_eval.py --videos samples/ --gt labels/dev_labels.json --disable congestion
 python scripts/build_scene_prior.py --videos samples/                        # optional prior

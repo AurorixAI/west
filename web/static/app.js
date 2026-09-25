@@ -320,8 +320,11 @@ function showDemo(res) {
   const rc = riskChart($("demoRisk"), res.risk, dur, (t) => seek(t));
   const seek = linkPlayer(video, [tl, rc]);
   eventCards($("demoEvents"), res.events, seek);
+  const cam = res.camera && !res.camera.known
+    ? " This is not the competition camera, so crossings, the stop line and the signal are unknown here: zone rules are off; detection, tracking and lane rules still run."
+    : " Camera recognised: the crossings and stop line are aligned to this video automatically.";
   $("demoNote").textContent = `${res.events.length} events in ${fmt(dur)} of video; analysed in ${res.seconds} s ` +
-    `with ${res.profile.weights} at ${res.profile.analysis_fps} fps. Boxes are drawn from our tracks; highlighted ones are event actors.`;
+    `with ${res.profile.weights} at ${res.profile.analysis_fps} fps. Boxes are drawn from our tracks; highlighted ones are event actors.` + cam;
   canvas.hidden = false;
   video.onerror = () => {
     canvas.hidden = true;
@@ -368,9 +371,16 @@ function drawOverlayLoop(video, canvas, res) {
     if (ov.t.length && Math.abs(ov.t[lo] - t) < 0.3) {
       const actors = [];
       ctx.lineWidth = 1.2;
-      for (const [x1, y1, x2, y2, id, cat] of ov.boxes[lo]) {
+      for (const [x1, y1, x2, y2, id, cat, warn] of ov.boxes[lo]) {
         const X = ox + (x1 / 1e4) * vw, Y = oy + (y1 / 1e4) * vh, BW = ((x2 - x1) / 1e4) * vw, BH = ((y2 - y1) / 1e4) * vh;
         if (hl.has(id)) { actors.push([X, Y, BW, BH, id, hl.get(id), cat]); continue; }
+        if (warn) {                                     // operator warning, not an event
+          ctx.strokeStyle = "#fab219";
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(X, Y, BW, BH);
+          plaque(ctx, warn === 1 ? "PEDESTRIAN AHEAD" : "CLOSE PASS", X, Y - 3, "#fab219", "600 11px Barlow, system-ui, sans-serif");
+          continue;
+        }
         const L = Math.max(4, 0.28 * Math.min(BW, BH));
         ctx.strokeStyle = catColor[cat];
         ctx.beginPath();

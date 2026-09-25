@@ -71,11 +71,46 @@ def draw_geometry(img: np.ndarray, geom: SceneGeometry, scale: float) -> None:
     """Crossings and stop line, kept faint so the road stays readable."""
     for cw in geom.crosswalks:
         _poly(img, cw, scale, (235, 235, 235), 0.10, 1)
-    a, b = (geom.stop_line / scale).astype(int)
-    cv2.line(img, tuple(a), tuple(b), (70, 70, 230), 2, cv2.LINE_AA)
+    if geom.stop_line is not None:
+        a, b = (geom.stop_line / scale).astype(int)
+        cv2.line(img, tuple(a), tuple(b), (70, 70, 230), 2, cv2.LINE_AA)
 
 
 SIGN_BLUE = (191, 95, 31)
+WARN = (25, 178, 250)          # operator warning amber, distinct from the event colours
+MOVING = 0.45                  # sizes/s, as rules.MOVE_SPEED
+WALKING = 1.0                  # sizes/s, as rules.WALKING_PACE
+
+
+def crossing_conflicts(samples: list[tuple[Track, int]], geom: SceneGeometry) -> dict[int, str]:
+    """Operator warnings for this frame, not events: vehicles on a zebra with a pedestrian on it.
+
+    "PEDESTRIAN AHEAD" while the vehicle stands with a pedestrian on the same
+    crossing; "CLOSE PASS" while it moves within 1.5 of its sizes of a
+    pedestrian on the carriageway, who may have just stepped off the zebra.
+    Two-wheelers at walking pace are being wheeled and get neither. Neither is
+    an official class.
+    """
+    peds = [(tr, i) for tr, i in samples if tr.category == "person"]
+    out: dict[int, str] = {}
+    if not peds:
+        return out
+    pf = np.array([tr.foot[i] for tr, i in peds])
+    ped_cw = geom.crosswalk_index(pf)
+    ped_road = geom.on_carriageway(pf, np.array([0.3 * tr.size[i] for tr, i in peds]))
+    for tr, i in samples:
+        if tr.category != "vehicle" or tr.cls == 1 or (tr.cls == 3 and tr.speed[i] < WALKING):
+            continue
+        k = geom.vehicle_crosswalk_index(tr.box[i:i + 1])[0]
+        if k < 0:
+            continue
+        dist = np.linalg.norm(pf - tr.foot[i], axis=1) / max(tr.size[i], 1.0)
+        if tr.speed[i] < MOVING:
+            if ((ped_cw == k) & ped_road & (dist <= 3.0)).any():
+                out[tr.tid] = "PEDESTRIAN AHEAD"
+        elif (ped_road & (dist <= 1.5)).any():
+            out[tr.tid] = "CLOSE PASS"
+    return out
 
 
 def draw_signals(img: np.ndarray, full: np.ndarray, geom: SceneGeometry, scale: float) -> None:
@@ -100,10 +135,17 @@ def draw_signals(img: np.ndarray, full: np.ndarray, geom: SceneGeometry, scale: 
 
 
 def draw_objects(img: np.ndarray, samples: list[tuple[Track, int]], scale: float,
-                 highlight: dict[int, str]) -> None:
-    """Brackets for every tracked object; a solid box and a plaque for event actors."""
+                 highlight: dict[int, str], warnings: dict[int, str] | None = None) -> None:
+    """Brackets for every tracked object; a solid box and a plaque for event actors;
+    a thin amber box and plaque for operator warnings."""
+    warnings = warnings or {}
     for tr, i in samples:
         if tr.tid in highlight:
+            continue
+        if tr.tid in warnings:
+            x1, y1, x2, y2 = (tr.box[i] / scale).astype(int)
+            cv2.rectangle(img, (x1, y1), (x2, y2), WARN, 1, cv2.LINE_AA)
+            _label(img, warnings[tr.tid], x1, y1 - 3, WARN, 0.4)
             continue
         x1, y1, x2, y2 = (tr.box[i] / scale).astype(int)
         _brackets(img, x1, y1, x2, y2, CATEGORY_COLOR.get(tr.category, (200, 200, 200)))

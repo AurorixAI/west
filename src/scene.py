@@ -18,10 +18,6 @@ from src import config as C
 from src.tracking import Track
 
 
-def _scaled(poly: np.ndarray, w: int, h: int) -> np.ndarray:
-    return (poly * np.array([w / C.REF_W, h / C.REF_H], np.float32)).astype(np.float32)
-
-
 def in_poly(poly: np.ndarray, pts: np.ndarray, margin: float | np.ndarray = 0.0) -> np.ndarray:
     """Vectorised point-in-polygon; ``margin`` > 0 grows the polygon (pixels)."""
     pts = np.atleast_2d(pts)
@@ -33,22 +29,44 @@ def in_poly(poly: np.ndarray, pts: np.ndarray, margin: float | np.ndarray = 0.0)
 
 @dataclass
 class SceneGeometry:
+    """The hand-placed geometry, carried into this video's pixels.
+
+    ``transform`` maps the reference view (3840x2160) to the video; by default
+    it is plain scaling. ``known=False`` (another camera) leaves every zone
+    empty, so zone-based rules stay silent and nothing is drawn in the wrong place.
+    """
     width: int
     height: int
+    transform: np.ndarray | None = None
+    known: bool = True
 
     def __post_init__(self):
         w, h = self.width, self.height
-        sx, sy = w / C.REF_W, h / C.REF_H
-        self.stop_line = _scaled(C.STOP_LINE, w, h)
-        self.crosswalks = [_scaled(c, w, h) for c in (C.CROSSWALK_MAIN, C.CROSSWALK_RIGHT, C.CROSSWALK_CORNER)]
-        self.stop_zone = _scaled(C.STOP_ZONE, w, h)
-        self.carriageway = _scaled(C.CARRIAGEWAY, w, h)
-        box = lambda b: tuple(int(round(v)) for v in np.array(b, float) * [sx, sy, sx, sy])  # noqa: E731
+        T = np.diag([w / C.REF_W, h / C.REF_H, 1.0]) if self.transform is None else np.asarray(self.transform, float)
+        if not self.known:
+            self.stop_line = self.stop_zone = self.carriageway = self.tl_roi = None
+            self.crosswalks, self.not_carriageway = [], []
+            self.signal_heads, self.road_signs = {}, {}
+            return
+
+        def pts(p):
+            return cv2.perspectiveTransform(np.asarray(p, np.float32).reshape(-1, 1, 2), T).reshape(-1, 2)
+
+        def box(b):
+            x1, y1, x2, y2 = b
+            q = pts([[x1, y1], [x2, y1], [x2, y2], [x1, y2]])
+            return int(q[:, 0].min()), int(q[:, 1].min()), int(np.ceil(q[:, 0].max())), int(np.ceil(q[:, 1].max()))
+
+        self.stop_line = pts(C.STOP_LINE)
+        self.crosswalks = [pts(c) for c in (C.CROSSWALK_MAIN, C.CROSSWALK_RIGHT, C.CROSSWALK_CORNER)]
+        self.stop_zone = pts(C.STOP_ZONE)
+        self.carriageway = pts(C.CARRIAGEWAY)
+        self.not_carriageway = [pts(p) for p in C.NOT_CARRIAGEWAY]
         self.signal_heads = {k: box(b) for k, b in C.SIGNAL_HEADS.items()}
         self.road_signs = {k: box(b) for k, b in C.ROAD_SIGNS.items()}
-        self.not_carriageway = [_scaled(p, w, h) for p in C.NOT_CARRIAGEWAY]
         y0, y1, x0, x1 = C.TL_ROI
-        self.tl_roi = (int(y0 * sy), int(y1 * sy), int(x0 * sx), int(x1 * sx))
+        bx0, by0, bx1, by1 = box((x0, y0, x1, y1))
+        self.tl_roi = (by0, by1, bx0, bx1)
 
     def on_carriageway(self, pts: np.ndarray, inset: float | np.ndarray = 0.0,
                        island_margin: float | np.ndarray = 0.0) -> np.ndarray:
@@ -58,6 +76,8 @@ class SceneGeometry:
         islands are, so the two tolerances are separate.
         """
         pts = np.atleast_2d(pts)
+        if self.carriageway is None:
+            return np.zeros(len(pts), bool)
         inside = in_poly(self.carriageway, pts, -np.asarray(inset, float))
         for p in self.not_carriageway:
             inside &= ~in_poly(p, pts, island_margin)

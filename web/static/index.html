@@ -53,7 +53,7 @@
   <div class="wrap">
     <dl class="facts">
       <div><dt>Classes emitted</dt><dd>10<small>of 14</small></dd></div>
-      <div><dt>Unit and end-to-end tests</dt><dd>40</dd></div>
+      <div><dt>Unit and end-to-end tests</dt><dd>51</dd></div>
       <div><dt>4K on a 4-core CPU</dt><dd>0.95<small>× real time</small></dd></div>
       <div><dt>Time budget</dt><dd>3<small>× video length</small></dd></div>
     </dl>
@@ -184,6 +184,12 @@
           overtakes it; a slow jam counts as congestion only if it lasts through a green phase.</p>
       </article>
       <article>
+        <h4>Every video is aligned to the camera first</h4>
+        <p>The zones are placed once on a reference frame. Each new video is matched to it on static scenery
+          (buildings, poles, kerbs) and the zones follow any shift, zoom or rotation, to within 2 px in our tests.
+          Footage from another camera is recognised as such: zone rules switch off instead of drawing zebras on bare asphalt.</p>
+      </article>
+      <article>
         <h4>Riders are not pedestrians</h4>
         <p>A courier waiting on a scooter at the light is a "person" to the detector. People on scooters and
           figures standing still in a traffic lane are traffic, not jaywalkers.</p>
@@ -208,7 +214,7 @@
       <tbody>
         <tr><td>Detection</td><td>YOLOv8s (COCO, 1280 px, 10 fps) on a GPU; YOLOv8n (960 px, 5 fps) without one</td><td><span class="chip chip-learned">learned</span> pretrained, not fine-tuned</td></tr>
         <tr><td>Tracking</td><td>ByteTrack per category (vehicles, people, animals), then offline smoothing and ID-switch stitching</td><td><span class="chip">algorithm</span></td></tr>
-        <tr><td>Scene</td><td>Traced carriageway, crossings and stop line, plus lane directions learned from each video's moving vehicles</td><td><span class="chip">measured</span> no labels</td></tr>
+        <tr><td>Scene</td><td>Traced carriageway, crossings, stop line, signal heads and signs, aligned to each video by feature matching (ORB + RANSAC homography); lane directions learned from each video's moving vehicles</td><td><span class="chip">measured</span> no labels</td></tr>
         <tr><td>Signal</td><td>Lit-bulb colour in a fixed region, 1 s majority vote</td><td><span class="chip">rule</span></td></tr>
         <tr><td>Events (Part A)</td><td>One rule per class over complete trajectories; boundaries follow the annotation conventions</td><td><span class="chip">rule</span> unit-tested</td></tr>
         <tr><td>Risk (Part B)</td><td>Own causal tracker; closest approach of every pair weighted by the braking needed to avoid it</td><td><span class="chip">model</span> hand-calibrated</td></tr>
