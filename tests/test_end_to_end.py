@@ -28,8 +28,11 @@ def video_dir(tmp_path_factory):
 
 
 def _run(video_dir: Path, out: Path) -> dict:
+    # A 4 s clip gets a 12 s budget, less than a cold start's model load; this test checks
+    # validity and determinism, so it relaxes the budget with the harness's own dev option.
     subprocess.run([sys.executable, "run_submission.py", "--videos", str(video_dir), "--out", str(out),
-                    "--team", "WEST"], cwd=ROOT, check=True, capture_output=True, timeout=600)
+                    "--team", "WEST", "--time-factor", "30"], cwd=ROOT, check=True, capture_output=True,
+                   timeout=600)
     return json.loads(out.read_text())
 
 
