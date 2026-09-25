@@ -4,10 +4,11 @@ Strictly causal: the estimator owns its own detector and tracker, sees frames
 only through ``step`` and keeps nothing but the last few seconds of each track.
 
 Risk signal, per sampled frame:
-  * for every pair of nearby road users (at least one a vehicle), the time and
-    distance of closest approach under constant velocity (TTC-style); pairs
-    driving in the same direction (a queue, a platoon) are down-weighted,
-    crossing / head-on conflicts and vehicle-pedestrian pairs are not;
+  * for every pair of nearby road users (at least one a vehicle, at least one
+    faster than walking pace), the time and distance of closest approach under
+    constant velocity (TTC-style), weighted by the deceleration needed to avoid
+    it (DRAC): approaching a queue needs gentle braking and scores nothing;
+    pairs driving in the same direction (a platoon) are down-weighted;
   * a hard-braking cue (speed falling by >60% within ~0.6 s) near another user.
 The raw hazard is held with a short exponential decay and mapped to [0, 1] so
 that 0.5 (the alarm threshold) needs a near-simultaneous arrival at a common
@@ -15,6 +16,7 @@ point about 2 s ahead; a hard stop on its own stays below the threshold.
 """
 from __future__ import annotations
 
+import os
 import time
 from collections import deque
 
@@ -22,7 +24,8 @@ import cv2
 import numpy as np
 
 from src import config as C
-from src.detection import Detector, pick_device
+from src.detection import Detector
+from src.pipeline import GPU, default_profile
 from src.tracking import MultiTracker, object_size
 
 # (weights, detector rate inside step(), frame width) with and without a GPU
@@ -31,7 +34,11 @@ CPU_SETTINGS = ("yolov8n.pt", 4.0, 640)
 HISTORY_SEC = 2.5
 HORIZON_SEC = 4.0         # closest approaches further ahead are ignored
 TTC_SCALE = 2.9           # seconds: a dead-on conflict 2 s ahead scores 0.5
-MISS_SCALE = 0.7          # sizes
+MISS_SCALE = 0.25         # sizes: passing in the next lane misses by ~0.4 at this camera angle
+# Deceleration rate to avoid the collision (DRAC, sizes/s^2): a normal approach
+# to a queue needs gentle braking and scores 0; only harder-than-normal counts.
+DRAC_LOW, DRAC_HIGH = 0.4, 1.2
+WALKING_PACE = 1.0        # sizes/s: two users both slower than this cannot crash hard
 FOLLOW_WEIGHT = 0.35      # same-direction pairs
 DECAY_SEC = 1.5
 BRAKING_HAZARD = 0.4      # on its own a hard stop is suspicious, not an alarm
@@ -56,8 +63,14 @@ def pair_hazard(p: np.ndarray, v: np.ndarray, size: float) -> tuple[float, float
     t_star = -float(p @ v) / vv
     if t_star <= 0 or t_star > HORIZON_SEC:
         return 0.0, t_star, np.inf
-    miss = float(np.linalg.norm(p + v * t_star)) / max(size, 1.0)
-    return float(np.exp(-t_star / TTC_SCALE) * np.exp(-(miss / MISS_SCALE) ** 2)), t_star, miss
+    size = max(size, 1.0)
+    miss = float(np.linalg.norm(p + v * t_star)) / size
+    dist = float(np.linalg.norm(p))
+    closing = -float(p @ v) / max(dist, 1e-9) / size             # sizes/s
+    gap = max(dist / size - 0.5, 0.25)                              # sizes to contact
+    drac = closing ** 2 / (2 * gap)
+    urgency = float(np.clip((drac - DRAC_LOW) / (DRAC_HIGH - DRAC_LOW), 0.0, 1.0))
+    return float(urgency * np.exp(-t_star / TTC_SCALE) * np.exp(-(miss / MISS_SCALE) ** 2)), t_star, miss
 
 
 def to_probability(raw: float) -> float:
@@ -75,7 +88,7 @@ class _Hist:
 
 class CausalRiskEstimator:
     def __init__(self, settings: tuple[str, float, int] | None = None):
-        weights, fps, width = settings or (GPU_SETTINGS if pick_device().startswith("cuda") else CPU_SETTINGS)
+        weights, fps, width = settings or (GPU_SETTINGS if default_profile() is GPU else CPU_SETTINGS)
         self.detector = Detector(weights=weights, imgsz=width)
         self.target_fps, self.width = fps, width
 
@@ -104,7 +117,7 @@ class CausalRiskEstimator:
         self.score = to_probability(self.held)
         self.busy += time.perf_counter() - t0
         # stay far inside the time budget on slow hardware
-        if t_sec > 5 and self.busy > MAX_REAL_TIME_SHARE * t_sec:
+        if not os.environ.get("WEST_NO_THIN") and t_sec > 5 and self.busy > MAX_REAL_TIME_SHARE * t_sec:
             self.stride *= 2
             self.busy = 0.0
             self.tracker = MultiTracker(self.fps / self.stride)
@@ -150,9 +163,11 @@ class CausalRiskEstimator:
                 rel, vrel = pj - pi, vj - vi
                 if np.linalg.norm(rel) > np.linalg.norm(vrel) * HORIZON_SEC + 2 * size:
                     continue                  # cannot meet within the horizon
+                ni, nj = np.linalg.norm(vi) / si, np.linalg.norm(vj) / sj
+                if max(ni, nj) < WALKING_PACE:
+                    continue                  # people and a walked scooter, a creeping queue
                 hz, _, _ = pair_hazard(rel, vrel, size)
                 if hz > 0 and "person" not in (hi.category, hj.category):
-                    ni, nj = np.linalg.norm(vi) / si, np.linalg.norm(vj) / sj
                     if ni > C.MOVE_SPEED and nj > C.MOVE_SPEED and vi @ vj / (np.linalg.norm(vi) * np.linalg.norm(vj)) > 0.9:
                         hz *= FOLLOW_WEIGHT
                 raw = max(raw, hz)

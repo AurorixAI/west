@@ -139,12 +139,13 @@ def test_jaywalking_across_the_avenue(scene):
     p = scene.path("person", PERSON, 50.0, [(3000, 1500), (3000, 2100)], 80, size=150)
     ev = labels(rules.jaywalking(scene.context()), "jaywalking")
     assert len(ev) == 1
-    on = p.t[(p.foot[:, 1] > 1650) & (p.foot[:, 1] < 1950)]
-    assert abs(ev[0][0] - on[0]) < 1.0 and abs(ev[0][1] - on[-1]) < 1.0
+    ctx = scene.context()
+    on = p.t[ctx.on_road(p.foot, inset=0.6 * p.size) & (ctx.geom.crosswalk_index(p.foot, 0.15 * p.size) < 0)]
+    assert abs(ev[0][0] - on[0]) < 0.3 and abs(ev[0][1] - on[-1]) < 0.3
 
 
 def test_pedestrian_on_the_zebra_is_not_jaywalking(scene):
-    scene.path("person", PERSON, 50.0, [(700, 1200), (1500, 1180)], 80, size=150)
+    scene.path("person", PERSON, 50.0, [(700, 1300), (1500, 1191)], 80, size=150)
     assert rules.jaywalking(scene.context()) == []
 
 
@@ -156,10 +157,10 @@ def test_cyclist_on_the_road_is_not_a_pedestrian(scene):
 
 def test_failure_to_yield(quiet_scene):
     scene = quiet_scene
-    scene.path("person", PERSON, 58.0, [(700, 1200), (1150, 1190)], 60, size=150)
+    scene.path("person", PERSON, 58.0, [(700, 1300), (1150, 1240)], 60, size=150)
     v = scene.path("vehicle", CAR, 60.0, [(900, 600), (900, 2100)], 400)
     ev = labels(rules.failure_to_yield(scene.context()), "failure_to_yield")
-    inside = v.t[(v.foot[:, 1] > 1075) & (v.foot[:, 1] < 1315)]
+    inside = v.t[(v.foot[:, 1] > 1221) & (v.foot[:, 1] < 1326)]
     assert len(ev) == 1 and abs(ev[0][0] - inside[0]) < 0.3 and abs(ev[0][1] - inside[-1]) < 0.3
 
 
@@ -188,6 +189,26 @@ def test_joining_a_queue_is_not_an_accident(quiet_scene):
     x = np.where(t < 48.0, 2000 + 300 * (t - 45) - 50 * (t - 45) ** 2, 2000 + 300 * 3 - 50 * 9)
     s.add("vehicle", CAR, t, np.stack([x, np.full_like(t, 1800)], 1), 120)
     assert rules.accident(s.context()) == []
+
+
+def test_driving_past_a_parked_car_at_a_low_sample_rate_is_not_an_accident(quiet_scene):
+    """Regression (real clip): with ~1 s between samples a moving car read as stopping dead."""
+    s = quiet_scene
+    s.path("vehicle", CAR, 45.0, [(2600, 1800), (2601, 1800)], 1, size=120)     # parked for 60 s
+    t = times(50.0, 55.0)[::12]                                                     # one sample per 1.2 s
+    x = 2000 + 300 * (t - 50)
+    s.add("vehicle", CAR, t, np.stack([x, np.full_like(t, 1790)], 1), 120)
+    assert rules.accident(s.context()) == []
+
+
+def test_speed_survives_sparse_sampling():
+    from src.tracking import Track
+    from collections import Counter
+    t = np.arange(0, 10, 1.2)
+    box = np.stack([100 * t, np.zeros_like(t), 100 * t + 50, np.full_like(t, 50)], 1)
+    tr = Track(1, "vehicle", CAR, t, box, Counter()).finalize()
+    assert np.allclose(tr.speed[1:-1], 2.0, atol=0.05)
+    assert np.allclose(rules.speed_with_window(tr, 0.5)[1:-1], 2.0, atol=0.05)
 
 
 def test_dog_on_the_road(scene):

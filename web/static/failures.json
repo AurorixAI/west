@@ -1,1 +1,5 @@
-[]
+[
+  {"video": "sample_test.mp4", "time": "0:00–0:20", "text": "Two cars stand at the kerb by the bus stop for the whole clip while traffic passes them, and are reported as stopped_vehicle. That fits the definition literally; whether the annotators count a car waiting at a bus stop is the open question, to be settled with dev labels."},
+  {"video": "sample_test.mp4", "time": "0:12–0:16", "text": "Jaywalker #1 is caught, but only after the traced carriageway was added: the carriageway learned from 20 s of a red phase did not yet cover the middle of the intersection. Short clips depend on the traced mask."},
+  {"video": "sample_test.mp4", "time": "0:01–0:15", "text": "A car waits on the right-hand crossing for about 15 s while people walk around it. No rule fires; it is yielding, but a longer wait would become a stopped_vehicle."}
+]

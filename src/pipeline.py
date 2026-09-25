@@ -1,6 +1,7 @@
 """Part A pipeline: video -> detections -> tracks -> scene model -> events."""
 from __future__ import annotations
 
+import os
 import time
 from dataclasses import dataclass
 from typing import Callable
@@ -37,6 +38,14 @@ CPU = Profile(weights="yolov8n.pt", analysis_fps=5.0, detect_width=960, batch=4)
 
 
 def default_profile() -> Profile:
+    """GPU profile on CUDA, CPU profile otherwise; WEST_PROFILE=gpu|cpu forces one.
+
+    Forcing ``gpu`` on a CPU reproduces the evaluation machine's configuration
+    (slowly: run the harness with a larger --time-factor).
+    """
+    forced = os.environ.get("WEST_PROFILE", "").lower()
+    if forced in ("gpu", "cpu"):
+        return GPU if forced == "gpu" else CPU
     return GPU if pick_device().startswith("cuda") else CPU
 
 
@@ -110,7 +119,8 @@ def observe(path: str, profile: Profile | None = None,
                 progress(min(done, 1.0))
             # running late (slow GPU, or none): halve the detection rate, repeatedly if needed
             elapsed = time.perf_counter() - t_start
-            if done > 0.05 and keep_every < 8 and elapsed / done > 0.9 * PART_A_BUDGET * info.duration:
+            if (not os.environ.get("WEST_NO_THIN") and done > 0.05 and keep_every < 8
+                    and elapsed / done > 0.9 * PART_A_BUDGET * info.duration):
                 keep_every *= 2
     if batch:
         flush()

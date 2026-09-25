@@ -160,7 +160,22 @@
     <li>Offline smoothing plus boundary refinement on raw positions: stop and start times land within a
       frame or two, which matters at tIoU 0.7.</li>
     <li>Testing every rule against a positive case and its closest look-alike (queue vs stopped vehicle, joining a
-      queue vs a crash, red-phase queue vs congestion, cyclist vs jaywalker, backpack vs dog): 35 tests.</li>
+      queue vs a crash, red-phase queue vs congestion, cyclist vs jaywalker, backpack vs dog, sparse vs dense sampling): 37 tests.</li>
+  </ul>
+  <h3>What the real footage changed</h3>
+  <ul>
+    <li>The hand-placed zones from the first version were off. The zebra is a narrow diagonal band, not a
+      rectangle; the crossing continues to the right of the island; and the stop line is diagonal. All of
+      them were re-measured on the sample frame, together with a traced carriageway and its islands. The
+      learned carriageway is still used on top of the trace.</li>
+    <li>A false "accident" on the sample clip: with detection thinned to about 1 sample per second, a
+      short speed window saw one sample and read 0, so a car driving past a parked one "stopped dead".
+      Speed windows now always reach the neighbouring samples; a regression test covers it.</li>
+    <li>The first risk model raised the alarm on 70% of a calm clip. Passing a parked car in the next lane
+      misses by only ~0.4 object sizes at this camera angle, and joining a queue has a short TTC.
+      Weighting by the deceleration needed to avoid the collision (DRAC), a tighter miss distance, and
+      ignoring pairs moving at walking pace brought it to 0 false alarm frames (maximum 0.18), while the
+      synthetic crash still alarms 1.5 s early.</li>
   </ul>
   <h3>What did not</h3>
   <ul>

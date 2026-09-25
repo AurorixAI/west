@@ -430,7 +430,7 @@ function dashboard(items) {
   t.innerHTML = "";
   const tile = (v, k) => t.append(el("div", { class: "tile" }, el("div", { class: "v" }, v), el("div", { class: "k" }, k)));
   tile(items.length, "sample videos");
-  tile(fmt(dur), "minutes of video");
+  tile(fmt(dur), "of video");
   tile(n, "events detected");
   tile(dur ? (n / dur * 3600).toFixed(0) : "–", "events per hour");
   const present = CLASSES.filter((c) => counts[c]);
@@ -450,7 +450,7 @@ function heroTiles(items) {
   const t = $("heroTiles");
   const tile = (v, k) => t.append(el("div", { class: "tile" }, el("div", { class: "v" }, v), el("div", { class: "k" }, k)));
   tile("10 of 14", "classes emitted");
-  tile("35", "unit and end-to-end tests");
+  tile("37", "unit and end-to-end tests");
   tile("0.95×", "real time, 4K on a 4-core CPU");
   tile(items.length || "–", "sample videos annotated");
 }

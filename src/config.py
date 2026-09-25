@@ -38,20 +38,44 @@ ENABLED_CLASSES: frozenset[str] = frozenset({
 # --------------------------------------------------------------------------
 REF_W, REF_H = 3840, 2160
 
-STOP_LINE = np.array([[450, 1060], [1400, 1050]], dtype=np.float32)
+# Measured on the organisers' sample frame (1080p coordinates x 2).
+# Stop line across the near carriageway, before the main crossing.
+STOP_LINE = np.array([[570, 1104], [1870, 936]], dtype=np.float32)
 
-# Zebra crossing from the left kerb to the central island.
+# Zebra crossing from the left kerb to the central island (a narrow diagonal band).
 CROSSWALK_MAIN = np.array(
-    [[550, 1080], [2450, 1020], [2550, 1220], [600, 1340]], dtype=np.float32)
+    [[660, 1252], [2360, 1030], [2370, 1116], [744, 1348]], dtype=np.float32)
+
+# Its continuation from the island to the right-hand kerb.
+CROSSWALK_RIGHT = np.array(
+    [[2580, 996], [3720, 924], [3740, 984], [2660, 1096]], dtype=np.float32)
 
 # Zebra crossing in the bottom-left corner.
 CROSSWALK_CORNER = np.array(
-    [[0, 1280], [520, 1330], [1750, 2160], [300, 2160], [0, 1800]], dtype=np.float32)
+    [[350, 1564], [670, 1472], [1780, 2160], [1240, 2160]], dtype=np.float32)
 
 # Between the stop line and the far edge of the main crossing: a vehicle that
 # stops here on red has passed the line without entering the intersection.
 STOP_ZONE = np.array(
-    [[450, 1060], [1400, 1050], [1450, 1320], [600, 1340]], dtype=np.float32)
+    [[570, 1104], [1870, 936], [2000, 1164], [744, 1348]], dtype=np.float32)
+
+# Carriageway traced on the sample frame: both carriageways of the avenue and
+# the intersection, bounded by the kerbs (parking strip on the left excluded).
+CARRIAGEWAY = np.array(
+    [[200, 180], [1200, 296], [2000, 464], [2600, 596], [2700, 660], [2800, 790], [3600, 820], [3680, 900], [3840, 1000], [3840, 2160],
+     [0, 2160], [0, 1700], [320, 1600], [500, 1520], [660, 1400], [670, 1280], [580, 1140],
+     [660, 1110], [120, 370]], dtype=np.float32)
+
+# Raised areas inside that outline where people legitimately stand.
+NOT_CARRIAGEWAY = [
+    np.array([[180, 276], [2220, 880], [2320, 960], [2280, 1040], [1860, 940], [120, 364]], np.float32),  # median
+    np.array([[2160, 880], [2300, 880], [2600, 1000], [2640, 1090], [2370, 1090], [2160, 1000]], np.float32),  # island
+    np.array([[2370, 1080], [2640, 1080], [2630, 1160], [2380, 1160]], np.float32),              # round island
+    np.array([[1010, 1590], [1250, 1366], [1520, 1504], [1470, 1530]], np.float32),              # triangle
+    np.array([[240, 1930], [660, 1750], [850, 1870], [820, 1900], [260, 1940]], np.float32),     # triangle
+    np.array([[1380, 1720], [1440, 1690], [1740, 1650], [1930, 1770], [1880, 1790],
+              [1480, 1830], [1380, 1760]], np.float32),                                          # island
+]
 
 # Traffic-signal head facing the camera: (ymin, ymax, xmin, xmax).
 TL_ROI = (680, 880, 2260, 2380)
@@ -70,6 +94,7 @@ BATCH_SIZE = 8
 COCO_PERSON = 0
 COCO_TWO_WHEELER = (1, 3)                 # bicycle, motorcycle
 COCO_VEHICLE = (2, 5, 7)                  # car, bus, truck
+COCO_BUS = 5
 COCO_ANIMAL = (15, 16, 17, 18, 19)        # cat, dog, horse, sheep, cow
 CATEGORY_OF_CLASS = {COCO_PERSON: "person"}
 CATEGORY_OF_CLASS.update({c: "vehicle" for c in COCO_VEHICLE + COCO_TWO_WHEELER})
@@ -103,7 +128,9 @@ STOPPED_MIN_PASSERS = 2      # moving vehicles passing a stopped one -> not a qu
 STOPPED_QUEUE_EXEMPT_SEC = 90.0
 
 JAYWALK_MIN_SEC = 1.5
-CROSSWALK_MARGIN = 0.5       # crossing polygons are grown by this many person heights
+CROSSWALK_MARGIN = 0.15      # crossing polygons are grown by this many person heights (box jitter)
+KERB_INSET = 0.6             # a pedestrian must be this many heights inside the outer kerb
+ISLAND_MARGIN = 0.2          # ... and this many heights off an island
 
 YIELD_MAX_DIST = 3.0         # vehicle-pedestrian distance on the crossing, in vehicle sizes
 

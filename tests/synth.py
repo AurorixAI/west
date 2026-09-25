@@ -2,7 +2,7 @@
 
 Background traffic teaches the flow field three lanes, placed on the
 competition camera's hand-calibrated geometry:
-  * SOUTH: x ~ 900, driving +y over the stop line and the main crossing;
+  * SOUTH: x ~ 900, driving +y over the stop line (y ~ 1061) and the main crossing (y 1221-1326);
   * NORTH: x ~ 1250, driving -y;
   * EAST:  y ~ 1800, x from 2000 to 3800, driving +x (away from the crossings).
 """

@@ -24,6 +24,23 @@ def window_mean(t: np.ndarray, x: np.ndarray, half: float) -> np.ndarray:
     return (cs[hi] - cs[lo]) / cnt
 
 
+def window_velocity(t: np.ndarray, xy: np.ndarray, half: float) -> np.ndarray:
+    """Velocity from the first to the last sample within +-half seconds of each sample.
+
+    The window always reaches at least the neighbouring sample on each side,
+    so sparse sampling (a thinned or low-rate run) never reads as standing still.
+    """
+    n = len(t)
+    if n < 2:
+        return np.zeros((n, 2))
+    idx = np.arange(n)
+    lo = np.minimum(np.searchsorted(t, t - half, side="left"), np.maximum(idx - 1, 0))
+    hi = np.maximum(np.searchsorted(t, t + half, side="right") - 1, np.minimum(idx + 1, n - 1))
+    dt = t[hi] - t[lo]
+    with np.errstate(invalid="ignore", divide="ignore"):
+        return np.where(dt[:, None] > 0, (xy[hi] - xy[lo]) / dt[:, None], 0.0)
+
+
 def object_size(box: np.ndarray, category: str) -> np.ndarray:
     w = np.maximum(box[:, 2] - box[:, 0], 1.0)
     h = np.maximum(box[:, 3] - box[:, 1], 1.0)
@@ -58,12 +75,7 @@ class Track:
         raw_foot = np.stack([(self.box[:, 0] + self.box[:, 2]) / 2, self.box[:, 3]], axis=1)
         self.foot = window_mean(self.t, raw_foot, half)
         self.size = window_mean(self.t, object_size(self.box, self.category), half)
-        n = len(self.t)
-        lo = np.searchsorted(self.t, self.t - half, side="left")
-        hi = np.clip(np.searchsorted(self.t, self.t + half, side="right") - 1, 0, n - 1)
-        dt = self.t[hi] - self.t[lo]
-        with np.errstate(invalid="ignore", divide="ignore"):
-            self.vel = np.where(dt[:, None] > 0, (self.foot[hi] - self.foot[lo]) / dt[:, None], 0.0)
+        self.vel = window_velocity(self.t, self.foot, half)
         self.speed = np.linalg.norm(self.vel, axis=1) / np.maximum(self.size, 1.0)
         return self
 

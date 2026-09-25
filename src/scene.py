@@ -39,11 +39,26 @@ class SceneGeometry:
     def __post_init__(self):
         w, h = self.width, self.height
         self.stop_line = _scaled(C.STOP_LINE, w, h)
-        self.crosswalks = [_scaled(C.CROSSWALK_MAIN, w, h), _scaled(C.CROSSWALK_CORNER, w, h)]
+        self.crosswalks = [_scaled(c, w, h) for c in (C.CROSSWALK_MAIN, C.CROSSWALK_RIGHT, C.CROSSWALK_CORNER)]
         self.stop_zone = _scaled(C.STOP_ZONE, w, h)
+        self.carriageway = _scaled(C.CARRIAGEWAY, w, h)
+        self.not_carriageway = [_scaled(p, w, h) for p in C.NOT_CARRIAGEWAY]
         y0, y1, x0, x1 = C.TL_ROI
         sx, sy = w / C.REF_W, h / C.REF_H
         self.tl_roi = (int(y0 * sy), int(y1 * sy), int(x0 * sx), int(x1 * sx))
+
+    def on_carriageway(self, pts: np.ndarray, inset: float | np.ndarray = 0.0,
+                       island_margin: float | np.ndarray = 0.0) -> np.ndarray:
+        """Inside the traced carriageway by ``inset`` pixels, and ``island_margin`` pixels off every island.
+
+        The outer kerbs are traced less precisely far from the camera than the
+        islands are, so the two tolerances are separate.
+        """
+        pts = np.atleast_2d(pts)
+        inside = in_poly(self.carriageway, pts, -np.asarray(inset, float))
+        for p in self.not_carriageway:
+            inside &= ~in_poly(p, pts, island_margin)
+        return inside
 
     def crosswalk_index(self, pts: np.ndarray, margin: float | np.ndarray = 0.0) -> np.ndarray:
         """Index of the crossing each point is on, -1 if none."""

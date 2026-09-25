@@ -23,7 +23,14 @@ so a CPU-only machine still keeps inside the 3× budget. A 10 s 4K clip took 9.5
 together on a 4-core CPU (0.95× real time). Both parts also watch their own clock: if a video runs
 late they thin detection instead of overrunning.
 
-`run_submission.py` and `evaluate.py` are the organisers' files, unchanged.
+`run_submission.py` and `evaluate.py` are the organisers' files, unchanged (byte-identical to the
+starter kit).
+
+`predictions_samples.json` was produced with the GPU configuration forced on a CPU:
+`WEST_PROFILE=gpu WEST_NO_THIN=1 python run_submission.py --videos samples/sample_test.mp4 --out predictions_samples.json --team WEST --time-factor 20`.
+`WEST_PROFILE` forces a profile, `WEST_NO_THIN` disables the time guard, and `--time-factor` is the
+harness's own development option. On a T4 the plain command gives the same configuration within the
+normal budget; fp16 may shift boundaries by a frame.
 
 ## Approach
 
@@ -72,8 +79,10 @@ every class.
 ## Sample videos
 
 - `samples/sample_test.mp4`: a 20 s, 1080p cut of the camera, used to calibrate the scene geometry
-  (crossings, stop line, carriageway and islands in `src/config.py`) and to generate
-  `predictions_samples.json`.
+  (crossings, stop line, traced carriageway and islands in `src/config.py`) and to generate
+  `predictions_samples.json`. On it the pipeline reports two jaywalkers (checked frame by frame),
+  two cars standing at the bus-stop kerb (`stopped_vehicle`, debatable), and no accident risk above
+  0.18.
 - `samples/annotated_preview_15s.mp4`: a rendering from our first pipeline (boxes burned in). It is
   not an input: run the harness on `samples/sample_test.mp4` (or the organisers' originals), not on
   the whole folder.
@@ -84,7 +93,7 @@ every class.
 
 ```bash
 pip install -r requirements-web.txt
-python -m pytest                                   # 35 tests, about 15 s on CPU
+python -m pytest                                   # 37 tests, about 15 s on CPU
 python scripts/dev_eval.py --videos samples/ --gt labels/dev_labels.json      # per-class F1
 python scripts/dev_eval.py --videos samples/ --gt labels/dev_labels.json --disable congestion
 python scripts/build_scene_prior.py --videos samples/                        # optional prior

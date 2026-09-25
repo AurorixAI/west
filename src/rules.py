@@ -16,7 +16,7 @@ import numpy as np
 from src import config as C
 from src.scene import FlowField, SceneGeometry, in_poly
 from src.signal_state import GREEN, RED, SignalTimeline
-from src.tracking import Track, window_mean
+from src.tracking import Track, window_mean, window_velocity
 
 Segment = tuple[float, float, str, tuple[int, ...]]   # start, end, label, actor track ids
 
@@ -39,12 +39,8 @@ def speed_with_window(tr: Track, window: float) -> np.ndarray:
     """Speed (sizes/s) from a shorter smoothing window than Track.speed, for abruptness tests."""
     half = window / 2
     raw = np.stack([(tr.box[:, 0] + tr.box[:, 2]) / 2, tr.box[:, 3]], 1)
-    foot = window_mean(tr.t, raw, half / 2)
-    n = len(tr.t)
-    lo = np.searchsorted(tr.t, tr.t - half, "left")
-    hi = np.clip(np.searchsorted(tr.t, tr.t + half, "right") - 1, 0, n - 1)
-    dt = np.maximum(tr.t[hi] - tr.t[lo], 1e-6)
-    return np.linalg.norm(foot[hi] - foot[lo], axis=1) / dt / np.maximum(tr.size, 1.0)
+    vel = window_velocity(tr.t, window_mean(tr.t, raw, half / 2), half)
+    return np.linalg.norm(vel, axis=1) / np.maximum(tr.size, 1.0)
 
 
 @dataclass
@@ -67,6 +63,15 @@ class Context:
             for i, t in enumerate(tr.t):
                 self.at[self.key(t)].append((tr, i))
         self.pedestrians = [t for t in self.tracks if t.category == "person" and not self._is_rider(t)]
+
+    def on_road(self, pts: np.ndarray, core: bool = False, inset: float | np.ndarray = 0.0,
+                island_margin: float | np.ndarray = 0.0) -> np.ndarray:
+        """Traced carriageway, or where the video's own moving vehicles drive.
+
+        The trace covers a short clip at a red light, where the learned mask is
+        still thin; the learned mask covers any road the trace missed.
+        """
+        return self.geom.on_carriageway(pts, inset, island_margin) | self.flow.is_road(pts, core)
 
     @staticmethod
     def key(t: float) -> int:
@@ -93,15 +98,21 @@ class Context:
 # Rules
 # --------------------------------------------------------------------------
 def stopped_vehicle(ctx: Context) -> list[Segment]:
+    """Stationary >= 10 s on the carriageway while traffic overtakes it.
+
+    Buses are left out: dwelling at a stop is their normal operation.
+    """
     out = []
     for v in ctx.vehicles:
+        if v.cls == C.COCO_BUS:
+            continue
         for i0, i1 in runs(v.speed < C.STOP_SPEED, v.t, 1.0):
             i0, i1 = refine_stationary(v, i0, i1)
             t0, t1 = v.t[i0], v.t[i1]
             if t1 - t0 < C.STOPPED_MIN_SEC:
                 continue
             loc = np.median(v.foot[i0:i1 + 1], axis=0)
-            if not ctx.flow.is_road(loc)[0]:
+            if not ctx.on_road(loc)[0]:
                 continue
             if t1 - t0 < C.STOPPED_QUEUE_EXEMPT_SEC and _passers(ctx, v, loc, t0, t1) < C.STOPPED_MIN_PASSERS:
                 continue                      # everybody around it is stopped too: a queue
@@ -112,22 +123,24 @@ def stopped_vehicle(ctx: Context) -> list[Segment]:
 def _passers(ctx: Context, v: Track, loc: np.ndarray, t0: float, t1: float) -> int:
     """Distinct vehicles that overtake the stationary ``v`` during [t0, t1].
 
-    Overtaking = moving from behind to ahead of it along the lane direction
-    within three sizes laterally. Vehicles that join or leave a queue around
-    it never get ahead of it while it is stopped, so a queue scores zero.
+    Overtaking = moving, along its own direction of travel, from behind ``v``
+    to ahead of it, within three sizes laterally. Vehicles that join or leave
+    a queue around it never get ahead of it while it is stopped, so a queue
+    scores zero. Uses each passer's own heading, not the learned lanes, so it
+    also works on a short clip whose flow field is still thin.
     """
     size = float(np.median(v.size))
-    flow_dir, ok = ctx.flow.direction(loc)
-    if not ok[0]:
-        return 0
-    d = flow_dir[0]
     seen = 0
     for o in ctx.vehicles:
         if o is v or o.end < t0 or o.start > t1:
             continue
-        m = (o.t >= t0) & (o.t <= t1)
+        m = (o.t >= t0) & (o.t <= t1) & (o.speed >= C.MOVE_SPEED)
         if m.sum() < 2:
             continue
+        d = o.foot[m][-1] - o.foot[m][0]
+        if np.linalg.norm(d) < 1e-6:
+            continue
+        d = d / np.linalg.norm(d)
         rel = o.foot[m] - loc
         along = rel @ d
         lateral = np.abs(rel[:, 0] * d[1] - rel[:, 1] * d[0])
@@ -135,7 +148,7 @@ def _passers(ctx: Context, v: Track, loc: np.ndarray, t0: float, t1: float) -> i
         ahead = np.nonzero(along > 0.5 * size)[0]
         if len(behind) and len(ahead) and ahead[-1] > behind[0]:
             k = behind[0] + int(np.argmin(np.abs(along[behind[0]:ahead[-1] + 1])))
-            if lateral[k] <= 3 * size and o.speed[m][k] >= C.MOVE_SPEED:
+            if lateral[k] <= 3 * size:
                 seen += 1
     return seen
 
@@ -160,7 +173,8 @@ def refine_stationary(tr: Track, i0: int, i1: int, tol: float = 0.2) -> tuple[in
 def jaywalking(ctx: Context) -> list[Segment]:
     out = []
     for p in ctx.pedestrians:
-        on_road = ctx.flow.is_road(p.foot, core=True)
+        on_road = ctx.on_road(p.foot, core=True, inset=C.KERB_INSET * p.size,
+                              island_margin=C.ISLAND_MARGIN * p.size)
         if not on_road.any():
             continue
         off_crossing = ctx.geom.crosswalk_index(p.foot, margin=C.CROSSWALK_MARGIN * p.size) < 0
@@ -193,7 +207,7 @@ def _pedestrian_in_path(ctx: Context, v: Track, k: int, i0: int, i1: int) -> int
             if id(p) not in peds:
                 continue
             pf = p.foot[j:j + 1]
-            if ctx.geom.crosswalk_index(pf)[0] != k or not ctx.flow.is_road(pf)[0]:
+            if ctx.geom.crosswalk_index(pf)[0] != k or not ctx.on_road(pf)[0]:
                 continue                      # waiting on the kerb or the island
             if np.linalg.norm(pf[0] - v.foot[i]) <= C.YIELD_MAX_DIST * v.size[i]:
                 return p.tid
@@ -421,7 +435,7 @@ def road_obstacle(ctx: Context) -> list[Segment]:
             continue
         if _on_person_fraction(ctx, a) > 0.3:
             continue
-        for i0, i1 in runs(ctx.flow.is_road(a.foot), a.t, 1.0):
+        for i0, i1 in runs(ctx.on_road(a.foot), a.t, 1.0):
             if a.t[i1] - a.t[i0] >= C.OBSTACLE_MIN_SEC:
                 out.append((a.t[i0], a.t[i1], "road_obstacle", (a.tid,)))
     return out

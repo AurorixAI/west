@@ -1,0 +1,19 @@
+{
+ "videos": [
+  {
+   "video": "sample_test.mp4",
+   "dir": "sample_test",
+   "duration": 20.02,
+   "events": 3,
+   "labels": [
+    "jaywalking",
+    "stopped_vehicle"
+   ]
+  }
+ ],
+ "signal_names": [
+  "UNKNOWN",
+  "RED",
+  "GREEN"
+ ]
+}
