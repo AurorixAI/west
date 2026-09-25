@@ -131,6 +131,7 @@ def build(video: Path, pred: dict | None, render: bool) -> dict:
         if writer is not None or (thumbs_due and t >= thumbs_due[0][0]):
             frame = small.copy()
             viz.draw_geometry(frame, an.geom, scale)
+            viz.draw_signals(frame, full, an.geom, scale)
             samples = index.at(t)
             viz.draw_objects(frame, samples, scale, highlight)
             r = float(risk_v[min(np.searchsorted(risk_t, t), len(risk_v) - 1)]) if len(risk_v) else None

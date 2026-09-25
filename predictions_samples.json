@@ -17,6 +17,11 @@
      17.52,
      19.92,
      "jaywalking"
+    ],
+    [
+     17.92,
+     19.92,
+     "failure_to_yield"
     ]
    ],
    "risk": [
@@ -2428,9 +2433,9 @@
    "duration": 20.02,
    "budget_sec": 400.4,
    "errors": [],
-   "part_a_sec": 79.4,
-   "part_b_sec": 22.6,
-   "total_sec": 102.1
+   "part_a_sec": 93.2,
+   "part_b_sec": 22.0,
+   "total_sec": 115.2
   }
  }
 }

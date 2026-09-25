@@ -93,7 +93,7 @@ every class.
 
 ```bash
 pip install -r requirements-web.txt
-python -m pytest                                   # 37 tests, about 15 s on CPU
+python -m pytest                                   # 40 tests, about 15 s on CPU
 python scripts/dev_eval.py --videos samples/ --gt labels/dev_labels.json      # per-class F1
 python scripts/dev_eval.py --videos samples/ --gt labels/dev_labels.json --disable congestion
 python scripts/build_scene_prior.py --videos samples/                        # optional prior

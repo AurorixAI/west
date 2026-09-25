@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 
 from src.scene import FlowField, SceneGeometry
-from src.signal_state import GREEN, RED
+from src.signal_state import GREEN, RED, bulb_pixels, instant_state
 from src.tracking import Track
 
 # BGR. Event colours follow the website's class families; objects stay quiet.
@@ -75,6 +75,30 @@ def draw_geometry(img: np.ndarray, geom: SceneGeometry, scale: float) -> None:
     cv2.line(img, tuple(a), tuple(b), (70, 70, 230), 2, cv2.LINE_AA)
 
 
+SIGN_BLUE = (191, 95, 31)
+
+
+def draw_signals(img: np.ndarray, full: np.ndarray, geom: SceneGeometry, scale: float) -> None:
+    """Signal heads facing the camera, in the colour their own lamps show now, and the road signs.
+
+    ``full`` is the full-resolution frame the lamps are read from; ``img`` is drawn on.
+    """
+    for name, (x1, y1, x2, y2) in geom.signal_heads.items():
+        red, green = bulb_pixels(full, (y1, y2, x1, x2))
+        state = instant_state(red, green, max(3, (x2 - x1) * (y2 - y1) // 150))
+        color = {RED: (72, 72, 235), GREEN: (90, 200, 70)}.get(state, (170, 170, 170))
+        a = (int(x1 / scale) - 3, int(y1 / scale) - 3)
+        b = (int(x2 / scale) + 3, int(y2 / scale) + 3)
+        cv2.rectangle(img, a, b, color, 2, cv2.LINE_AA)
+        text = {RED: "RED", GREEN: "GREEN"}.get(state, "--")
+        _label(img, text, a[0], a[1] - 4, color, 0.4, (255, 255, 255))
+    for name, (x1, y1, x2, y2) in geom.road_signs.items():
+        a = (int(x1 / scale) - 2, int(y1 / scale) - 2)
+        b = (int(x2 / scale) + 2, int(y2 / scale) + 2)
+        cv2.rectangle(img, a, b, (240, 240, 240), 1, cv2.LINE_AA)
+        _label(img, name.upper(), b[0] + 4, b[1], SIGN_BLUE, 0.36, (255, 255, 255))
+
+
 def draw_objects(img: np.ndarray, samples: list[tuple[Track, int]], scale: float,
                  highlight: dict[int, str]) -> None:
     """Brackets for every tracked object; a solid box and a plaque for event actors."""
@@ -90,7 +114,10 @@ def draw_objects(img: np.ndarray, samples: list[tuple[Track, int]], scale: float
         x1, y1, x2, y2 = (tr.box[i] / scale).astype(int)
         color = EVENT_COLOR.get(label, (0, 0, 255))
         cv2.rectangle(img, (x1, y1), (x2, y2), color, 2, cv2.LINE_AA)
-        _label(img, f"{label.replace('_', ' ').upper()}  {tr.tid}", x1, y1 - 3, color)
+        # in failure_to_yield the person is the one not given way, not the offender
+        text = "PEDESTRIAN" if label == "failure_to_yield" and tr.category == "person" \
+            else label.replace("_", " ").upper()
+        _label(img, f"{text}  {tr.tid}", x1, y1 - 3, color)
 
 
 def draw_hud(img: np.ndarray, t: float, signal: int, n_vehicles: int, n_people: int,

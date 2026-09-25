@@ -38,13 +38,16 @@ class SceneGeometry:
 
     def __post_init__(self):
         w, h = self.width, self.height
+        sx, sy = w / C.REF_W, h / C.REF_H
         self.stop_line = _scaled(C.STOP_LINE, w, h)
         self.crosswalks = [_scaled(c, w, h) for c in (C.CROSSWALK_MAIN, C.CROSSWALK_RIGHT, C.CROSSWALK_CORNER)]
         self.stop_zone = _scaled(C.STOP_ZONE, w, h)
         self.carriageway = _scaled(C.CARRIAGEWAY, w, h)
+        box = lambda b: tuple(int(round(v)) for v in np.array(b, float) * [sx, sy, sx, sy])  # noqa: E731
+        self.signal_heads = {k: box(b) for k, b in C.SIGNAL_HEADS.items()}
+        self.road_signs = {k: box(b) for k, b in C.ROAD_SIGNS.items()}
         self.not_carriageway = [_scaled(p, w, h) for p in C.NOT_CARRIAGEWAY]
         y0, y1, x0, x1 = C.TL_ROI
-        sx, sy = w / C.REF_W, h / C.REF_H
         self.tl_roi = (int(y0 * sy), int(y1 * sy), int(x0 * sx), int(x1 * sx))
 
     def on_carriageway(self, pts: np.ndarray, inset: float | np.ndarray = 0.0,
@@ -59,6 +62,22 @@ class SceneGeometry:
         for p in self.not_carriageway:
             inside &= ~in_poly(p, pts, island_margin)
         return inside
+
+    def vehicle_crosswalk_index(self, box: np.ndarray) -> np.ndarray:
+        """Crossing each vehicle box's ground footprint touches, -1 if none.
+
+        The bottom-centre point alone is the rear bumper of a car driving away
+        from the camera, still short of the zebra while its front is on it, so
+        three points up the lower part of the box are tested.
+        """
+        box = np.atleast_2d(box)
+        cx = (box[:, 0] + box[:, 2]) / 2
+        h = box[:, 3] - box[:, 1]
+        out = np.full(len(box), -1)
+        for f in (0.0, 0.2, 0.4):
+            idx = self.crosswalk_index(np.stack([cx, box[:, 3] - f * h], 1))
+            out = np.where(out < 0, idx, out)
+        return out
 
     def crosswalk_index(self, pts: np.ndarray, margin: float | np.ndarray = 0.0) -> np.ndarray:
         """Index of the crossing each point is on, -1 if none."""

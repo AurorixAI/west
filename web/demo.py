@@ -138,6 +138,7 @@ def _thumbnails(path: Path, an) -> dict[int, str]:
         scale = full.shape[1] / 960
         img = cv2.resize(full, (960, int(full.shape[0] / scale)), interpolation=cv2.INTER_AREA)
         viz.draw_geometry(img, an.geom, scale)
+        viz.draw_signals(img, full, an.geom, scale)
         viz.draw_objects(img, index.at(t), scale, {a: lbl for a in actors})
         ok, buf = cv2.imencode(".jpg", img, [cv2.IMWRITE_JPEG_QUALITY, 80])
         if ok:

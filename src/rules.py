@@ -190,29 +190,41 @@ def jaywalking(ctx: Context) -> list[Segment]:
 
 
 def failure_to_yield(ctx: Context) -> list[Segment]:
+    """A vehicle moves across a crossing while a pedestrian is on it close by.
+
+    Stopping on the zebra itself is not yielding, so a car that stands on the
+    crossing while people walk round it and then drives on is reported; a car
+    queued over the zebra that pulls away once the people have gone is not.
+    Bicycles are left out: they are often wheeled across with the pedestrians.
+    """
     out = []
     for v in ctx.vehicles:
-        cw = ctx.geom.crosswalk_index(v.foot)
+        if v.cls == C.COCO_BICYCLE:
+            continue
+        cw = ctx.geom.vehicle_crosswalk_index(v.box)
         for k in range(len(ctx.geom.crosswalks)):
-            for i0, i1 in runs(cw == k, v.t, 0.3):
-                sp = v.speed[i0:i1 + 1]
-                if sp.mean() < C.MOVE_SPEED or sp.min() < 2 * C.STOP_SPEED:
-                    continue                  # it stopped for somebody: yielded
-                ped = _pedestrian_in_path(ctx, v, k, i0, i1)
+            for i0, i1 in runs(cw == k, v.t, 0.3):   # a car at speed is on a zebra for ~0.3 s
+                ped = _pedestrian_while_moving(ctx, v, k, i0, i1)
                 if ped is not None:
                     out.append((v.t[i0], v.t[i1], "failure_to_yield", (v.tid, ped)))
     return out
 
 
-def _pedestrian_in_path(ctx: Context, v: Track, k: int, i0: int, i1: int) -> int | None:
-    """Track id of a pedestrian on the carriageway part of crossing k near the vehicle, if any."""
+def _pedestrian_while_moving(ctx: Context, v: Track, k: int, i0: int, i1: int) -> int | None:
+    """Track id of a pedestrian on the carriageway part of crossing k, near the vehicle
+    at a moment the vehicle is moving; None if there is none."""
     peds = set(id(p) for p in ctx.pedestrians)
+    # a scooter wheeled across with the people moves at their pace
+    min_speed = C.WALKING_PACE if v.cls in C.COCO_TWO_WHEELER else C.MOVE_SPEED
     for i in range(i0, i1 + 1):
+        if v.speed[i] < min_speed:
+            continue
         for p, j in ctx.at.get(ctx.key(v.t[i]), ()):
             if id(p) not in peds:
                 continue
             pf = p.foot[j:j + 1]
-            if ctx.geom.crosswalk_index(pf)[0] != k or not ctx.on_road(pf)[0]:
+            if ctx.geom.crosswalk_index(pf)[0] != k or \
+                    not ctx.on_road(pf, inset=C.YIELD_KERB_INSET * p.size[j], island_margin=0.0)[0]:
                 continue                      # waiting on the kerb or the island
             if np.linalg.norm(pf[0] - v.foot[i]) <= C.YIELD_MAX_DIST * v.size[i]:
                 return p.tid

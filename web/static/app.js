@@ -26,7 +26,7 @@ const RULES = [
   ["illegal_u_turn", "Heading turns by 150° or more within 20 s, with no track teleports. Legality cannot be read from signs, so every U-turn is reported.", "Heading leaves the start direction to reaching the opposite one"],
   ["stopped_vehicle", "A car or truck stands 10 s or more on the carriageway while at least two vehicles overtake it; queues get no overtakers. Buses at a stop are left out.", "Stops to moves again or disappears"],
   ["jaywalking", "A pedestrian walks on the carriageway (0.6 heights inside the kerb, off the islands) outside the zebra for 1.5 s or more. Riders, and figures standing still in a lane, are traffic.", "Steps off the kerb or zebra to leaves the road"],
-  ["failure_to_yield", "A vehicle drives through a crossing without slowing while a pedestrian is on the carriageway part of the same crossing within 3 vehicle sizes.", "Enters to leaves the crossing"],
+  ["failure_to_yield", "A vehicle moves across a zebra (any part of its footprint on the stripes) while a pedestrian is on the carriageway part of it within 3 vehicle sizes. Stopping on the zebra is not yielding; a scooter wheeled at walking pace is not traffic.", "Enters to leaves the crossing"],
   ["congestion", "In one traffic direction, 6 or more vehicles with 80% below crawling speed for 45 s, lasting through at least 15 s of green (90 s if the signal is unreadable).", "Queue stops moving to clears"],
   ["road_obstacle", "A confidently detected animal (median confidence ≥ 0.5) on the carriageway for 2 s, not sitting on a person's box.", "Appears to leaves the road"],
 ];
@@ -370,7 +370,7 @@ function drawOverlayLoop(video, canvas, res) {
       ctx.lineWidth = 1.2;
       for (const [x1, y1, x2, y2, id, cat] of ov.boxes[lo]) {
         const X = ox + (x1 / 1e4) * vw, Y = oy + (y1 / 1e4) * vh, BW = ((x2 - x1) / 1e4) * vw, BH = ((y2 - y1) / 1e4) * vh;
-        if (hl.has(id)) { actors.push([X, Y, BW, BH, id, hl.get(id)]); continue; }
+        if (hl.has(id)) { actors.push([X, Y, BW, BH, id, hl.get(id), cat]); continue; }
         const L = Math.max(4, 0.28 * Math.min(BW, BH));
         ctx.strokeStyle = catColor[cat];
         ctx.beginPath();
@@ -379,11 +379,13 @@ function drawOverlayLoop(video, canvas, res) {
         }
         ctx.stroke();
       }
-      for (const [X, Y, BW, BH, id, label] of actors) {
+      for (const [X, Y, BW, BH, id, label, cat] of actors) {
         ctx.strokeStyle = hexOf(label);
         ctx.lineWidth = 2.5;
         ctx.strokeRect(X, Y, BW, BH);
-        plaque(ctx, `${pretty(label).toUpperCase()}  ${id}`, X, Y - 3, hexOf(label), "600 12px Barlow, system-ui, sans-serif");
+        // in failure_to_yield the person is the one not given way, not the offender
+        const text = label === "failure_to_yield" && cat === 1 ? "PEDESTRIAN" : pretty(label).toUpperCase();
+        plaque(ctx, `${text}  ${id}`, X, Y - 3, hexOf(label), "600 12px Barlow, system-ui, sans-serif");
       }
     }
     active.forEach((e, k) => plaque(ctx, pretty(e.label).toUpperCase(), ox + 12, oy + 34 + k * 30, hexOf(e.label),
