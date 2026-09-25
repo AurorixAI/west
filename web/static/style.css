@@ -56,7 +56,7 @@ h3 { font-size: 1.05rem; margin: 24px 0 8px; }
 .prose { max-width: 75ch; }
 .prose li { margin-bottom: 6px; }
 
-.top { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--page) 88%, transparent);
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: color-mix(in srgb, var(--page) 88%, transparent);
   backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
 .bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 52px; }
 .brand { font-weight: 700; color: var(--ink); text-decoration: none; white-space: nowrap; }

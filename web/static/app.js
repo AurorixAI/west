@@ -605,7 +605,23 @@ function setupLabel() {
   });
 }
 
+/* The live demo needs the Python server (web/app.py); a static copy of the
+   site (e.g. a preview page) says so instead of offering a dead upload box. */
+async function checkBackend() {
+  try {
+    const r = await fetch("api/health");
+    if (r.ok && (await r.json()).ok) return;
+  } catch (_) { /* no server */ }
+  $("drop").hidden = true;
+  const n = el("div", { class: "notice" },
+    "This copy of the site is static, so uploads are off. The live demo runs the Python pipeline: start it with ",
+    el("code", {}, "uvicorn web.app:app --port 7860"),
+    " (see the README) or use the team's hosted demo. Sample results, EDA and the label tool below all work here.");
+  $("drop").after(n);
+}
+
 /* -------------------------------------------------------------------- boot */
+checkBackend();
 setupDemo();
 diagram();
 team();
