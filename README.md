@@ -19,8 +19,8 @@ bash weights/download.sh
 # Step 2: Install required packages
 pip install -r requirements.txt
 
-# Step 3: Run official submission harness
-python run_submission.py --videos "/path/to/test_videos" --out predictions.json --team WEST
+# Step 3: Run official submission harness (e.g., on included samples/ or organizer /data/test)
+python run_submission.py --videos samples --out predictions.json --team WEST
 
 # Step 4: Validate prediction format (offline check)
 python evaluate.py --pred predictions.json --validate-only
@@ -31,7 +31,13 @@ To run against ground truth labels:
 python evaluate.py --pred predictions.json --gt ground_truth.json --per-video
 ```
 
+### 📹 Included Sample Videos & Full 4K Footage
+- **`samples/sample_test.mp4`** (12 MB): Ready-to-run test clip included directly in the Git repository for immediate validation without downloading external files.
+- **`samples/annotated_preview_15s.mp4`** (23 MB): Pre-rendered demonstration showcasing detected bounding boxes, calibrated crosswalk and stop lines, HSV signal HUD, and causal risk meter.
+- **Full 4K Master Video** (`C3905.MP4` - 2.19 GB): Due to GitHub's 100 MB per-file file size limit, full raw 4K videos are mounted offline during evaluation (e.g., `/data/test`) as instructed in the competition guidelines.
+
 ---
+
 
 ## 2. Interactive Web Platform & Live Demo
 

@@ -2,11 +2,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 .DS_Store
-*.mp4
 *.MP4
-*.avi
-*.mkv
 !dashboard/static/**
+!samples/*.mp4
 .venv/
 env/
 *.swp
