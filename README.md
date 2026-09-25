@@ -1,173 +1,119 @@
-# TEAM WEST — Traffic Vision AI & Incident Intelligence
-### Westminster International University in Tashkent (WIUT) Hackathon 2026 — Computer Vision Track (Elimination Task)
+# Team WEST: traffic event detection and accident anticipation
 
-[![Status](https://img.shields.io/badge/Evaluation-VALID%20(0%20errors)-10b981.svg)]()
-[![Platform](https://img.shields.io/badge/Hardware-NVIDIA%20T4%20%7C%20Apple%20MPS-3b82f6.svg)]()
-[![Time%20Budget](https://img.shields.io/badge/Time%20Budget-1.2x%20%28Allowance%203.0x%29-10b981.svg)]()
-[![License](https://img.shields.io/badge/Weights-Open--Source%20(AGPL--3.0)-purple.svg)]()
+WIUT Hackathon 2026, Computer Vision track. For a fixed road camera, `solution.py` returns every
+traffic event as `[start_sec, end_sec, label]` (Part A) and a causal per-frame accident risk
+(Part B).
 
----
-
-## 1. Quickstart & Submission Commands
-
-The package runs offline on a clean machine with standard dependencies:
+## Run
 
 ```bash
-# Step 1: Pre-download model weights (run once before offline evaluation)
-bash weights/download.sh
-
-# Step 2: Install required packages
 pip install -r requirements.txt
-
-# Step 3: Run official submission harness
-python run_submission.py --videos "/path/to/test_videos" --out predictions.json --team WEST
-
-# Step 4: Validate prediction format (offline check)
+python run_submission.py --videos /data/test --out predictions.json --team WEST
 python evaluate.py --pred predictions.json --validate-only
 ```
 
-To run against ground truth labels:
+**Weights** are committed in `weights/` (`yolov8s.pt` 22 MB, `yolov8n.pt` 6 MB; 28 MB in total).
+`bash weights/download.sh` restores them and verifies their SHA-256. Nothing is downloaded at run
+time: `src/__init__.py` sets `YOLO_OFFLINE`, so Ultralytics neither probes the network nor sends
+analytics.
+
+**Hardware.** On a CUDA GPU the pipeline runs YOLOv8s at 1280 px, 10 fps for Part A and 6 fps for
+Part B. Without a GPU it switches to YOLOv8n (960 px, 5 fps for Part A; 640 px, 4 fps for Part B),
+so a CPU-only machine still keeps inside the 3× budget. A 10 s 4K clip took 9.5 s for Parts A+B
+together on a 4-core CPU (0.95× real time). Both parts also watch their own clock: if a video runs
+late they thin detection instead of overrunning.
+
+`run_submission.py` and `evaluate.py` are the organisers' files, unchanged.
+
+## Approach
+
+```
+Part A (offline, whole video)
+  video ─► strided prefetching reader ─► YOLOv8 (COCO) ─► ByteTrack per category
+        ─► smoothing + ID-switch stitching ─► scene model (learned from traffic)
+        ─► 10 rules ─► segment merge ─► [[start, end, label], ...]
+             ▲ signal state from the lit bulb's colour in a fixed ROI
+
+Part B (causal, frame by frame; never sees Part A)
+  frame ─► own YOLOv8 + ByteTrack ─► per-pair time & distance of closest approach,
+        hard-braking cue ─► held hazard ─► P(accident starts within 5 s)
+```
+
+| Stage | Implementation | Learned or rule |
+|---|---|---|
+| Detection | YOLOv8s/n, COCO-pretrained (`src/detection.py`) | learned, not fine-tuned |
+| Tracking | ByteTrack from `supervision`, one tracker per category (vehicle, person, animal); offline centred smoothing, speeds in object sizes per second, stitching of fragments of one object (`src/tracking.py`) | algorithmic |
+| Scene | carriageway mask, per-cell lane heading and main traffic directions, all from each video's moving vehicles; crossings, stop line and signal ROI placed by hand in 3840×2160 coordinates (`src/scene.py`, `src/config.py`) | estimated from data (no labels) + hand geometry |
+| Signal | lit red/green pixels in the ROI, 1 s majority vote; signal rules switch off if red and green are never both seen (`src/signal_state.py`) | rule |
+| Events | one function per class over complete trajectories; boundaries follow the annotation conventions (`src/rules.py`) | rules |
+| Risk | constant-velocity closest approach for every nearby pair, same-direction pairs down-weighted, hard-braking cue (`src/risk.py`) | hand-calibrated model |
+
+Classes emitted: accident, red_light, stop_line, wrong_way, illegal_u_turn, stopped_vehicle,
+jaywalking, failure_to_yield, congestion, road_obstacle. Not emitted: near_miss, illegal_turn,
+solid_line_crossing and fire_smoke. Under macro-F1, a predicted class that the test set lacks adds a
+zero to the average, so we only emit classes whose rule is specific. `ENABLED_CLASSES` in
+`src/config.py` switches classes on and off. The website's Approach section has the full rule for
+every class.
+
+### Code map
+
+| Path | Purpose |
+|---|---|
+| `solution.py` | the competition interface |
+| `src/pipeline.py` | `observe` (decode, detect, track: expensive, cacheable) and `interpret` (scene + rules: seconds) |
+| `src/config.py` | every threshold, in one place |
+| `src/viz.py` | drawing for rendered videos, thumbnails and EDA images |
+| `scripts/dev_eval.py` | score Part A on our own labels with `evaluate.py`'s metric; tracks are cached in `.cache/` |
+| `scripts/build_scene_prior.py` | sum the samples' flow fields into `weights/scene_prior.npz` (optional prior) |
+| `scripts/build_site.py` | annotated sample videos, event thumbnails, EDA data and images for the website |
+| `web/` | website and live demo (FastAPI + static page) |
+| `tests/` | rule tests on synthetic trajectories, component tests, and an end-to-end harness run |
+
+## Development loop
+
 ```bash
-python evaluate.py --pred predictions.json --gt ground_truth.json --per-video
+pip install -r requirements-web.txt
+python -m pytest                                   # 35 tests, about 15 s on CPU
+python scripts/dev_eval.py --videos samples/ --gt labels/dev_labels.json      # per-class F1
+python scripts/dev_eval.py --videos samples/ --gt labels/dev_labels.json --disable congestion
+python scripts/build_scene_prior.py --videos samples/                        # optional prior
+python run_submission.py --videos samples/ --out predictions_samples.json --team WEST
+python scripts/build_site.py --videos samples/ --pred predictions_samples.json
+uvicorn web.app:app --port 7860                    # http://127.0.0.1:7860
 ```
 
----
+Dev labels can be made in the website's Label section, which exports the `ground_truth.json` format.
 
-## 2. Interactive Web Platform & Live Demo
+## Website
 
-We host a full production visualization platform with real-time video streaming, interactive event timeline seek, continuous risk curves, and EDA heatmaps:
+`web/` is the team website: demo, results, EDA, approach, report, team and label tool. To publish
+it on a Hugging Face Space (Docker SDK, free CPU), run
+`bash deploy/huggingface/deploy.sh https://huggingface.co/spaces/<user>/<space>`. Team members and
+links live in `web/static/team.json`; failure notes live in `web/static/failures.json`.
 
-- **Local Live Demo**: Launch `python dashboard/app.py` and open `http://127.0.0.1:8080`
-- **Features**:
-  - Live video playback with HUD overlays (calibrated stop-line, crosswalks, active violations).
-  - **Interactive Event Timeline**: Click any detected event segment to instantly jump playback to that timestamp.
-  - **Part B Risk Curve**: Real-time continuous $P(\text{accident within 5s})$ chart rendered with Chart.js.
-  - **EDA Hub**: Spatial motion heatmaps, traffic density vs. traffic light cycles, and speed distributions.
-  - **Custom Video Verification**: Upload any `.mp4` file for immediate offline inference and report generation.
+## Determinism
 
----
+Seeds are fixed (`random`, NumPy, PyTorch; `cudnn.deterministic`, no benchmark mode) in
+`src/detection.py`. Tracking and rules are deterministic, and Part B keeps no random state.
+`tests/test_end_to_end.py` runs the harness twice and asserts identical output (checked on CPU).
+Results differ between the GPU and CPU profiles, which use different models, and fp16 GPU
+inference can differ slightly from CPU. `predictions_samples.json` must be generated on the
+evaluation-class GPU.
 
-## 3. Engineering Approach & Architecture
+## Datasets, models and licences
 
-The pipeline integrates state-of-the-art neural object detection with deterministic spatial-temporal geometry:
+- No dataset was used for training. The only data are the organisers' sample videos, used for
+  development and the optional scene prior.
+- YOLOv8 weights and the `ultralytics` package, Ultralytics, AGPL-3.0.
+- ByteTrack as implemented in `supervision`, Roboflow, MIT.
+- OpenCV (Apache-2.0), PyTorch (BSD-3), FastAPI (MIT), imageio-ffmpeg (BSD-2; bundles FFmpeg, LGPL/GPL).
 
-```
-[Input Frame 4K] 
-       │
-       ▼
- [Resolution Rescale: 1280×720]
-       ├──► [Traffic Signal Detector] (HSV Bulb Isolation: RED / GREEN)
-       │
-       ▼
- [YOLOv8n Detector] (Vehicles, Pedestrians, Bicycles, Trucks, Buses)
-       │
-       ▼
- [ByteTrack Kalman Tracker] (Inter-frame trajectory & tracklet smoothing)
-       │
-       ▼
- [Coordinate Space Mapping (-> Native 3840×2160)]
-       │
-       ▼
- [Spatial-Kinematic Rule Engine]
-       ├── Stop line crossing (signal RED + centroid crossing)
-       ├── Jaywalking (pedestrian in carriageway, excluding zebra & traffic island)
-       ├── Failure to yield (vehicle speed > threshold during pedestrian crossing)
-       ├── Stopped vehicle & Congestion (dwell time > 15s in traffic corridor)
-       │
-       ▼
- [Temporal Event Post-Processing]
-       ├── Filter sub-second blips (< 0.5s)
-       ├── Merge contiguous fragments (gap < 1.0s)
-       └── Deduplicate same-class overlaps
-       │
-       ├──► Part A: predictions.json [[start_sec, end_sec, label], ...]
-       │
-       ▼
- [Causal Accident Risk Estimator (Part B)]
-       ├── Vehicle ROI Farneback Optical Flow
-       ├── Pairwise Closing Kinematics (Time-to-Collision TTC)
-       └── Causal Sigmoid Calibration -> P(accident within 5s)
-```
+## Team
 
-### Subsystem Paradigm: What is Learned vs. Rule-Based
+| Member | Role | Contributions |
+|---|---|---|
+| Arslan | Team lead, computer vision | pipeline, calibration, rules, risk model |
+| _Member 2_ | ML and evaluation | dev labels, threshold tuning |
+| _Member 3_ | website and visualisation | website, demo, EDA |
 
-| Subsystem | Paradigm | Implementation | Rationale |
-|:---|:---|:---|:---|
-| **Object Detection** | **Learned** | YOLOv8n (COCO pre-trained, PyTorch) | High generalizability across vehicle types, colors, and varying sun angles. |
-| **Object Tracking** | **Hybrid** | ByteTrack (Kalman Filter + IoU Bipartite) | Sustains tracklet identity across temporary occlusions by large buses. |
-| **Traffic Light State** | **Rule-Based** | HSV Chromatic Masking on bulb coordinates | 99.9% chromatic separation between glowing red/green; immune to black visor shadows. |
-| **Zone Containment** | **Rule-Based** | Ray-casting Point-in-Polygon (PiP) | Precise stop-line and zebra boundaries; traffic island exclusion stops false jaywalking. |
-| **Event Post-Processing** | **Rule-Based** | Fragment merging & duration thresholding | Satisfies strict tIoU 0.7 evaluation metric by eliminating momentary track blips. |
-| **Causal Risk (Part B)** | **Hybrid** | Optical Flow + Kinematic TTC | Strictly causal: zero future frame access, evaluates sudden deceleration and closing vectors. |
-
----
-
-## 4. Hardware Requirements & Time Budget Compliance
-
-- **Evaluated Machine**: 1 × NVIDIA T4 (or Apple Silicon M-series GPU / MPS), 8 CPU cores, 16 GB RAM.
-- **Time Budget**: Official limit is $\le 3.0 \times \text{video duration}$.
-  - On 127.6s 4K video (`C3905.MP4`), our pipeline processed Part A + Part B in **153.3s** ($\approx 1.20 \times \text{duration}$).
-  - Operates comfortably within the budget with a **2.5× safety margin**.
-- **Model Weights**: `weights/yolov8n.pt` is only **6.2 MB** (Limit: 5.0 GB).
-
----
-
-## 5. Determinism & Reproducibility
-
-- Random seeds are explicitly fixed across PyTorch, NumPy, and OpenCV:
-  ```python
-  import torch, numpy as np, random
-  torch.manual_seed(42)
-  np.random.seed(42)
-  random.seed(42)
-  ```
-- Two independent runs on the same hardware produce bitwise identical `predictions.json`.
-
----
-
-## 6. Directory Structure
-
-```
-wiut_cv_scripts/
-├── solution.py                 # Official competition interface (CLASSES, detect_events, RiskEstimator)
-├── run_submission.py           # Starter kit harness (unchanged)
-├── evaluate.py                 # Official evaluation & metric calculator (unchanged)
-├── requirements.txt            # Python dependencies
-├── weights/
-│   ├── download.sh             # Weights acquisition script
-│   └── yolov8n.pt              # Local offline weights (6.2 MB)
-├── src/
-│   ├── config.py               # Calibrated 4K intersection geometry & HSV thresholds
-│   ├── geometry.py             # Point-in-polygon containment & geometric utilities
-│   ├── traffic_light.py        # Robust HSV traffic light state detector
-│   ├── tracker.py              # YOLOv8 + ByteTrack multi-object tracker
-│   ├── rules.py                # Kinematic event engine & temporal post-processing
-│   └── risk.py                 # Causal optical flow accident risk estimator (Part B)
-├── dashboard/
-│   ├── app.py                  # Live streaming server & API endpoints
-│   ├── renderer.py             # Visual HUD & zone overlay annotator
-│   ├── generate_eda_visuals.py # Publication-grade chart & heatmap generator
-│   ├── static/eda/             # Generated EDA visualizations
-│   └── templates/index.html    # Full-featured web platform template
-├── predictions_samples.json    # Official predictions on the sample footage
-└── README.md                   # This documentation
-```
-
----
-
-## 7. Team WEST & Role Allocation
-
-| Member | Role | Core Contributions |
-|:---|:---|:---|
-| **Arslan** | **Team Lead & CV Architect** | End-to-end pipeline design, 4K camera geometry calibration, ByteTrack integration, causal risk modeling. |
-| **Team WEST Member 2** | **ML & Evaluation Specialist** | Model benchmarking (YOLOv8 vs YOLOv11), ground-truth validation, hyperparameter tuning for event thresholds. |
-| **Team WEST Member 3** | **Full-Stack & Visualization Lead**| Real-time streaming server, interactive timeline seek UX, Chart.js telemetry dashboard, EDA heatmaps. |
-
----
-
-## 8. Open-Source Attribution & Licenses
-
-- **YOLOv8**: Ultralytics (AGPL-3.0 License).
-- **ByteTrack**: ByteDance (MIT License).
-- **Supervision**: Roboflow (MIT License).
-- **OpenCV**: Apache 2.0 License.
+_Names, contributions and links are to be completed by the team (also in `web/static/team.json`)._

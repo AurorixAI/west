@@ -11,3 +11,6 @@ __pycache__/
 env/
 *.swp
 *.bak
+.cache/
+.pytest_cache/
+samples/
