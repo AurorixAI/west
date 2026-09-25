@@ -17,10 +17,24 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.config import CLASSES  # noqa: E402
-from src.pipeline import analyze  # noqa: E402
-from src.risk import CausalRiskEstimator  # noqa: E402
+from src.detection import warm_up  # noqa: E402
+from src.pipeline import GPU, analyze, default_profile  # noqa: E402
+from src.risk import CPU_SETTINGS, GPU_SETTINGS, CausalRiskEstimator  # noqa: E402
 
 __all__ = ["CLASSES", "detect_events", "RiskEstimator"]
+
+
+def _warm_up() -> None:
+    """Pay the one-off start-up cost now: the harness times each video from its first call."""
+    part_a = default_profile()
+    weights_b, _, width_b = GPU_SETTINGS if part_a is GPU else CPU_SETTINGS
+    try:
+        warm_up([(part_a.weights, part_a.detect_width), (weights_b, width_b)])
+    except Exception as exc:  # a failed warm-up only costs time later; never fail the import
+        print(f"warning: detector warm-up failed: {exc}", file=sys.stderr)
+
+
+_warm_up()
 
 
 def detect_events(video_path: str) -> list[list]:
