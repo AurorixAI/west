@@ -1,0 +1,7 @@
+# Website, live demo, site builder and tests (not needed for the submission run)
+-r requirements.txt
+fastapi>=0.110
+uvicorn>=0.29
+python-multipart>=0.0.9
+imageio-ffmpeg>=0.5
+pytest>=8

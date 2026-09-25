@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WEST Traffic Events</title>
+<meta name="description" content="Traffic event detection and accident anticipation for a fixed road camera: approach, EDA, results and a live demo.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Crect width=%2216%22 height=%2216%22 rx=%223%22 fill=%22%232a78d6%22/%3E%3Ccircle cx=%228%22 cy=%224.5%22 r=%221.8%22 fill=%22%23fff%22/%3E%3Ccircle cx=%228%22 cy=%2211.5%22 r=%221.8%22 fill=%22%23fff%22/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap bar">
+    <a class="brand" href="#top">WEST <span>traffic events</span></a>
+    <nav>
+      <a href="#demo">Demo</a><a href="#results">Results</a><a href="#eda">EDA</a>
+      <a href="#approach">Approach</a><a href="#report">Report</a><a href="#team">Team</a><a href="#label">Label</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero wrap">
+  <h1>Every traffic event on one camera, as a time segment with a class, plus an alarm before a crash.</h1>
+  <p class="lede">A COCO-pretrained detector and a tracker turn the video into trajectories. A scene model
+    learned from the traffic itself supplies lanes, directions and the carriageway. Ten hand-written,
+    tested rules turn trajectories into events. A causal time-to-collision model scores accident risk
+    frame by frame.</p>
+  <div class="tiles" id="heroTiles"></div>
+</section>
+
+<section id="demo" class="wrap">
+  <h2>Live demo</h2>
+  <p>Upload an <strong>.mp4 up to 150 s and 500 MB</strong>. The server runs the same pipeline as the
+    submission, on CPU. Expect roughly one to two minutes per minute of 1080p video, and about three
+    for 4K. You get the event timeline, the risk curve, and your video played back with our tracks
+    drawn over it. The video stays in your browser for playback; the server deletes its copy after two hours.</p>
+  <label class="drop" id="drop">
+    <input type="file" id="file" accept=".mp4,video/mp4">
+    <span id="dropText">Drop an .mp4 here or click to choose</span>
+  </label>
+  <div class="progress" id="progress" hidden>
+    <div class="progress-row"><span id="progLabel">Uploading</span><span id="progPct">0%</span></div>
+    <div class="meter"><div id="progBar"></div></div>
+  </div>
+  <p class="error" id="demoError" role="alert" hidden></p>
+  <div id="demoResult" hidden>
+    <div class="player">
+      <video id="demoVideo" controls playsinline muted></video>
+      <canvas id="demoCanvas"></canvas>
+    </div>
+    <p class="muted" id="demoNote"></p>
+    <div class="chart-block"><h3>Event timeline</h3><div id="demoTimeline"></div></div>
+    <div class="chart-block"><h3>Accident risk, P(accident starts within 5 s)</h3><div id="demoRisk"></div></div>
+    <div class="chart-block"><h3>Events</h3><div id="demoEvents" class="events"></div></div>
+    <button class="btn" id="demoDownload">Download events JSON</button>
+  </div>
+</section>
+
+<section id="results" class="wrap">
+  <h2>Results on the sample videos</h2>
+  <p>Every sample video annotated by our renderer (<code>scripts/build_site.py</code>), with the events and
+    the risk curve exactly as <code>run_submission.py</code> wrote them to
+    <a href="predictions_samples.json">predictions_samples.json</a>. Click an event or a point on
+    either chart to jump the video there.</p>
+  <div id="noSamples" class="notice" hidden>No sample results have been built into this deployment yet.
+    Run <code>python scripts/build_site.py --videos samples/ --pred predictions_samples.json</code>.</div>
+  <div class="tabs" id="sampleTabs" role="tablist"></div>
+  <div id="sampleView" hidden>
+    <div class="player"><video id="sampleVideo" controls playsinline muted preload="metadata"></video></div>
+    <div class="chart-block"><h3>Event timeline</h3><div id="sampleTimeline"></div></div>
+    <div class="chart-block"><h3>Accident risk, P(accident starts within 5 s)</h3><div id="sampleRisk"></div></div>
+    <div class="chart-block"><h3>Events</h3><div id="sampleEvents" class="events"></div></div>
+  </div>
+  <h3>Operator dashboard: all sample videos</h3>
+  <div class="tiles" id="dashTiles"></div>
+  <div class="chart-block"><div id="dashClasses"></div></div>
+  <h3>One example of each class we detected</h3>
+  <div class="events" id="classGallery"></div>
+  <h3>Failure cases</h3>
+  <div id="failures" class="prose"></div>
+</section>
+
+<section id="eda" class="wrap">
+  <h2>Exploratory data analysis</h2>
+  <p>Computed from our own tracks of each sample video. Pick a video; every chart below follows it.</p>
+  <div class="tabs" id="edaTabs" role="tablist"></div>
+  <div id="edaView" hidden>
+    <table class="meta" id="edaMeta"></table>
+    <div class="chart-block"><h3>Objects on screen per second, by class</h3><div id="edaCounts"></div></div>
+    <div class="chart-block"><h3>Signal state seen by the camera</h3><div id="edaSignal"></div></div>
+    <div class="grid2">
+      <div class="chart-block"><h3>Scene brightness (mean grey level)</h3><div id="edaBright"></div></div>
+      <div class="chart-block"><h3>Vehicle speed, moving samples (object sizes per second)</h3><div id="edaSpeed"></div></div>
+    </div>
+    <div class="gallery" id="edaImages"></div>
+  </div>
+  <h3>Findings that shaped the solution</h3>
+  <ol class="prose">
+    <li><strong>Strong perspective.</strong> A car near the camera is several times larger than one across the
+      avenue, so a pixel-per-second speed means nothing. Every kinematic threshold is in <em>object sizes per
+      second</em> (√(w·h) of the box; a person's height).</li>
+    <li><strong>The painted road is not the whole road.</strong> The first version's hand-drawn road polygon
+      missed the far carriageway and covered a pavement corner where people wait. That produced a 35 s
+      "jaywalking" that was just people standing on the kerb. The carriageway is now learned per video
+      from where moving vehicles drive (flow-field image), and people count as on the road only well
+      inside it.</li>
+    <li><strong>Lanes have a direction you can measure.</strong> Headings of moving vehicles per grid cell are
+      coherent (the flow field arrows), so wrong-way driving becomes a test against the cell's dominant
+      heading. The vehicle under test is left out of its own vote.</li>
+    <li><strong>The signal head faces the camera.</strong> The lit bulb's colour in a fixed ROI gives the phase.
+      Red and green phases are long and clean after a 1 s majority vote, so red-light and stop-line rules
+      can use them. If the signal is never seen both red and green, those rules switch off.</li>
+    <li><strong>Queues look like stopped vehicles.</strong> Every red phase parks a queue across all lanes. A stopped
+      vehicle counts only if other traffic overtakes it. A slow-moving jam counts as congestion only if it
+      persists through a green phase.</li>
+  </ol>
+</section>
+
+<section id="approach" class="wrap">
+  <h2>Problem and approach</h2>
+  <div class="diagram" id="diagram"></div>
+  <h3>What is learned and what is rule-based</h3>
+  <table class="data">
+    <thead><tr><th>Stage</th><th>How</th><th>Learned?</th></tr></thead>
+    <tbody>
+      <tr><td>Detection</td><td>YOLOv8s (COCO, 1280 px, 10 fps) on GPU; YOLOv8n (960 px, 5 fps) without one</td><td>Learned (pretrained, not fine-tuned)</td></tr>
+      <tr><td>Tracking</td><td>ByteTrack per category (vehicles, people, animals), then offline smoothing and ID-switch stitching</td><td>Algorithmic</td></tr>
+      <tr><td>Scene</td><td>Carriageway mask, lane directions and traffic directions from each video's own moving vehicles (+ optional prior from the samples)</td><td>Estimated from data, no labels</td></tr>
+      <tr><td>Signal</td><td>Lit-bulb colour in a fixed ROI, 1 s majority vote</td><td>Rule</td></tr>
+      <tr><td>Events (Part A)</td><td>One rule per class over complete trajectories; boundaries follow the annotation conventions</td><td>Rules, unit-tested</td></tr>
+      <tr><td>Risk (Part B)</td><td>Causal tracker; time and distance of closest approach for every pair; hard-braking cue</td><td>Physics-style model, hand-calibrated</td></tr>
+    </tbody>
+  </table>
+  <h3>Rules, class by class</h3>
+  <table class="data" id="rulesTable"><thead><tr><th>Class</th><th>Fires when</th><th>Segment</th></tr></thead><tbody></tbody></table>
+  <p>Not emitted: <strong>near_miss, illegal_turn, solid_line_crossing, fire_smoke</strong>. Under macro-F1 a class
+    we predict but the test set lacks adds a zero to the average. We only emit classes whose rule is
+    specific enough to be worth that risk; see the report.</p>
+  <h3>Models and data</h3>
+  <ul class="prose">
+    <li>YOLOv8s / YOLOv8n, COCO-pretrained weights by Ultralytics (AGPL-3.0), shipped in <code>weights/</code>.</li>
+    <li>ByteTrack as implemented in Roboflow <code>supervision</code> (MIT).</li>
+    <li>No external dataset was used for training; nothing is fine-tuned. The only data are the organisers' sample videos.</li>
+  </ul>
+</section>
+
+<section id="report" class="wrap prose">
+  <h2>Report</h2>
+  <h3>What we built</h3>
+  <p>A two-stage pipeline. <em>Observe</em>: decode, detect and track, and read the signal (the expensive part,
+    cacheable). <em>Interpret</em>: learn the scene, run the rules, merge segments (seconds). Part B is a
+    separate causal estimator with its own detector and tracker that never sees a future frame. A time
+    guard thins detection if a video falls behind its share of the 3× budget. On CPU a lighter profile
+    keeps even a GPU-less run inside the budget.</p>
+  <h3>What worked</h3>
+  <ul>
+    <li>Learning lanes and the carriageway from the traffic instead of drawing them: robust, and no calibration.</li>
+    <li>Size-normalised kinematics: one set of thresholds for near and far objects.</li>
+    <li>Offline smoothing plus boundary refinement on raw positions: stop and start times land within a
+      frame or two, which matters at tIoU 0.7.</li>
+    <li>Testing every rule against a positive case and its closest look-alike (queue vs stopped vehicle, joining a
+      queue vs a crash, red-phase queue vs congestion, cyclist vs jaywalker, backpack vs dog, sparse vs dense sampling): 37 tests.</li>
+  </ul>
+  <h3>What the real footage changed</h3>
+  <ul>
+    <li>The hand-placed zones from the first version were off. The zebra is a narrow diagonal band, not a
+      rectangle; the crossing continues to the right of the island; and the stop line is diagonal. All of
+      them were re-measured on the sample frame, together with a traced carriageway and its islands. The
+      learned carriageway is still used on top of the trace.</li>
+    <li>A false "accident" on the sample clip: with detection thinned to about 1 sample per second, a
+      short speed window saw one sample and read 0, so a car driving past a parked one "stopped dead".
+      Speed windows now always reach the neighbouring samples; a regression test covers it.</li>
+    <li>The first risk model raised the alarm on 70% of a calm clip. Passing a parked car in the next lane
+      misses by only ~0.4 object sizes at this camera angle, and joining a queue has a short TTC.
+      Weighting by the deceleration needed to avoid the collision (DRAC), a tighter miss distance, and
+      ignoring pairs moving at walking pace brought it to 0 false alarm frames (maximum 0.18), while the
+      synthetic crash still alarms 1.5 s early.</li>
+  </ul>
+  <h3>What did not</h3>
+  <ul>
+    <li>Our first version: hand-drawn road polygon, per-frame pixel speeds, and a "pedestrian anywhere on the
+      crossing + vehicle anywhere on the crossing" yield rule. It produced 35 s and 92 s segments that
+      could never match at any tIoU, and its red-light rule could never fire (a missing field). Its
+      optical-flow risk score was 0.0 on every frame.</li>
+    <li>COCO animals: a backpack is often a "dog". Obstacles now need a confident detection that is not on a person.</li>
+    <li>Near misses: without depth, "braked hard near another car" fires in every queue. Not emitted.</li>
+  </ul>
+  <h3>Limitations, stated plainly</h3>
+  <ul>
+    <li>Thresholds are physically motivated and tested on synthetic trajectories. They are only as good
+      as our dev labels of the sample videos; see the per-class table from <code>scripts/dev_eval.py</code>.</li>
+    <li>Illegal U-turns: we detect U-turns and cannot read the signs, so every U-turn is reported as illegal.</li>
+    <li>Accidents: contact plus an abrupt stop of both parties. Hit-and-run and single-vehicle crashes are missed.</li>
+  </ul>
+  <h3>Next</h3>
+  <ul>
+    <li>Fine-tune the detector on frames of this camera (small, distant pedestrians are the weakest point).</li>
+    <li>A small video classifier (e.g. trained on DoTA or CCD) to confirm accident candidates, and a learned risk head on the TTC features.</li>
+    <li>A homography to metres, which would make speeds and near-miss gaps physical.</li>
+  </ul>
+</section>
+
+<section id="team" class="wrap">
+  <h2>Team</h2>
+  <div class="team" id="teamCards"></div>
+  <h3>Links</h3>
+  <ul class="prose" id="links"></ul>
+</section>
+
+<section id="label" class="wrap">
+  <h2>Label tool</h2>
+  <p>How we built our dev set: open a local video (it never leaves your browser), then mark events with the
+    keyboard. <kbd>S</kbd> marks the start, <kbd>E</kbd> the end of the selected class, <kbd>Space</kbd>
+    plays and pauses, and <kbd>←</kbd>/<kbd>→</kbd> step one second. The export is a
+    <code>ground_truth.json</code> for <code>evaluate.py</code>.</p>
+  <input type="file" id="labelFile" accept="video/mp4">
+  <div id="labelUi" hidden>
+    <div class="player"><video id="labelVideo" controls playsinline muted></video></div>
+    <div class="label-row">
+      <select id="labelClass"></select>
+      <button class="btn" id="labelStart">Start (S)</button>
+      <button class="btn" id="labelEnd">End (E)</button>
+      <span class="muted" id="labelPending"></span>
+    </div>
+    <div id="labelTimeline"></div>
+    <div id="labelList" class="events"></div>
+    <button class="btn" id="labelExport">Export ground_truth.json</button>
+  </div>
+</section>
+</main>
+
+<footer class="wrap muted">Team WEST, WIUT Hackathon 2026, Computer Vision track.</footer>
+<div class="tooltip" id="tooltip" role="status"></div>
+<script src="app.js"></script>
+</body>
+</html>
