@@ -63,6 +63,7 @@ def main() -> int:
         print(f"{name}: {len(entry['events'])} events, max risk {max(s for _, s in curve):.2f}, "
               f"{time.perf_counter() - t0:.0f}s", flush=True)
 
+    pred = {"team": pred["team"], "videos": {k: v for k, v in pred["videos"].items() if k in gt}}
     rep = evaluate.evaluate(gt, pred)
     b = rep["part_b"]
     pre, calm = [], []

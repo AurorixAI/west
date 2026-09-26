@@ -53,7 +53,7 @@
   <div class="wrap">
     <dl class="facts">
       <div><dt>Classes emitted</dt><dd>10<small>of 14</small></dd></div>
-      <div><dt>Unit and end-to-end tests</dt><dd>51</dd></div>
+      <div><dt>Unit and end-to-end tests</dt><dd>53</dd></div>
       <div><dt>4K on a 4-core CPU</dt><dd>0.95<small>× real time</small></dd></div>
       <div><dt>Time budget</dt><dd>3<small>× video length</small></dd></div>
     </dl>
@@ -260,7 +260,7 @@
         <ul>
           <li>The first zones were wrong: the zebra is a narrow diagonal band, the crossing continues past the island, the stop line is diagonal. All re-measured on the sample frame.</li>
           <li>A false "accident": with detection thinned to one sample a second, a short speed window read 0, so a passing car "stopped dead". Speed windows now always reach the neighbouring samples.</li>
-          <li>The first risk model alarmed on 70% of a calm clip. Weighting by the braking needed to avoid a collision (DRAC) brought it to no alarms, peak 0.18, while a synthetic crash still alarms 1.5 s early.</li>
+          <li>The first risk model alarmed on 70% of a calm clip. Weighting by the braking needed to avoid a collision (DRAC) brought it to no alarms (peak 0.40 on the sample clip), while a synthetic crash still alarms 1.5 s early.</li>
         </ul>
       </article>
       <article>
@@ -269,6 +269,16 @@
           <li>Our first version: a hand-drawn road, per-frame pixel speeds and an "anyone on the crossing" yield rule produced 35 s and 92 s segments; its red-light rule could never fire and its risk score was 0 on every frame.</li>
           <li>COCO animals: a backpack is often a "dog". Obstacles need a confident detection that is not on a person.</li>
           <li>Near misses: without depth, "braked hard near another car" fires in every queue. Not emitted.</li>
+        </ul>
+      </article>
+      <article>
+        <h3>Tested on other cameras</h3>
+        <ul>
+          <li>63 public CCTV clips (TAD; accident times from NVIDIA's AI City 2026 Track 3 annotations, CC-BY-4.0): 51 crashes, 12 calm clips, all from cameras we never calibrated on.</li>
+          <li>It found a real bug. The harness starts each video's clock after importing <code>solution.py</code>, and lazy model loading charged the first clip 84 s against a 22 s budget. The detectors now warm up at import.</li>
+          <li>It found a second bug. A car moving more than its own length between detections never overlapped its last box, so the tracker never confirmed it and Part B never saw it. Cars are now associated with buffered IoU. Two-wheelers get a tracker of their own, because widened boxes swapped a motorcycle's and a bicycle's ids on our clip.</li>
+          <li>Part B after the fixes: alarms before 6 of 51 crashes, 6 of 7 alarms correct, none on the calm clips (score 0.096, from 0.000). Alarms come late, 0.08 s on average, and many crashes happen in the clip's first 1.5 s.</li>
+          <li>The accident rule (Part A) stays strict: 0 of 14 crashes on a subset, no false events. It needs both parties seen standing after contact, and a knocked-down pedestrian leaves the detector's view. Loosening it would fire on every car that stops in front of a pedestrian.</li>
         </ul>
       </article>
       <article>

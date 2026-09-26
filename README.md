@@ -71,6 +71,7 @@ every class.
 | `src/config.py` | every threshold, in one place |
 | `src/viz.py` | drawing for rendered videos, thumbnails and EDA images |
 | `scripts/dev_eval.py` | score Part A on our own labels with `evaluate.py`'s metric; tracks are cached in `.cache/` |
+| `scripts/eval_public.py` | score Parts A/B on public clips from other cameras (robustness check) |
 | `scripts/build_scene_prior.py` | sum the samples' flow fields into `weights/scene_prior.npz` (optional prior) |
 | `scripts/build_site.py` | annotated sample videos, event thumbnails, EDA data and images for the website |
 | `web/` | website and live demo (FastAPI + static page) |
@@ -81,19 +82,58 @@ every class.
 - `samples/sample_test.mp4`: a 20 s, 1080p cut of the camera, used to calibrate the scene geometry
   (crossings, stop line, traced carriageway and islands in `src/config.py`) and to generate
   `predictions_samples.json`. On it the pipeline reports two jaywalkers (checked frame by frame),
-  two cars standing at the bus-stop kerb (`stopped_vehicle`, debatable), and no accident risk above
-  0.18.
+  two cars standing at the bus-stop kerb (`stopped_vehicle`, debatable), a car crossing the corner
+  zebra at speed past a pedestrian (`failure_to_yield`), and no accident risk above 0.40.
 - `samples/annotated_preview_15s.mp4`: a rendering from our first pipeline (boxes burned in). It is
   not an input: run the harness on `samples/sample_test.mp4` (or the organisers' originals), not on
   the whole folder.
 - The organisers' four full-length 4K sample videos are linked from their Drive folder and are too
   large for git.
 
+## Robustness on other cameras
+
+The geometry is calibrated on one camera; everything else has to work on any. We scored the
+pipeline on 63 public CCTV clips from other cameras with `scripts/eval_public.py` (evaluate.py's
+metric, the evaluation-GPU configuration run on a CPU): 51 crashes from TAD, with accident times
+from NVIDIA's AI City Challenge 2026 Track 3 temporal annotations, and 12 accident-free TAD clips.
+
+| | before | after the fixes below |
+|---|---|---|
+| Part B score | 0.000 | 0.096 |
+| crashes with an alarm before impact | 0 / 51 | 6 / 51 |
+| alarms that were right | – | 6 / 7 |
+| alarms on accident-free clips | 0 / 12 | 0 / 12 |
+
+What the clips exposed:
+
+- **Start-up charged to the first video.** `run_submission.py` starts each video's clock after
+  importing `solution.py`. With lazy loading the first clip carried the weights load and predictor
+  set-up (84 s against a 22 s budget) and was scored as empty. `solution.py` now warms the detectors
+  up at import.
+- **Fast cars were invisible to the tracker.** At a few detections per second a car moves more
+  than its own length, its boxes stop overlapping, and ByteTrack never confirms it. Cars are now
+  associated with buffered IoU (boxes widened by half their size for matching only). Two-wheelers
+  have their own tracker with a small buffer, because widened boxes swapped the ids of a motorcycle
+  and a bicycle riding side by side on our clip.
+- **Late accidents could not fire.** The accident rule wanted 5 s of standing wrecks from 3 s after
+  impact; near the end of a video it now uses what is left (at least 1.5 s).
+
+What they did not fix: alarms come late (0.08 s before impact on average; in 20 of the clips the
+crash happens in the first 1.5 s), and the accident rule stays strict (0 of 14 crashes on a
+subset, no false events), because a knocked-down pedestrian leaves the detector's view while the
+rule wants both parties seen standing. Loosening either would add false alarms on the competition
+camera, where our own clip peaks at 0.40.
+
+```bash
+python scripts/eval_public.py --videos <clips> --gt <ground_truth.json>            # Part B
+WEST_PROFILE=gpu WEST_NO_THIN=1 python scripts/eval_public.py --videos <clips> --gt <gt.json> --part-a
+```
+
 ## Development loop
 
 ```bash
 pip install -r requirements-web.txt
-python -m pytest                                   # 51 tests, about 20 s on CPU
+python -m pytest                                   # 53 tests, about 35 s on CPU
 python scripts/dev_eval.py --videos samples/ --gt labels/dev_labels.json      # per-class F1
 python scripts/dev_eval.py --videos samples/ --gt labels/dev_labels.json --disable congestion
 python scripts/build_scene_prior.py --videos samples/                        # optional prior
@@ -122,8 +162,11 @@ evaluation-class GPU.
 
 ## Datasets, models and licences
 
-- No dataset was used for training. The only data are the organisers' sample videos, used for
-  development and the optional scene prior.
+- No dataset was used for training. The organisers' sample videos were used for development and the
+  optional scene prior.
+- Evaluation only (not in the repository, not used for training): TAD (Traffic Anomaly Dataset,
+  Kaggle `nikanvasei/traffic-anomaly-dataset-tad`) clips, with accident times from NVIDIA's
+  `PhysicalAI-Traffic-Anomaly-Reasoning` annotations (CC-BY-4.0).
 - YOLOv8 weights and the `ultralytics` package, Ultralytics, AGPL-3.0.
 - ByteTrack as implemented in `supervision`, Roboflow, MIT.
 - OpenCV (Apache-2.0), PyTorch (BSD-3), FastAPI (MIT), imageio-ffmpeg (BSD-2; bundles FFmpeg, LGPL/GPL).

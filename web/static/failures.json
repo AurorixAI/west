@@ -7,7 +7,7 @@
  {
   "video": "sample_test.mp4",
   "time": "0:01–0:17",
-  "text": "A car stands on the right-hand zebra for about 15 s while people walk round it, then pulls away right behind one of them. No event class fits (it neither drove through nor braked hard), so the video shows operator warnings instead: PEDESTRIAN AHEAD, then CLOSE PASS, and the risk curve rises to 0.28 without an alarm. An annotator may still call it a failure to yield."
+  "text": "A car stands on the right-hand zebra for about 15 s while people walk round it, then pulls away right behind one of them. No event class fits (it neither drove through nor braked hard), so the video shows operator warnings instead: PEDESTRIAN AHEAD, then CLOSE PASS, and the risk curve rises to about 0.4 without an alarm. An annotator may still call it a failure to yield."
  },
  {
   "video": "sample_test.mp4",
