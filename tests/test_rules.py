@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from src import rules
-from tests.synth import BICYCLE, CAR, DOG, PERSON, RED, Scene, times
+from tests.synth import BICYCLE, CAR, DOG, MOTORCYCLE, PERSON, RED, Scene, times
 
 
 def labels(segs, name):
@@ -89,6 +89,14 @@ def test_u_turn(scene):
 
 
 def test_lane_following_is_not_a_u_turn(scene):
+    assert rules.illegal_u_turn(scene.context()) == []
+
+
+def test_u_turn_off_the_carriageway_is_ignored(scene):
+    """Regression (sample clip, fine-tuned detector): a 'car' reflected in a glass facade."""
+    ang = np.linspace(-np.pi / 2, np.pi / 2, 30)
+    loop = [(3300 + 150 * np.cos(a), 400 + 150 * np.sin(a)) for a in ang]
+    scene.path("vehicle", CAR, 30.0, [(2900, 250)] + loop + [(2900, 550)], 300)
     assert rules.illegal_u_turn(scene.context()) == []
 
 
@@ -184,6 +192,15 @@ def test_queued_car_over_the_zebra_that_waits_for_people_is_not_failure_to_yield
     scene = quiet_scene
     scene.path("vehicle", CAR, 55.0, [(900, 600), (900, 1280), (900, 2100)], 400, dwell={1: 25})
     scene.path("person", PERSON, 58.0, [(700, 1300), (1150, 1240), (1400, 1100)], 60, size=150)
+    assert rules.failure_to_yield(scene.context()) == []
+
+
+def test_courier_wheeling_a_scooter_over_the_zebra_is_not_failure_to_yield(quiet_scene):
+    """Regression (sample clip, fine-tuned detector): the 'pedestrian' is the scooter's own rider."""
+    scene = quiet_scene
+    route = [(700, 1300), (1150, 1240)]
+    scene.path("vehicle", MOTORCYCLE, 60.0, route, 150, size=100)
+    scene.path("person", PERSON, 60.6, route, 150, size=150)    # walks 90 px behind it
     assert rules.failure_to_yield(scene.context()) == []
 
 
