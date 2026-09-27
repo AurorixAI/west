@@ -306,8 +306,9 @@ function send(method, url, body = null, onProgress = null) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open(method, url);
+    xhr.timeout = 140_000;                            // under the host's 150 s cap: a stalled piece is retried
     if (onProgress) xhr.upload.onprogress = (e) => e.lengthComputable && onProgress(e.loaded);
-    xhr.onerror = () => reject(new Error("Upload failed: the server could not be reached."));
+    xhr.onerror = xhr.ontimeout = () => reject(new Error("Upload failed: the server could not be reached."));
     xhr.onload = () => {
       let res = {};
       try { res = JSON.parse(xhr.responseText); } catch (_) { /* not JSON */ }
@@ -571,7 +572,7 @@ function diagram() {
 
 async function team() {
   let data = { members: [], links: [] };
-  try { data = await loadJSON("team.json"); } catch (_) { /* optional */ }
+  try { data = await loadJSON("team.json?v=2"); } catch (_) { /* optional */ }
   const box = $("teamCards");
   for (const m of data.members) {
     const links = el("div", { class: "links" });

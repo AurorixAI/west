@@ -3,7 +3,7 @@
     {
       "name": "Arslan Djemilov",
       "role": "CTO, team lead",
-      "photo": "img/team/arslan.jpg",
+      "photo": "img/team/arslan.jpg?v=2",
       "did": ["Pipeline design and scene calibration", "Detection, tracking and rule engine", "Accident-risk model"],
       "projects": [{"name": "ALGO landing", "url": "https://github.com/AurorixAI/algo-landing"}],
       "links": {"GitHub": "https://github.com/arslan15114", "LinkedIn": "https://www.linkedin.com/in/arslandjemilov", "Portfolio": ""}
@@ -11,7 +11,7 @@
     {
       "name": "Temurmalik Irgashev",
       "role": "ML/Ops engineer",
-      "photo": "img/team/temurmalik.jpg",
+      "photo": "img/team/temurmalik.jpg?v=2",
       "did": ["Release engineering: merge, tag and submission package", "Reproducibility check from a clean clone against predictions_samples.json", "Deployment of the website and the live demo"],
       "projects": [{"name": "ALGO landing", "url": "https://github.com/AurorixAI/algo-landing"}, {"name": "SQB Process Hub (private)"}],
       "links": {"GitHub": "https://github.com/temur023", "LinkedIn": "", "Portfolio": ""}
@@ -19,7 +19,7 @@
     {
       "name": "Sardorbek Bozorov",
       "role": "Researcher",
-      "photo": "img/team/sardorbek.jpg",
+      "photo": "img/team/sardorbek.jpg?v=2",
       "did": ["Research on traffic-event detection and accident anticipation", "Finding reference material for the team"],
       "projects": [{"name": "ALGO landing", "url": "https://github.com/AurorixAI/algo-landing"}],
       "links": {"GitHub": "", "LinkedIn": "", "Portfolio": ""}
