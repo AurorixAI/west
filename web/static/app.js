@@ -371,6 +371,32 @@ function plaque(ctx, text, x, y, bg, font) {
   ctx.fillText(text, x + 6, y - 6);
 }
 
+// Crossings, stop line and signal heads, as src/viz.py draws them into the sample videos.
+function drawScene(ctx, sc, signal, t, ox, oy, vw, vh) {
+  const P = ([x, y]) => [ox + (x / 1e4) * vw, oy + (y / 1e4) * vh];
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = "rgba(235,235,235,0.8)";
+  ctx.fillStyle = "rgba(235,235,235,0.10)";
+  for (const cw of sc.crosswalks || []) {
+    ctx.beginPath();
+    cw.forEach((p, i) => (i ? ctx.lineTo(...P(p)) : ctx.moveTo(...P(p))));
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+  if (sc.stop_line) {
+    ctx.strokeStyle = "#e64646"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(...P(sc.stop_line[0])); ctx.lineTo(...P(sc.stop_line[1])); ctx.stroke();
+  }
+  const phase = signal.find(([a, b]) => a <= t && t <= b);
+  const state = phase ? phase[2] : "UNKNOWN";
+  const color = { RED: "#eb4848", GREEN: "#46c85a" }[state] || "#aaaaaa";
+  for (const [p1, p2] of sc.signals || []) {
+    const [x1, y1] = P(p1), [x2, y2] = P(p2);
+    ctx.strokeStyle = color; ctx.lineWidth = 2;
+    ctx.strokeRect(x1 - 3, y1 - 3, x2 - x1 + 6, y2 - y1 + 6);
+    plaque(ctx, state === "UNKNOWN" ? "--" : state, x1 - 3, y1 - 6, color, "600 11px Barlow, system-ui, sans-serif");
+  }
+}
+
 function drawOverlayLoop(video, canvas, res) {
   demo.frameLoop = (demo.frameLoop || 0) + 1;
   const loopId = demo.frameLoop;
@@ -385,6 +411,7 @@ function drawOverlayLoop(video, canvas, res) {
     // letterboxing inside the <video> element
     const ar = res.video.width / res.video.height, vw = Math.min(w, h * ar), vh = vw / ar;
     const ox = (w - vw) / 2, oy = (h - vh) / 2;
+    if (res.scene) drawScene(ctx, res.scene, res.signal || [], t, ox, oy, vw, vh);
     let lo = 0, hi = ov.t.length - 1;
     while (lo < hi) { const m = (lo + hi) >> 1; if (ov.t[m] < t) lo = m + 1; else hi = m; }
     if (lo > 0 && Math.abs(ov.t[lo - 1] - t) < Math.abs(ov.t[lo] - t)) lo -= 1;

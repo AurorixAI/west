@@ -111,6 +111,7 @@ def analyse_upload(path: Path, report) -> dict:
         "risk": risk,
         "signal": [[round(a, 2), round(b, 2), st] for a, b, st in obs.signal.phases()],
         "overlay": _overlay(obs.tracks, an.geom, info.width, info.height),
+        "scene": _scene(an.geom, info.width, info.height),
         "camera": {"known": obs.camera_known, "note": obs.registration},
         "seconds": round(obs.seconds, 1),
         "profile": {"weights": profile.weights, "analysis_fps": profile.analysis_fps},
@@ -118,6 +119,18 @@ def analyse_upload(path: Path, report) -> dict:
 
 
 WARNING_CODE = {"PEDESTRIAN AHEAD": 1, "CLOSE PASS": 2}
+
+
+def _scene(geom, w: int, h: int) -> dict | None:
+    """Crossings, stop line and signal heads (0..10000 of the frame), drawn by the page as in draw_geometry."""
+    try:
+        n = lambda pts: [[int(x / w * 1e4), int(y / h * 1e4)] for x, y in pts]  # noqa: E731
+        return {"crosswalks": [n(cw) for cw in geom.crosswalks],
+                "stop_line": n(geom.stop_line) if geom.stop_line is not None else None,
+                "signals": [n([(x1, y1), (x2, y2)]) for x1, y1, x2, y2 in geom.signal_heads.values()]}
+    except Exception:                                  # the overlay is optional; never fail the job for it
+        traceback.print_exc()
+        return None
 
 
 def _overlay(tracks, geom, w: int, h: int) -> dict:
