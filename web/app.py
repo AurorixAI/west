@@ -4,19 +4,23 @@
 
 Serves the static site (web/static) and a small job API for the live demo:
     POST /api/jobs            multipart upload "file" (.mp4) -> {"id": ...}
+    POST /api/uploads         start a chunked upload -> {"id": ...}
+    PUT  /api/uploads/{id}?offset=N   raw bytes of one chunk
+    POST /api/uploads/{id}/done?name=  queue the assembled file as a job -> {"id": ...}
     GET  /api/jobs/{id}       state, progress, stage, and the result when done
 """
 from __future__ import annotations
 
 import sys
 import tempfile
+import uuid
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from fastapi import FastAPI, File, HTTPException, UploadFile  # noqa: E402
+from fastapi import FastAPI, File, HTTPException, Request, UploadFile  # noqa: E402
 from fastapi.responses import FileResponse, JSONResponse  # noqa: E402
 from fastapi.staticfiles import StaticFiles  # noqa: E402
 
@@ -50,6 +54,50 @@ async def create_job(file: UploadFile = File(...)) -> dict:
         return {"id": jobs.submit(tmp, file.filename)}
     except (RuntimeError, ValueError) as exc:
         tmp.unlink(missing_ok=True)
+        raise HTTPException(400, str(exc))
+
+
+# Chunked upload for large videos: hosts cap one request's body and duration (Modal: 4 GiB,
+# 150 s), and the organisers' 4K samples are 5-6 GB. The page sends the file in pieces.
+uploads: dict[str, Path] = {}
+
+
+@app.post("/api/uploads")
+def new_upload() -> dict:
+    uid = uuid.uuid4().hex[:12]
+    uploads[uid] = Path(tempfile.mkstemp(suffix=".mp4")[1])
+    return {"id": uid}
+
+
+@app.put("/api/uploads/{uid}")
+async def upload_chunk(uid: str, offset: int, request: Request) -> dict:
+    path = uploads.get(uid)
+    if path is None:
+        raise HTTPException(404, "unknown upload")
+    if offset > path.stat().st_size:
+        raise HTTPException(409, "chunk out of order")
+    with path.open("r+b") as f:                   # writing at the offset makes a retried chunk harmless
+        f.seek(offset)
+        async for chunk in request.stream():
+            f.write(chunk)
+        f.truncate()
+        size = f.tell()
+    if size > MAX_MB * 2**20:
+        uploads.pop(uid, None)
+        path.unlink(missing_ok=True)
+        raise HTTPException(413, f"file is larger than {MAX_MB} MB")
+    return {"size": size}
+
+
+@app.post("/api/uploads/{uid}/done")
+def finish_upload(uid: str, name: str) -> dict:
+    path = uploads.pop(uid, None)
+    if path is None:
+        raise HTTPException(404, "unknown upload")
+    try:
+        return {"id": jobs.submit(path, name)}
+    except (RuntimeError, ValueError) as exc:
+        path.unlink(missing_ok=True)
         raise HTTPException(400, str(exc))
 
 

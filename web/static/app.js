@@ -279,20 +279,43 @@ function startDemo(file) {
   $("dropText").textContent = file.name;
   if (demo.url) URL.revokeObjectURL(demo.url);
   demo.url = URL.createObjectURL(file);
-  const form = new FormData();
-  form.append("file", file);
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", "api/jobs");
-  xhr.upload.onprogress = (e) => e.lengthComputable && progress("Uploading", e.loaded / e.total);
-  xhr.onerror = () => demoError("Upload failed: the server could not be reached.");
-  xhr.onload = () => {
-    let body = {};
-    try { body = JSON.parse(xhr.responseText); } catch (_) { /* not JSON */ }
-    if (xhr.status !== 200) return demoError(body.detail || `Upload failed (HTTP ${xhr.status}).`);
-    poll(body.id);
-  };
   progress("Uploading", 0);
-  xhr.send(form);
+  uploadInChunks(file).then(poll, (e) => demoError(e.message));
+}
+
+// The file goes up in 32 MB pieces: hosts cap a single request (Modal: 4 GiB and 150 s),
+// and the organisers' 4K clips are 5-6 GB. A failed piece is retried from its offset.
+const CHUNK = 32 * 2 ** 20;
+async function uploadInChunks(file) {
+  const { id } = await send("POST", "api/uploads");
+  for (let off = 0; off < file.size; off += CHUNK) {
+    const part = file.slice(off, off + CHUNK);
+    for (let attempt = 1; ; attempt++) {
+      try {
+        await send("PUT", `api/uploads/${id}?offset=${off}`, part, (n) => progress("Uploading", (off + n) / file.size));
+        break;
+      } catch (e) {
+        if (attempt === 3 || e.status) throw e;       // retry network failures, not server refusals
+      }
+    }
+  }
+  return (await send("POST", `api/uploads/${id}/done?name=${encodeURIComponent(file.name)}`)).id;
+}
+
+function send(method, url, body = null, onProgress = null) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, url);
+    if (onProgress) xhr.upload.onprogress = (e) => e.lengthComputable && onProgress(e.loaded);
+    xhr.onerror = () => reject(new Error("Upload failed: the server could not be reached."));
+    xhr.onload = () => {
+      let res = {};
+      try { res = JSON.parse(xhr.responseText); } catch (_) { /* not JSON */ }
+      if (xhr.status === 200) return resolve(res);
+      reject(Object.assign(new Error(res.detail || `Upload failed (HTTP ${xhr.status}).`), { status: xhr.status }));
+    };
+    xhr.send(body);
+  });
 }
 
 async function poll(id) {
