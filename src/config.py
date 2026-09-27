@@ -91,7 +91,7 @@ TL_ROI = (680, 880, 2260, 2380)
 # --------------------------------------------------------------------------
 # Detection / tracking
 # --------------------------------------------------------------------------
-DETECTOR_WEIGHTS = "yolov8s.pt"
+DETECTOR_WEIGHTS = "west_yolo11s.pt"   # YOLO11s fine-tuned on this camera (scripts/train_detector.py)
 ANALYSIS_FPS = 10.0          # Part A samples the video at this rate
 DETECT_WIDTH = 1280          # frames are resized to this width before YOLO
 DETECT_CONF = 0.10           # low: ByteTrack uses low-score boxes for its second pass
@@ -152,6 +152,7 @@ ISLAND_MARGIN = 0.2          # ... and this many heights off an island
 YIELD_MAX_DIST = 3.0         # vehicle-pedestrian distance on the crossing, in vehicle sizes
 YIELD_KERB_INSET = 0.3       # pedestrian heights inside the kerb: stepping onto the road, not waiting
 WALKING_PACE = 1.0           # sizes/s; a two-wheeler slower than this is being wheeled
+WHEELER_MAX_DIST = 1.5       # a person this close to a two-wheeler (in its sizes) is its rider
 
 RED_MIN_SEC = 1.0            # signal must have been red this long (no amber cases)
 RED_EVENT_MAX_SEC = 6.0      # red_light ends when the vehicle leaves the frame or after this
@@ -162,6 +163,7 @@ WRONG_WAY_COS = -0.5
 
 UTURN_MIN_DEG = 150.0
 UTURN_MAX_SEC = 20.0
+UTURN_MIN_ON_ROAD = 0.8      # share of the turn on the carriageway
 
 CONGESTION_MIN_VEHICLES = 6
 CONGESTION_SLOW_FRAC = 0.8

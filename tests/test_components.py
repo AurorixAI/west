@@ -9,7 +9,7 @@ from src import risk
 from src.detection import Detections
 from src.signal_state import GREEN, RED, UNKNOWN, SignalTimeline
 from src.tracking import Track, stitch
-from tests.synth import CAR, times
+from tests.synth import BICYCLE, CAR, PERSON, times
 
 
 def _track(tid, t, x, y=1000.0, size=100.0):
@@ -72,15 +72,15 @@ def test_pair_hazard_ranks_conflicts():
 
 
 class ScriptedDetector:
-    """Stands in for YOLO: boxes come from a function of time."""
+    """Stands in for YOLO: boxes come from a function of time; a fifth number is the class (default car)."""
 
     def __init__(self, script):
         self.script, self.t = script, 0.0
 
     def __call__(self, images, scales):
-        boxes = self.script(self.t)
-        xyxy = np.array(boxes, np.float32).reshape(-1, 4)
-        return [Detections(xyxy, np.full(len(xyxy), 0.9, np.float32), np.full(len(xyxy), CAR, np.int32))]
+        rows = [list(b) + [CAR] * (5 - len(b)) for b in self.script(self.t)]
+        a = np.array(rows, np.float32).reshape(-1, 5)
+        return [Detections(a[:, :4], np.full(len(a), 0.9, np.float32), a[:, 4].astype(np.int32))]
 
 
 def _run(script, duration=10.0, fps=25.0):
@@ -126,6 +126,16 @@ def test_platoon_does_not_raise_the_alarm():
     # Two cars one and a half lengths apart at the same speed, for 10 s.
     def script(t):
         return [_box(500 + 300 * t, 1000), _box(350 + 300 * t, 1000)]
+    assert _run(script)[:, 1].max() < 0.5
+
+
+def test_cyclist_and_their_bicycle_are_not_a_conflict():
+    """Regression (sample clip, fine-tuned detector): the rider and the bike were two tracks
+    whose jittery velocities looked like a collision course."""
+    def script(t):
+        x = 500 + 150 * t
+        y = 950 + 35 * np.sin(2 * np.pi * t / 1.5)      # the bike's box jitters against the rider's
+        return [[x - 25, 930 - 110, x + 25, 930, PERSON], [x - 45, y - 70, x + 45, y, BICYCLE]]
     assert _run(script)[:, 1].max() < 0.5
 
 

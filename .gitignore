@@ -12,3 +12,4 @@ env/
 .cache/
 .pytest_cache/
 predictions.json
+runs/

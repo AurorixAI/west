@@ -226,7 +226,10 @@ def _pedestrian_while_moving(ctx: Context, v: Track, k: int, i0: int, i1: int) -
             if ctx.geom.crosswalk_index(pf)[0] != k or \
                     not ctx.on_road(pf, inset=C.YIELD_KERB_INSET * p.size[j], island_margin=0.0)[0]:
                 continue                      # waiting on the kerb or the island
-            if np.linalg.norm(pf[0] - v.foot[i]) <= C.YIELD_MAX_DIST * v.size[i]:
+            dist = np.linalg.norm(pf[0] - v.foot[i])
+            if v.cls in C.COCO_TWO_WHEELER and dist < C.WHEELER_MAX_DIST * v.size[i]:
+                continue                      # the rider, walking their own scooter across
+            if dist <= C.YIELD_MAX_DIST * v.size[i]:
                 return p.tid
     return None
 
@@ -333,8 +336,11 @@ def illegal_u_turn(ctx: Context) -> list[Segment]:
         d = np.abs(h[i:j + 1] - h[i])
         s = i + int(np.argmax(d >= 15.0))
         e = i + int(np.argmax(d >= total - 15.0))
-        if t[e] > t[s]:
-            out.append((t[s], t[e], "illegal_u_turn", (v.tid,)))
+        if t[e] <= t[s]:
+            continue
+        if ctx.on_road(v.foot[m][s:e + 1]).mean() < C.UTURN_MIN_ON_ROAD:
+            continue                          # off the carriageway: a car park, or a reflection in a facade
+        out.append((t[s], t[e], "illegal_u_turn", (v.tid,)))
     return out
 
 

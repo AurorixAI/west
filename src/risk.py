@@ -41,6 +41,7 @@ DRAC_LOW, DRAC_HIGH = 0.4, 1.2
 WALKING_PACE = 1.0        # sizes/s: two users both slower than this cannot crash hard...
 SLOW_PAIR_WEIGHT = 0.35   # ...so their conflicts raise the risk a little, never to the alarm
 FOLLOW_WEIGHT = 0.35      # same-direction pairs
+RIDER_GAP = 1.0           # sizes: a person this close to a bicycle/motorcycle is riding or wheeling it
 DECAY_SEC = 1.5
 # At a few detections per second a fast car moves more than its own length
 # between samples, its boxes stop overlapping and the tracker restarts it
@@ -94,6 +95,12 @@ class _Hist:
     def __init__(self, category: str, cls: int):
         self.t, self.foot, self.size = deque(), deque(), deque()
         self.category, self.cls, self.last = category, cls, -1.0
+
+
+def _rider_and_ride(a: _Hist, b: _Hist) -> bool:
+    """A person and a bicycle/motorcycle, in either order."""
+    return any(x.category == "person" and y.category == "vehicle" and y.cls in C.COCO_TWO_WHEELER
+               for x, y in ((a, b), (b, a)))
 
 
 class CausalRiskEstimator:
@@ -174,6 +181,8 @@ class CausalRiskEstimator:
                     continue
                 size = 0.5 * (si + sj)
                 rel, vrel = pj - pi, vj - vi
+                if _rider_and_ride(hi, hj) and np.linalg.norm(rel) < RIDER_GAP * size:
+                    continue                  # one road user seen twice: the cyclist and the bicycle
                 if np.linalg.norm(rel) > np.linalg.norm(vrel) * HORIZON_SEC + 2 * size:
                     continue                  # cannot meet within the horizon
                 ni, nj = np.linalg.norm(vi) / si, np.linalg.norm(vj) / sj
