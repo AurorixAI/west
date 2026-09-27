@@ -534,10 +534,10 @@ function diagram() {
     });
   };
   lane(26, "PART A · OFFLINE, WHOLE VIDEO", [["Video", "25–30 fps", false], ["Frame reader", "strided", false],
-    ["YOLOv8", "COCO-pretrained", true], ["ByteTrack", "per category", false], ["Smooth + stitch", "whole tracks", false],
+    ["YOLO11s", "fine-tuned here", true], ["ByteTrack", "per category", false], ["Smooth + stitch", "whole tracks", false],
     ["Scene model", "lanes, kerbs", true], ["10 rules", "per class", false], ["Events", "segments", false]], 116);
   lane(160, "PART B · CAUSAL, FRAME BY FRAME, NEVER SEES PART A", [["Every frame", "in order", false],
-    ["YOLOv8 + ByteTrack", "its own, causal", true], ["Closest approach", "every pair", false],
+    ["YOLO11s + ByteTrack", "its own, causal", true], ["Closest approach", "every pair", false],
     ["× braking needed", "DRAC urgency", false], ["Risk", "P(accident ≤ 5 s)", false]], 168);
   const legend = svg("g", {}, s);
   svg("rect", { class: "box learned", x: W - 170, y: 0, width: 14, height: 14, rx: 3 }, legend);

@@ -117,15 +117,9 @@ class MultiTracker:
         for group, tracker in self.trackers.items():
             m = groups == group
             cat, id_base = GROUPS[group]
-            boxes = det.xyxy[m].astype(np.float32)
-            b = C.TRACK_IOU_BUFFER.get(group, 0.0)
-            wh = np.tile(boxes[:, 2:] - boxes[:, :2], 2) * np.array([-b, -b, b, b], np.float32)
-            sd = sv.Detections(xyxy=boxes + wh, confidence=det.conf[m], class_id=det.cls[m], data={"box": boxes})
+            sd = sv.Detections(xyxy=det.xyxy[m].astype(np.float32), confidence=det.conf[m], class_id=det.cls[m])
             tracked = tracker.update_with_detections(sd)
-            if len(tracked) == 0:
-                continue
-            for box, tid, cls, conf in zip(tracked.data["box"], tracked.tracker_id, tracked.class_id,
-                                           tracked.confidence):
+            for box, tid, cls, conf in zip(tracked.xyxy, tracked.tracker_id, tracked.class_id, tracked.confidence):
                 self.records[(cat, id_base + int(tid))].append((t, box.astype(np.float32), int(cls), float(conf)))
                 out.append((cat, id_base + int(tid), box, int(cls)))
         return out

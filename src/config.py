@@ -97,13 +97,6 @@ DETECT_WIDTH = 1280          # frames are resized to this width before YOLO
 DETECT_CONF = 0.10           # low: ByteTrack uses low-score boxes for its second pass
 TRACK_ACTIVATION = 0.30
 TRACK_BUFFER_SEC = 3.0
-# Buffered IoU (Yang et al. 2021): boxes are widened by this share of their
-# size on every side before association, so a car that moves more than its
-# own length between two samples still overlaps its predicted box. The
-# tracker hands back the original boxes. Two-wheelers ride side by side and
-# among pedestrians: widened boxes would swap their ids, so they get a small
-# buffer and a tracker of their own (a car never inherits a bike's id).
-TRACK_IOU_BUFFER = {"vehicle": 0.5, "two_wheeler": 0.1, "person": 0.0, "animal": 0.0}
 BATCH_SIZE = 8
 
 COCO_PERSON = 0

@@ -53,7 +53,7 @@
   <div class="wrap">
     <dl class="facts">
       <div><dt>Classes emitted</dt><dd>10<small>of 14</small></dd></div>
-      <div><dt>Unit and end-to-end tests</dt><dd>53</dd></div>
+      <div><dt>Unit and end-to-end tests</dt><dd>55</dd></div>
       <div><dt>4K on a 4-core CPU</dt><dd>0.95<small>× real time</small></dd></div>
       <div><dt>Time budget</dt><dd>3<small>× video length</small></dd></div>
     </dl>
@@ -78,7 +78,7 @@
       <ul class="demo-notes">
         <li><strong>Speed.</strong> About one to two minutes per minute of 1080p video, about three for 4K.</li>
         <li><strong>Privacy.</strong> Playback uses the file in your browser. The server deletes its copy after two hours.</li>
-        <li><strong>Model.</strong> The CPU profile: YOLOv8n at 5 fps. The GPU submission runs YOLOv8s at 10 fps.</li>
+        <li><strong>Model.</strong> The CPU profile: YOLOv8n at 5 fps. The GPU submission runs our fine-tuned YOLO11s at 10 fps.</li>
       </ul>
     </div>
     <div class="progress" id="progress" hidden>
@@ -212,7 +212,7 @@
     <table class="data">
       <thead><tr><th>Stage</th><th>How</th><th>Kind</th></tr></thead>
       <tbody>
-        <tr><td>Detection</td><td>YOLOv8s (COCO, 1280 px, 10 fps) on a GPU; YOLOv8n (960 px, 5 fps) without one</td><td><span class="chip chip-learned">learned</span> pretrained, not fine-tuned</td></tr>
+        <tr><td>Detection</td><td>YOLO11s fine-tuned on this camera (1280 px, 10 fps) on a GPU; YOLOv8n COCO (960 px, 5 fps) without one</td><td><span class="chip chip-learned">learned</span> self-trained from a YOLO11x teacher on the organisers' frames</td></tr>
         <tr><td>Tracking</td><td>ByteTrack per category (vehicles, people, animals), then offline smoothing and ID-switch stitching</td><td><span class="chip">algorithm</span></td></tr>
         <tr><td>Scene</td><td>Traced carriageway, crossings, stop line, signal heads and signs, aligned to each video by feature matching (ORB + RANSAC homography); lane directions learned from each video's moving vehicles</td><td><span class="chip">measured</span> no labels</td></tr>
         <tr><td>Signal</td><td>Lit-bulb colour in a fixed region, 1 s majority vote</td><td><span class="chip">rule</span></td></tr>
@@ -228,7 +228,7 @@
       so we only emit classes whose rule is specific enough to be worth that risk.</p>
     <h3 class="sub-head">Models and data</h3>
     <ul class="plain">
-      <li>YOLOv8s and YOLOv8n, COCO-pretrained weights by Ultralytics (AGPL-3.0), shipped in <code>weights/</code>.</li>
+      <li>YOLO11s fine-tuned by us (<code>weights/west_yolo11s.pt</code>) from Ultralytics YOLO11 weights, with a YOLO11x teacher (not shipped); YOLOv8s/n COCO weights for the CPU profile and as the baseline. All AGPL-3.0.</li>
       <li>ByteTrack as implemented in Roboflow <code>supervision</code> (MIT).</li>
       <li>No external dataset and no fine-tuning. The only data are the organisers' sample videos.</li>
     </ul>
@@ -260,7 +260,7 @@
         <ul>
           <li>The first zones were wrong: the zebra is a narrow diagonal band, the crossing continues past the island, the stop line is diagonal. All re-measured on the sample frame.</li>
           <li>A false "accident": with detection thinned to one sample a second, a short speed window read 0, so a passing car "stopped dead". Speed windows now always reach the neighbouring samples.</li>
-          <li>The first risk model alarmed on 70% of a calm clip. Weighting by the braking needed to avoid a collision (DRAC) brought it to no alarms (peak 0.40 on the sample clip), while a synthetic crash still alarms 1.5 s early.</li>
+          <li>The first risk model alarmed on 70% of a calm clip. Weighting by the braking needed to avoid a collision (DRAC) brought it to no alarms (peak 0.30 on the sample clip), while a synthetic crash still alarms 1.5 s early.</li>
         </ul>
       </article>
       <article>
@@ -276,8 +276,7 @@
         <ul>
           <li>63 public CCTV clips (TAD; accident times from NVIDIA's AI City 2026 Track 3 annotations, CC-BY-4.0): 51 crashes, 12 calm clips, all from cameras we never calibrated on.</li>
           <li>It found a real bug. The harness starts each video's clock after importing <code>solution.py</code>, and lazy model loading charged the first clip 84 s against a 22 s budget. The detectors now warm up at import.</li>
-          <li>It found a second bug. A car moving more than its own length between detections never overlapped its last box, so the tracker never confirmed it and Part B never saw it. Cars are now associated with buffered IoU. Two-wheelers get a tracker of their own, because widened boxes swapped a motorcycle's and a bicycle's ids on our clip.</li>
-          <li>Part B after the fixes: alarms before 6 of 51 crashes, 6 of 7 alarms correct, none on the calm clips (score 0.096, from 0.000). Alarms come late, 0.08 s on average, and many crashes happen in the clip's first 1.5 s.</li>
+          <li>It exposed a limit we chose to keep. A car moving more than its own length between detections never overlaps its last box, so the tracker loses it. Buffered IoU fixed that on TAD (Part B 0.000 → 0.096, 6 of 7 alarms right), but on the competition camera, with the fine-tuned detector, it swapped ids between neighbouring cars: a false accident, and risk 0.91 on a calm clip. We kept the plain tracker; the competition camera decides.</li>
           <li>The accident rule (Part A) stays strict: 0 of 14 crashes on a subset, no false events. It needs both parties seen standing after contact, and a knocked-down pedestrian leaves the detector's view. Loosening it would fire on every car that stops in front of a pedestrian.</li>
         </ul>
       </article>

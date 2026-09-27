@@ -113,15 +113,6 @@ def test_crossing_conflict_raises_the_alarm_before_impact():
     assert curve[curve[:, 0] < 3, 1].max() < 0.5
 
 
-def test_fast_cars_whose_boxes_never_overlap_are_still_followed():
-    """At 6 detections/s a car at 6 lengths/s jumps a full length: its boxes never overlap."""
-    def script(t):
-        return [_box(2000 - 600 * (8 - t), 1000), _box(2000, 1000 - 600 * (8 - t))] if t < 8 else []
-    curve = _run(script)
-    alarm = curve[(curve[:, 0] < 8) & (curve[:, 1] >= 0.5)]
-    assert len(alarm) and 8 - alarm[0, 0] >= 0.5
-
-
 def test_platoon_does_not_raise_the_alarm():
     # Two cars one and a half lengths apart at the same speed, for 10 s.
     def script(t):

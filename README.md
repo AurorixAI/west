@@ -39,13 +39,13 @@ normal budget; fp16 may shift boundaries by a frame.
 
 ```
 Part A (offline, whole video)
-  video ─► strided prefetching reader ─► YOLOv8 (COCO) ─► ByteTrack per category
+  video ─► strided prefetching reader ─► YOLO11s (ours) ─► ByteTrack per category
         ─► smoothing + ID-switch stitching ─► scene model (learned from traffic)
         ─► 10 rules ─► segment merge ─► [[start, end, label], ...]
              ▲ signal state from the lit bulb's colour in a fixed ROI
 
 Part B (causal, frame by frame; never sees Part A)
-  frame ─► own YOLOv8 + ByteTrack ─► per-pair time & distance of closest approach,
+  frame ─► own YOLO11s + ByteTrack ─► per-pair time & distance of closest approach,
         hard-braking cue ─► held hazard ─► P(accident starts within 5 s)
 ```
 
@@ -87,7 +87,7 @@ every class.
   (crossings, stop line, traced carriageway and islands in `src/config.py`) and to generate
   `predictions_samples.json`. On it the pipeline reports three jaywalking segments, a car standing
   at the bus-stop kerb (`stopped_vehicle`, debatable), one `failure_to_yield` at the end, and a peak
-  accident risk of 0.49 (below the 0.5 alarm).
+  accident risk of 0.30 (the alarm is 0.5).
 - `samples/annotated_preview_15s.mp4`: a rendering from our first pipeline (boxes burned in). It is
   not an input: run the harness on `samples/sample_test.mp4` (or the organisers' originals), not on
   the whole folder.
@@ -103,32 +103,28 @@ pipeline on 63 public CCTV clips from other cameras with `scripts/eval_public.py
 metric, the evaluation-GPU configuration run on a CPU): 51 crashes from TAD, with accident times
 from NVIDIA's AI City Challenge 2026 Track 3 temporal annotations, and 12 accident-free TAD clips.
 
-| | before | after the fixes below |
-|---|---|---|
-| Part B score | 0.000 | 0.096 |
-| crashes with an alarm before impact | 0 / 51 | 6 / 51 |
-| alarms that were right | – | 6 / 7 |
-| alarms on accident-free clips | 0 / 12 | 0 / 12 |
-
-What the clips exposed:
+With the COCO YOLOv8s detector the clips first scored 0.000 for Part B. What they exposed:
 
 - **Start-up charged to the first video.** `run_submission.py` starts each video's clock after
   importing `solution.py`. With lazy loading the first clip carried the weights load and predictor
   set-up (84 s against a 22 s budget) and was scored as empty. `solution.py` now warms the detectors
   up at import.
-- **Fast cars were invisible to the tracker.** At a few detections per second a car moves more
-  than its own length, its boxes stop overlapping, and ByteTrack never confirms it. Cars are now
-  associated with buffered IoU (boxes widened by half their size for matching only). Two-wheelers
-  have their own tracker with a small buffer, because widened boxes swapped the ids of a motorcycle
-  and a bicycle riding side by side on our clip.
 - **Late accidents could not fire.** The accident rule wanted 5 s of standing wrecks from 3 s after
   impact; near the end of a video it now uses what is left (at least 1.5 s).
+- **A car can inherit a bicycle's id.** Two-wheelers now have a ByteTrack of their own.
+- **Fast cars are lost at low sample rates.** At 4–6 detections per second a car can move more
+  than its own length, its boxes stop overlapping, and ByteTrack never confirms it. Buffered IoU
+  (boxes widened for matching) and re-linking lost tracks raised TAD's Part B score to 0.096 (alarms
+  before 6 of 51 crashes, 6 of 7 alarms right, none on the calm clips). **We did not ship it.**
+  With the fine-tuned detector, on the competition camera, both swapped ids between neighbouring
+  cars: a small car's track jumped onto a bus, its speed in sizes per second collapsed, and the
+  accident rule saw a crash; the risk reached 0.91 on a calm clip (0.30 without them). The
+  competition camera decides.
 
-What they did not fix: alarms come late (0.08 s before impact on average; in 20 of the clips the
-crash happens in the first 1.5 s), and the accident rule stays strict (0 of 14 crashes on a
-subset, no false events), because a knocked-down pedestrian leaves the detector's view while the
-rule wants both parties seen standing. Loosening either would add false alarms on the competition
-camera, where our own clip peaks at 0.40.
+What stays open: alarms on other cameras come late or not at all, and the accident rule is strict
+(0 of 14 TAD crashes on a subset, no false events): a knocked-down pedestrian leaves the detector's
+view, while the rule wants both parties seen standing. Loosening it would fire on every car that
+stops in front of a pedestrian on the competition camera.
 
 ```bash
 python scripts/eval_public.py --videos <clips> --gt <ground_truth.json>            # Part B
@@ -139,7 +135,7 @@ WEST_PROFILE=gpu WEST_NO_THIN=1 python scripts/eval_public.py --videos <clips> -
 
 ```bash
 pip install -r requirements-web.txt
-python -m pytest                                   # 56 tests, about 40 s on CPU
+python -m pytest                                   # 55 tests, about 30 s on CPU
 python scripts/dev_eval.py --videos samples/ --gt labels/dev_labels.json      # per-class F1
 python scripts/dev_eval.py --videos samples/ --gt labels/dev_labels.json --disable congestion
 python scripts/build_scene_prior.py --videos samples/                        # optional prior
