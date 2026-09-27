@@ -264,7 +264,7 @@
           <li>On the organisers' four full videos (18 min) the rules first reported 333 events. We drew a contact sheet for every one, looked at them, and fixed the causes, not the thresholds alone: 27 of 27 "accidents" were queues, red-light stops or cars leaving the frame; most "failures to yield" were people waiting at the far kerb. Now 113 events (failure_to_yield 216 → 56, accident 27 → 0, U-turn 20 → 7, jaywalking 52 → 41), and every true case we had found stayed.</li>
           <li>The first zones were wrong: the zebra is a narrow diagonal band, the crossing continues past the island, the stop line is diagonal. All re-measured on the sample frame.</li>
           <li>A false "accident": with detection thinned to one sample a second, a short speed window read 0, so a passing car "stopped dead". Speed windows now always reach the neighbouring samples.</li>
-          <li>The first risk model alarmed on 70% of a calm clip. Weighting by the braking needed to avoid a collision (DRAC) brought it to no alarms (peak 0.30 on the sample clip), while a synthetic crash still alarms 1.5 s early.</li>
+          <li>The first risk model alarmed on 70% of a calm clip. Weighting by the braking needed to avoid a collision (DRAC) brought it to no alarms on the sample clip. On the organisers' four full videos it still alarmed 72 times in 18 minutes with no crash in them, so the alarm now needs a conflict about 0.6 s ahead instead of 2 s: 9 alarms. The map is monotone, so the ranking of frames (AP) is unchanged; the price is later warnings.</li>
         </ul>
       </article>
       <article>

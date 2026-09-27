@@ -77,9 +77,18 @@ def pair_hazard(p: np.ndarray, v: np.ndarray, size: float, urgency: bool = True)
     return float(weight * np.exp(-t_star / TTC_SCALE) * np.exp(-(miss / MISS_SCALE) ** 2)), t_star, miss
 
 
+# Calibrated on the organisers' four sample videos (18 min, no crash): with the
+# alarm at a held hazard of 0.5 (a dead-on conflict ~2 s ahead) normal traffic
+# at the crossings raised 72 alarms; at 0.8 (~0.6 s ahead) it raises 9. The map
+# is monotone, so the ranking of frames (and AP) does not change, only where
+# the 0.5 alarm threshold falls.
+ALARM_HAZARD = 0.8
+RISK_GAMMA = float(np.log(0.5) / np.log(ALARM_HAZARD))
+
+
 def to_probability(raw: float) -> float:
-    """Monotone map of the held hazard to P(accident within 5 s), floor 0.02."""
-    return float(np.clip(0.02 + 0.96 * raw, 0.0, 1.0))
+    """Monotone map of the held hazard to P(accident within 5 s): floor 0.02, 0.5 at ALARM_HAZARD."""
+    return float(np.clip(0.02 + 0.96 * max(raw, 0.0) ** RISK_GAMMA, 0.0, 1.0))
 
 
 class _Hist:

@@ -109,8 +109,9 @@ def test_crossing_conflict_raises_the_alarm_before_impact():
     before = curve[(curve[:, 0] >= 3) & (curve[:, 0] < 8)]
     alarm = before[before[:, 1] >= 0.5]
     assert len(alarm), "no alarm before the impact"
-    assert 8 - alarm[0, 0] >= 1.5             # warned well before the impact
+    assert 8 - alarm[0, 0] >= 0.4             # warned before the impact (calibrated late: see ALARM_HAZARD)
     assert curve[curve[:, 0] < 3, 1].max() < 0.5
+    assert curve[(curve[:, 0] >= 3) & (curve[:, 0] < 8), 1].max() > curve[curve[:, 0] < 3, 1].max()
 
 
 def test_platoon_does_not_raise_the_alarm():

@@ -133,6 +133,16 @@ pedestrians, a car passing close to a pedestrian on the right crossing, two U-tu
 island gap, a van and an SUV standing on the zebra past the stop line on red) are still reported.
 Each fix has a regression test that fails without it.
 
+### Part B calibration
+
+The risk is a held hazard mapped monotonically to [0, 1] (`to_probability` in `src/risk.py`). With
+the 0.5 alarm at a hazard of 0.5 (a dead-on conflict about 2 s ahead), normal traffic at the
+crossings of the organisers' four videos raised 72 alarms in 18 minutes, with no crash in them;
+alarm precision would be near zero on similar test videos. The alarm now sits at a hazard of 0.8
+(a conflict about 0.6 s ahead): 9 alarms on the same videos. The map is monotone, so the frame
+ranking (and AP) is unchanged; warnings come later, and on the TAD clips from other cameras the two
+early alarms we had are lost. We chose precision on the competition camera.
+
 ## Robustness on other cameras
 
 The geometry is calibrated on one camera; everything else has to work on any. We scored the
