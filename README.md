@@ -119,7 +119,8 @@ With the COCO YOLOv8s detector the clips first scored 0.000 for Part B. What the
   With the fine-tuned detector, on the competition camera, both swapped ids between neighbouring
   cars: a small car's track jumped onto a bus, its speed in sizes per second collapsed, and the
   accident rule saw a crash; the risk reached 0.91 on a calm clip (0.30 without them). The
-  competition camera decides.
+  competition camera decides. The shipped pipeline (fine-tuned YOLO11s, plain tracker) scores 0.039
+  on TAD: alarms before 2 of 51 crashes, 2 of 5 alarms right, none on the calm clips.
 
 What stays open: alarms on other cameras come late or not at all, and the accident rule is strict
 (0 of 14 TAD crashes on a subset, no false events): a knocked-down pedestrian leaves the detector's

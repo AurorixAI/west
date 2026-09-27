@@ -276,7 +276,7 @@
         <ul>
           <li>63 public CCTV clips (TAD; accident times from NVIDIA's AI City 2026 Track 3 annotations, CC-BY-4.0): 51 crashes, 12 calm clips, all from cameras we never calibrated on.</li>
           <li>It found a real bug. The harness starts each video's clock after importing <code>solution.py</code>, and lazy model loading charged the first clip 84 s against a 22 s budget. The detectors now warm up at import.</li>
-          <li>It exposed a limit we chose to keep. A car moving more than its own length between detections never overlaps its last box, so the tracker loses it. Buffered IoU fixed that on TAD (Part B 0.000 → 0.096, 6 of 7 alarms right), but on the competition camera, with the fine-tuned detector, it swapped ids between neighbouring cars: a false accident, and risk 0.91 on a calm clip. We kept the plain tracker; the competition camera decides.</li>
+          <li>It exposed a limit we chose to keep. A car moving more than its own length between detections never overlaps its last box, so the tracker loses it. Buffered IoU fixed that on TAD (Part B 0.000 → 0.096, 6 of 7 alarms right), but on the competition camera, with the fine-tuned detector, it swapped ids between neighbouring cars: a false accident, and risk 0.91 on a calm clip. We kept the plain tracker; the competition camera decides. As shipped, TAD scores 0.039 (alarms before 2 of 51 crashes, none on calm clips).</li>
           <li>The accident rule (Part A) stays strict: 0 of 14 crashes on a subset, no false events. It needs both parties seen standing after contact, and a knocked-down pedestrian leaves the detector's view. Loosening it would fire on every car that stops in front of a pedestrian.</li>
         </ul>
       </article>
