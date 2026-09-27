@@ -4,23 +4,13 @@
   "sample_test.mp4": {
    "events": [
     [
-     6.41,
-     10.71,
+     6.71,
+     10.21,
      "jaywalking"
     ],
     [
-     9.11,
-     19.92,
-     "stopped_vehicle"
-    ],
-    [
-     12.11,
+     14.41,
      16.22,
-     "jaywalking"
-    ],
-    [
-     17.52,
-     19.92,
      "jaywalking"
     ],
     [
@@ -2438,9 +2428,9 @@
    "duration": 20.02,
    "budget_sec": 800.8,
    "errors": [],
-   "part_a_sec": 115.3,
-   "part_b_sec": 28.4,
-   "total_sec": 143.8
+   "part_a_sec": 92.1,
+   "part_b_sec": 23.2,
+   "total_sec": 115.2
   }
  }
 }

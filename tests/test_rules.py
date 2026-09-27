@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from src import rules
-from tests.synth import BICYCLE, CAR, DOG, MOTORCYCLE, PERSON, RED, Scene, times
+from tests.synth import BICYCLE, BUS, CAR, DOG, MOTORCYCLE, PERSON, RED, Scene, times
 
 
 def labels(segs, name):
@@ -292,3 +292,32 @@ def test_post_process_merges_clamps_and_drops_blips():
 def test_merge_keeps_the_actors_of_merged_events():
     out = rules.merge([(1, 3, "jaywalking", (1,)), (2.5, 5, "jaywalking", (2,))], 60.0)
     assert out == [(1.0, 5.0, "jaywalking", (1, 2))]
+
+
+# -- calibration on the organisers' four videos (review-data) -------------------
+def test_pulling_up_fast_behind_a_standing_car_is_not_an_accident(quiet_scene):
+    """Regression: a car stopping sharply at the back of a red-light queue read as a crash."""
+    s = quiet_scene
+    t = times(40.0, 70.0)
+    s.add("vehicle", CAR, t, np.tile([[2600.0, 1800.0]], (len(t), 1)), 120)          # the queue's last car
+    t = times(45.0, 70.0)
+    x = np.where(t < 47.08, 2000 + 250 * (t - 45), 2520.0)                            # 2 sizes/s, then dead stop
+    s.add("vehicle", CAR, t, np.stack([x, np.full_like(t, 1800)], 1), 120)
+    assert rules.accident(s.context()) == []
+
+
+def test_pedestrian_waiting_at_the_kerb_end_of_the_zebra_is_not_failure_to_yield(quiet_scene):
+    """Regression: people standing at the far kerb of a crossing while cars drive past it."""
+    s = quiet_scene
+    t = times(50.0, 70.0)
+    s.add("person", PERSON, t, np.tile([[790.0, 1285.0]], (len(t), 1)), 150)        # on the zebra, by its left kerb
+    s.path("vehicle", CAR, 60.0, [(900, 600), (900, 2100)], 400)
+    assert rules.failure_to_yield(s.context()) == []
+
+
+def test_passenger_seen_through_a_bus_window_is_not_a_pedestrian(quiet_scene):
+    s = quiet_scene
+    t = times(50.0, 60.0)
+    s.add("vehicle", BUS, t, np.stack([2000 + 100 * (t - 50), np.full_like(t, 1800)], 1), 500)
+    s.add("person", PERSON, t, np.stack([2000 + 100 * (t - 50), np.full_like(t, 1650)], 1), 80)
+    assert s.context().pedestrians == []

@@ -58,8 +58,8 @@ Part B (causal, frame by frame; never sees Part A)
 | Events | one function per class over complete trajectories; boundaries follow the annotation conventions (`src/rules.py`) | rules |
 | Risk | constant-velocity closest approach for every nearby pair, same-direction pairs down-weighted, hard-braking cue (`src/risk.py`) | hand-calibrated model |
 
-Classes emitted: accident, red_light, stop_line, wrong_way, illegal_u_turn, stopped_vehicle,
-jaywalking, failure_to_yield, congestion, road_obstacle. Not emitted: near_miss, illegal_turn,
+Classes emitted: accident, red_light, stop_line, wrong_way, illegal_u_turn, jaywalking,
+failure_to_yield, congestion, road_obstacle. Not emitted: stopped_vehicle, near_miss, illegal_turn,
 solid_line_crossing and fire_smoke. Under macro-F1, a predicted class that the test set lacks adds a
 zero to the average, so we only emit classes whose rule is specific. `ENABLED_CLASSES` in
 `src/config.py` switches classes on and off. The website's Approach section has the full rule for
@@ -85,9 +85,9 @@ every class.
 
 - `samples/sample_test.mp4`: a 20 s, 1080p cut of the camera, used to calibrate the scene geometry
   (crossings, stop line, traced carriageway and islands in `src/config.py`) and to generate
-  `predictions_samples.json`. On it the pipeline reports three jaywalking segments, a car standing
-  at the bus-stop kerb (`stopped_vehicle`, debatable), one `failure_to_yield` at the end, and a peak
-  accident risk of 0.30 (the alarm is 0.5).
+  `predictions_samples.json`. On it the pipeline reports two jaywalking segments, one
+  `failure_to_yield` at the end (a car crossing the corner zebra at speed past a pedestrian), and a
+  peak accident risk of 0.30 (the alarm is 0.5).
 - `samples/annotated_preview_15s.mp4`: a rendering from our first pipeline (boxes burned in). It is
   not an input: run the harness on `samples/sample_test.mp4` (or the organisers' originals), not on
   the whole folder.
@@ -95,6 +95,43 @@ every class.
   3840x2160 at 29.97 fps, H.264 4:2:2 10-bit) are linked from their Drive folder and are too large
   for git; the detector is trained on their key frames. C3896/C3897 and C3902 are framed differently
   from C3905 and `sample_test.mp4` (zoomed in or shifted), and C3905 is at dusk.
+
+## Calibration on the organisers' videos
+
+The organisers' four full sample videos (C3896, C3897, C3902, C3905; 18.4 min, 4K) have no labels.
+We ran the pipeline on them, drew a contact sheet for every reported event (`scripts/review_events.py`:
+six frames around the event, actors and zones drawn), looked at every sheet of the rare classes and
+at samples of the frequent ones, and fixed what made the false ones fire. The rules are then
+re-run on the cached tracks in seconds.
+
+| class | before | after | what the false ones were |
+|---|---|---|---|
+| accident | 27 | 0 | all 27 false: queues, red-light stops, a car behind another in the next lane, cars leaving the frame (a box cut by the edge stops moving), people halting beside cars |
+| failure_to_yield | 216 | 56 | people standing at the far kerb of the right crossing while traffic passes it; jittery small figures |
+| illegal_u_turn | 20 | 7 | heading noise while a turning car waits for pedestrians; an id switch |
+| jaywalking | 52 | 41 | people crossing the island between the two zebras (the learned road mask covered it), people walking beside the paint, passengers seen through bus windows |
+| wrong_way | 6 | 3 | cars turning across one stream; a cyclist on a zebra |
+| stopped_vehicle | 6 | off | every queue beside a moving lane, merged into one segment as long as the video |
+| **all classes** | **333** | **113** | |
+
+What changed in the rules:
+
+- **accident** needs a vehicle at road speed (at least 2 lengths/s) that stops within 0.8 s, a
+  second party that was moving or is shoved by the blow, and no box at the frame edge.
+- **failure_to_yield** needs the pedestrian to walk (at least 0.3 heights/s), along the crossing,
+  at least one height from either kerb.
+- **illegal_u_turn** needs straight legs of 1.5 lengths before and after the turn, at least 135
+  degrees apart.
+- **wrong_way** needs the vehicle to drive against the flow for most of its visible path; bicycles
+  are left out.
+- **jaywalking**: the traced islands always override the learned road mask, the zebra is widened by
+  half a person height, and a person whose box lies inside a car or bus is a passenger.
+- **stopped_vehicle** is switched off in `ENABLED_CLASSES`.
+
+The true cases we found on the sheets (a car turning through the main crossing past a group of
+pedestrians, a car passing close to a pedestrian on the right crossing, two U-turns through the
+island gap, a van and an SUV standing on the zebra past the stop line on red) are still reported.
+Each fix has a regression test that fails without it.
 
 ## Robustness on other cameras
 
@@ -136,7 +173,7 @@ WEST_PROFILE=gpu WEST_NO_THIN=1 python scripts/eval_public.py --videos <clips> -
 
 ```bash
 pip install -r requirements-web.txt
-python -m pytest                                   # 55 tests, about 30 s on CPU
+python -m pytest                                   # 58 tests, about 30 s on CPU
 python scripts/dev_eval.py --videos samples/ --gt labels/dev_labels.json      # per-class F1
 python scripts/dev_eval.py --videos samples/ --gt labels/dev_labels.json --disable congestion
 python scripts/build_scene_prior.py --videos samples/                        # optional prior

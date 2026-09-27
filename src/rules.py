@@ -327,6 +327,8 @@ def stop_line(ctx: Context) -> list[Segment]:
 def wrong_way(ctx: Context) -> list[Segment]:
     out = []
     for v in ctx.vehicles:
+        if v.cls == C.COCO_BICYCLE:
+            continue                          # cyclists ride over the crossings with the pedestrians
         moving = v.speed >= C.MOVE_SPEED
         if moving.sum() < 5:
             continue
@@ -335,6 +337,8 @@ def wrong_way(ctx: Context) -> list[Segment]:
         cos = (u * flow_dir).sum(1)
         judged = moving & ok
         against = judged & (cos < C.WRONG_WAY_COS)
+        if against.sum() < C.WRONG_WAY_TRACK_SHARE * max(judged.sum(), 1):
+            continue                          # a turn cuts across one stream; a wrong-way driver keeps against it
         for i0, i1 in runs(against, v.t, 1.0):
             if v.t[i1] - v.t[i0] < C.WRONG_WAY_MIN_SEC:
                 continue

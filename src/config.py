@@ -28,8 +28,10 @@ CLASSES: list[str] = [
 # class to the average, so a class whose detector is not specific enough costs
 # more than it earns. near_miss, illegal_turn, solid_line_crossing and
 # fire_smoke have no rule precise enough on this camera yet (see the report).
+# stopped_vehicle is off: on the organisers' four videos it reported every
+# queue beside a moving lane, merged into one segment as long as the video.
 ENABLED_CLASSES: frozenset[str] = frozenset({
-    "accident", "red_light", "wrong_way", "illegal_u_turn", "stopped_vehicle",
+    "accident", "red_light", "wrong_way", "illegal_u_turn",
     "jaywalking", "failure_to_yield", "stop_line", "congestion", "road_obstacle",
 })
 
@@ -160,6 +162,7 @@ STOP_LINE_MIN_STOP_SEC = 2.0
 
 WRONG_WAY_MIN_SEC = 2.0
 WRONG_WAY_COS = -0.5
+WRONG_WAY_TRACK_SHARE = 0.6   # share of the vehicle's judged path spent against the flow
 
 UTURN_MIN_DEG = 150.0
 UTURN_MAX_SEC = 20.0

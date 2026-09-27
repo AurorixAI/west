@@ -19,14 +19,13 @@ const CLASS_FAMILY = {
   road_obstacle: "flow", fire_smoke: "flow",
 };
 const RULES = [
-  ["accident", "Two road users' boxes touch on the ground and at least one drops from moving to below a third of its speed within about a second; both are then seen standing still for 5 s.", "First contact to both stopped"],
+  ["accident", "Two road users' boxes touch on the ground; a vehicle at road speed (≥ 2 lengths/s) drops below a third of it within 0.8 s, the other party was moving or is shoved, both then stand still for 5 s, and neither box touches the frame edge. Queues, red-light stops and cars driving out of view are not crashes.", "First contact to both stopped"],
   ["red_light", "A vehicle's front crosses the stop line from the approach side while the signal has been red for at least 1 s, and it does not stop just past the line.", "Crossing to leaving the frame (at most 6 s)"],
   ["stop_line", "A vehicle that came from behind the line stands for 2 s or more between the stop line and the far edge of the crossing, on red.", "Stops to signal turns green"],
-  ["wrong_way", "For 2 s or more and 3 sizes of travel, the vehicle drives against the dominant heading of the cells it is in (cos < −0.5); the cell must be coherent, and the vehicle's own votes are removed.", "First to last opposing sample"],
-  ["illegal_u_turn", "Heading turns by 150° or more within 20 s, with no track teleports. Legality cannot be read from signs, so every U-turn is reported.", "Heading leaves the start direction to reaching the opposite one"],
-  ["stopped_vehicle", "A car or truck stands 10 s or more on the carriageway while at least two vehicles overtake it; queues get no overtakers. Buses at a stop are left out.", "Stops to moves again or disappears"],
-  ["jaywalking", "A pedestrian walks on the carriageway (0.6 heights inside the kerb, off the islands) outside the zebra for 1.5 s or more. Riders, and figures standing still in a lane, are traffic.", "Steps off the kerb or zebra to leaves the road"],
-  ["failure_to_yield", "A vehicle moves across a zebra (any part of its footprint on the stripes) while a pedestrian is on the carriageway part of it within 3 vehicle sizes. Stopping on the zebra is not yielding; a scooter wheeled at walking pace is not traffic.", "Enters to leaves the crossing"],
+  ["wrong_way", "For 2 s or more and 3 sizes of travel, and for most of its visible path, the vehicle drives against the dominant heading of the cells it is in (cos < −0.5); the cell must be coherent, and the vehicle's own votes are removed. Bicycles are left out.", "First to last opposing sample"],
+  ["illegal_u_turn", "Heading turns by 150° or more within 20 s on the carriageway, between two straight legs of 1.5 lengths each in nearly opposite directions. Legality cannot be read from signs, so every U-turn is reported.", "Heading leaves the start direction to reaching the opposite one"],
+  ["jaywalking", "A pedestrian walks on the carriageway (0.6 heights inside the kerb, off the islands) more than half a height from the zebra for 1.5 s or more. Riders, figures standing still in a lane, and people seen through a bus window are not pedestrians.", "Steps off the kerb or zebra to leaves the road"],
+  ["failure_to_yield", "A vehicle moves across a zebra (any part of its footprint on the stripes) while a pedestrian walks along it within 3 vehicle sizes, at least one height from either kerb. People waiting at the kerb do not count; stopping on the zebra is not yielding; a scooter wheeled at walking pace is not traffic.", "Enters to leaves the crossing"],
   ["congestion", "In one traffic direction, 6 or more vehicles with 80% below crawling speed for 45 s, lasting through at least 15 s of green (90 s if the signal is unreadable).", "Queue stops moving to clears"],
   ["road_obstacle", "A confidently detected animal (median confidence ≥ 0.5) on the carriageway for 2 s, not sitting on a person's box.", "Appears to leaves the road"],
 ];
