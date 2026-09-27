@@ -19,7 +19,7 @@ from src.tracking import Track
 
 W, H = 3840, 2160
 DT = 0.1
-CAR, BUS, PERSON, BICYCLE, DOG = 2, 5, 0, 1, 16
+CAR, BUS, PERSON, BICYCLE, MOTORCYCLE, DOG = 2, 5, 0, 1, 3, 16
 
 
 def times(t0: float, t1: float) -> np.ndarray:
@@ -80,4 +80,4 @@ class Scene:
         return Context(self.tracks, SceneGeometry(W, H), flow, self.signal, self.duration)
 
 
-__all__ = ["Scene", "times", "CAR", "BUS", "PERSON", "BICYCLE", "DOG", "RED", "GREEN"]
+__all__ = ["Scene", "times", "CAR", "BUS", "PERSON", "BICYCLE", "MOTORCYCLE", "DOG", "RED", "GREEN"]

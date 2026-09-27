@@ -41,6 +41,7 @@ DRAC_LOW, DRAC_HIGH = 0.4, 1.2
 WALKING_PACE = 1.0        # sizes/s: two users both slower than this cannot crash hard...
 SLOW_PAIR_WEIGHT = 0.35   # ...so their conflicts raise the risk a little, never to the alarm
 FOLLOW_WEIGHT = 0.35      # same-direction pairs
+RIDER_GAP = 1.0           # sizes: a person this close to a bicycle/motorcycle is riding or wheeling it
 DECAY_SEC = 1.5
 BRAKING_HAZARD = 0.4      # on its own a hard stop is suspicious, not an alarm
 MAX_REAL_TIME_SHARE = 0.5 # step() may spend this share of video time before thinning
@@ -76,9 +77,18 @@ def pair_hazard(p: np.ndarray, v: np.ndarray, size: float, urgency: bool = True)
     return float(weight * np.exp(-t_star / TTC_SCALE) * np.exp(-(miss / MISS_SCALE) ** 2)), t_star, miss
 
 
+# Calibrated on the organisers' four sample videos (18 min, no crash): with the
+# alarm at a held hazard of 0.5 (a dead-on conflict ~2 s ahead) normal traffic
+# at the crossings raised 72 alarms; at 0.8 (~0.6 s ahead) it raises 9. The map
+# is monotone, so the ranking of frames (and AP) does not change, only where
+# the 0.5 alarm threshold falls.
+ALARM_HAZARD = 0.8
+RISK_GAMMA = float(np.log(0.5) / np.log(ALARM_HAZARD))
+
+
 def to_probability(raw: float) -> float:
-    """Monotone map of the held hazard to P(accident within 5 s), floor 0.02."""
-    return float(np.clip(0.02 + 0.96 * raw, 0.0, 1.0))
+    """Monotone map of the held hazard to P(accident within 5 s): floor 0.02, 0.5 at ALARM_HAZARD."""
+    return float(np.clip(0.02 + 0.96 * max(raw, 0.0) ** RISK_GAMMA, 0.0, 1.0))
 
 
 class _Hist:
@@ -87,6 +97,12 @@ class _Hist:
     def __init__(self, category: str, cls: int):
         self.t, self.foot, self.size = deque(), deque(), deque()
         self.category, self.cls, self.last = category, cls, -1.0
+
+
+def _rider_and_ride(a: _Hist, b: _Hist) -> bool:
+    """A person and a bicycle/motorcycle, in either order."""
+    return any(x.category == "person" and y.category == "vehicle" and y.cls in C.COCO_TWO_WHEELER
+               for x, y in ((a, b), (b, a)))
 
 
 class CausalRiskEstimator:
@@ -131,8 +147,8 @@ class CausalRiskEstimator:
         live = []
         for cat, tid, box, cls in self.tracker.update(t, det):
             key = (cat, tid)
-            hs = self.hist.get(key) or self.hist.setdefault(key, _Hist(cat, cls))
             b = np.asarray(box, float)[None]
+            hs = self.hist.get(key) or self.hist.setdefault(key, _Hist(cat, cls))
             hs.t.append(t)
             hs.foot.append(np.array([(b[0, 0] + b[0, 2]) / 2, b[0, 3]]))
             hs.size.append(float(object_size(b, cat)[0]))
@@ -145,7 +161,7 @@ class CausalRiskEstimator:
 
         users = []
         for hs in live:
-            if hs.category == "animal" or len(hs.t) < 4:
+            if hs.category == "animal" or len(hs.t) < 3:
                 continue
             tt, ff = np.array(hs.t), np.array(hs.foot)
             recent = tt >= t - 1.0
@@ -164,6 +180,8 @@ class CausalRiskEstimator:
                     continue
                 size = 0.5 * (si + sj)
                 rel, vrel = pj - pi, vj - vi
+                if _rider_and_ride(hi, hj) and np.linalg.norm(rel) < RIDER_GAP * size:
+                    continue                  # one road user seen twice: the cyclist and the bicycle
                 if np.linalg.norm(rel) > np.linalg.norm(vrel) * HORIZON_SEC + 2 * size:
                     continue                  # cannot meet within the horizon
                 ni, nj = np.linalg.norm(vi) / si, np.linalg.norm(vj) / sj

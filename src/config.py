@@ -28,8 +28,10 @@ CLASSES: list[str] = [
 # class to the average, so a class whose detector is not specific enough costs
 # more than it earns. near_miss, illegal_turn, solid_line_crossing and
 # fire_smoke have no rule precise enough on this camera yet (see the report).
+# stopped_vehicle is off: on the organisers' four videos it reported every
+# queue beside a moving lane, merged into one segment as long as the video.
 ENABLED_CLASSES: frozenset[str] = frozenset({
-    "accident", "red_light", "wrong_way", "illegal_u_turn", "stopped_vehicle",
+    "accident", "red_light", "wrong_way", "illegal_u_turn",
     "jaywalking", "failure_to_yield", "stop_line", "congestion", "road_obstacle",
 })
 
@@ -55,6 +57,10 @@ CROSSWALK_RIGHT = np.array(
 CROSSWALK_CORNER = np.array(
     [[356, 1562], [674, 1474], [874, 1586], [1250, 1748], [1500, 1868], [1612, 1980], [1724, 2080], [1780, 2160], [1200, 2160], [1162, 2080], [1100, 1980], [906, 1848], [612, 1692]],
     dtype=np.float32)
+
+# Edges (index i joins vertex i and i+1) at the two ends of each crossing, where
+# the kerbs are: every other edge runs along the pedestrians' walking line.
+CROSSWALK_END_EDGES = ((1, 3), (1, 3), (7, 12))
 
 # Between the stop line and the far edge of the main crossing: a vehicle that
 # stops here on red has passed the line without entering the intersection.
@@ -91,7 +97,7 @@ TL_ROI = (680, 880, 2260, 2380)
 # --------------------------------------------------------------------------
 # Detection / tracking
 # --------------------------------------------------------------------------
-DETECTOR_WEIGHTS = "yolov8s.pt"
+DETECTOR_WEIGHTS = "west_yolo11s.pt"   # YOLO11s fine-tuned on this camera (scripts/train_detector.py)
 ANALYSIS_FPS = 10.0          # Part A samples the video at this rate
 DETECT_WIDTH = 1280          # frames are resized to this width before YOLO
 DETECT_CONF = 0.10           # low: ByteTrack uses low-score boxes for its second pass
@@ -138,13 +144,17 @@ STOPPED_QUEUE_EXEMPT_SEC = 90.0
 
 JAYWALK_MIN_SEC = 1.5
 JAYWALK_MIN_SPEED = 0.25     # heights/s; walking is ~0.6-0.8
-CROSSWALK_MARGIN = 0.15      # crossing polygons are grown by this many person heights (box jitter)
+CROSSWALK_MARGIN = 0.5       # crossing polygons are grown by this many person heights: walking beside the paint is crossing
 KERB_INSET = 0.6             # a pedestrian must be this many heights inside the outer kerb
 ISLAND_MARGIN = 0.2          # ... and this many heights off an island
 
 YIELD_MAX_DIST = 3.0         # vehicle-pedestrian distance on the crossing, in vehicle sizes
 YIELD_KERB_INSET = 0.3       # pedestrian heights inside the kerb: stepping onto the road, not waiting
+YIELD_PED_MIN_SPEED = 0.3    # heights/s: the pedestrian is walking, not waiting at the kerb
+YIELD_ACROSS_COS = 0.5       # ... heading within 60 degrees of the crossing's walking line
+YIELD_END_MARGIN = 1.0       # ... and at least one height from either end: not waiting at the kerb
 WALKING_PACE = 1.0           # sizes/s; a two-wheeler slower than this is being wheeled
+WHEELER_MAX_DIST = 1.5       # a person this close to a two-wheeler (in its sizes) is its rider
 
 RED_MIN_SEC = 1.0            # signal must have been red this long (no amber cases)
 RED_EVENT_MAX_SEC = 6.0      # red_light ends when the vehicle leaves the frame or after this
@@ -152,16 +162,24 @@ STOP_LINE_MIN_STOP_SEC = 2.0
 
 WRONG_WAY_MIN_SEC = 2.0
 WRONG_WAY_COS = -0.5
+WRONG_WAY_TRACK_SHARE = 0.6   # share of the vehicle's judged path spent against the flow
 
 UTURN_MIN_DEG = 150.0
 UTURN_MAX_SEC = 20.0
+UTURN_MIN_ON_ROAD = 0.8      # share of the turn on the carriageway
+UTURN_LEG_SEC = 3.0          # driving straight before and after the turn, this long...
+UTURN_LEG_SIZES = 1.5        # ... covering this many vehicle lengths each way
+UTURN_REVERSE_COS = -0.7     # ... in nearly opposite directions (>= 135 degrees apart)
 
 CONGESTION_MIN_VEHICLES = 6
 CONGESTION_SLOW_FRAC = 0.8
 CONGESTION_MIN_SEC = 45.0
 
+ACCIDENT_MIN_SPEED = 2.0     # sizes/s before contact (~30 km/h for a car): queues and red lights start slower
+ACCIDENT_STOP_SEC = 0.8      # ... and the speed has dropped within this long after contact
 ACCIDENT_DROP_RATIO = 0.35   # speed after contact <= ratio * speed before
 ACCIDENT_STAY_SEC = 5.0      # involved vehicles stay stationary this long afterwards
+ACCIDENT_TAIL_SEC = 1.5      # ...or, near the end of a video, over at least this much of what is left
 
 OBSTACLE_MIN_SEC = 2.0
 OBSTACLE_MIN_CONF = 0.5

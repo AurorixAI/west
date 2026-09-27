@@ -46,14 +46,14 @@
         <span class="monitor-meta">00:14 · 1080p · 29.97 fps</span>
       </div>
       <img src="img/hero.jpg" width="1280" height="720" alt="Annotated camera frame: tracked vehicles and pedestrians, the zebra crossings and stop line, one pedestrian flagged for jaywalking and two cars flagged as stopped vehicles.">
-      <figcaption>Our renderer on the sample clip. Pedestrian 1 has left the zebra: <strong>jaywalking,
-        12.0–16.2 s</strong>. Two cars have stood at the bus-stop kerb since the clip began.</figcaption>
+      <figcaption>Our renderer on the sample clip: zones aligned to the camera, every tracked road user,
+        the signal state read from the lamps, and the events as they happen.</figcaption>
     </figure>
   </div>
   <div class="wrap">
     <dl class="facts">
-      <div><dt>Classes emitted</dt><dd>10<small>of 14</small></dd></div>
-      <div><dt>Unit and end-to-end tests</dt><dd>51</dd></div>
+      <div><dt>Classes emitted</dt><dd>9<small>of 14</small></dd></div>
+      <div><dt>Unit and end-to-end tests</dt><dd>58</dd></div>
       <div><dt>4K on a 4-core CPU</dt><dd>0.95<small>× real time</small></dd></div>
       <div><dt>Time budget</dt><dd>3<small>× video length</small></dd></div>
     </dl>
@@ -73,12 +73,12 @@
         <input type="file" id="file" accept=".mp4,video/mp4">
         <svg class="drop-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-5 5m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
         <span class="drop-title" id="dropText">Drop an .mp4 here, or click to choose</span>
-        <span class="drop-limits">up to 150 s · up to 500 MB · H.264 plays in every browser</span>
+        <span class="drop-limits">up to 10 min · up to 5 GB · H.264 plays in every browser</span>
       </label>
       <ul class="demo-notes">
         <li><strong>Speed.</strong> About one to two minutes per minute of 1080p video, about three for 4K.</li>
         <li><strong>Privacy.</strong> Playback uses the file in your browser. The server deletes its copy after two hours.</li>
-        <li><strong>Model.</strong> The CPU profile: YOLOv8n at 5 fps. The GPU submission runs YOLOv8s at 10 fps.</li>
+        <li><strong>Model.</strong> The CPU profile: YOLOv8n at 5 fps. The GPU submission runs our fine-tuned YOLO11s at 10 fps.</li>
       </ul>
     </div>
     <div class="progress" id="progress" hidden>
@@ -179,9 +179,11 @@
           never both seen, the red-light and stop-line rules switch themselves off.</p>
       </article>
       <article>
-        <h4>Queues look like stopped vehicles</h4>
-        <p>Every red phase parks a queue across all lanes. A stopped vehicle counts only if other traffic
-          overtakes it; a slow jam counts as congestion only if it lasts through a green phase.</p>
+        <h4>Queues look like stopped vehicles, and like crashes</h4>
+        <p>Every red phase parks a queue across all lanes, often beside a lane that still moves. On the
+          organisers' four videos a "stopped vehicle" rule reported every such queue, so the class is off;
+          a car pulling up sharply at the back of a queue is not a crash unless the car in front is shoved.
+          A slow jam counts as congestion only if it lasts through a green phase.</p>
       </article>
       <article>
         <h4>Every video is aligned to the camera first</h4>
@@ -203,7 +205,7 @@
     <header class="section-head">
       <p class="eyebrow">Problem and approach</p>
       <h2>Learned perception, rules you can read.</h2>
-      <p class="lede">A pretrained detector and a tracker do the seeing. Everything that decides an event is a
+      <p class="lede">A detector fine-tuned on this camera and a tracker do the seeing. Everything that decides an event is a
         short, tested rule over complete trajectories, so every output can be traced back to a reason.</p>
     </header>
     <div class="diagram" id="diagram"></div>
@@ -212,7 +214,7 @@
     <table class="data">
       <thead><tr><th>Stage</th><th>How</th><th>Kind</th></tr></thead>
       <tbody>
-        <tr><td>Detection</td><td>YOLOv8s (COCO, 1280 px, 10 fps) on a GPU; YOLOv8n (960 px, 5 fps) without one</td><td><span class="chip chip-learned">learned</span> pretrained, not fine-tuned</td></tr>
+        <tr><td>Detection</td><td>YOLO11s fine-tuned on this camera (1280 px, 10 fps) on a GPU; YOLOv8n COCO (960 px, 5 fps) without one</td><td><span class="chip chip-learned">learned</span> self-trained from a YOLO11x teacher on the organisers' frames</td></tr>
         <tr><td>Tracking</td><td>ByteTrack per category (vehicles, people, animals), then offline smoothing and ID-switch stitching</td><td><span class="chip">algorithm</span></td></tr>
         <tr><td>Scene</td><td>Traced carriageway, crossings, stop line, signal heads and signs, aligned to each video by feature matching (ORB + RANSAC homography); lane directions learned from each video's moving vehicles</td><td><span class="chip">measured</span> no labels</td></tr>
         <tr><td>Signal</td><td>Lit-bulb colour in a fixed region, 1 s majority vote</td><td><span class="chip">rule</span></td></tr>
@@ -223,14 +225,15 @@
     </div>
     <h3 class="sub-head">Rules, class by class</h3>
     <div class="table-scroll"><table class="data" id="rulesTable"><thead><tr><th>Class</th><th>Fires when</th><th>Segment</th></tr></thead><tbody></tbody></table></div>
-    <p class="aside">Not emitted: <code>near_miss</code>, <code>illegal_turn</code>, <code>solid_line_crossing</code>,
+    <p class="aside">Not emitted: <code>stopped_vehicle</code>, <code>near_miss</code>, <code>illegal_turn</code>, <code>solid_line_crossing</code>,
       <code>fire_smoke</code>. Under macro-F1 a class we predict but the test set lacks adds a zero to the average,
       so we only emit classes whose rule is specific enough to be worth that risk.</p>
     <h3 class="sub-head">Models and data</h3>
     <ul class="plain">
-      <li>YOLOv8s and YOLOv8n, COCO-pretrained weights by Ultralytics (AGPL-3.0), shipped in <code>weights/</code>.</li>
+      <li>YOLO11s fine-tuned by us (<code>weights/west_yolo11s.pt</code>) from Ultralytics YOLO11 weights, with a YOLO11x teacher (not shipped); YOLOv8s/n COCO weights for the CPU profile and as the baseline. All AGPL-3.0.</li>
       <li>ByteTrack as implemented in Roboflow <code>supervision</code> (MIT).</li>
-      <li>No external dataset and no fine-tuning. The only data are the organisers' sample videos.</li>
+      <li>Training data: 1,086 key frames of the organisers' four sample videos, labelled by the YOLO11x teacher (drivers behind windscreens dropped), trained on 640 px tiles at the pipeline's 1280 px scale (<code>scripts/train_detector.py</code>). No public dataset was used for training.</li>
+      <li>Evaluation only: 63 public CCTV clips from TAD, with accident times from NVIDIA's AI City 2026 Track 3 annotations (CC-BY-4.0).</li>
     </ul>
   </div>
 </section>
@@ -258,9 +261,10 @@
       <article>
         <h3>What the real footage changed</h3>
         <ul>
+          <li>On the organisers' four full videos (18 min) the rules first reported 333 events. We drew a contact sheet for every one, looked at them, and fixed the causes, not the thresholds alone: 27 of 27 "accidents" were queues, red-light stops or cars leaving the frame; most "failures to yield" were people waiting at the far kerb. Now 113 events (failure_to_yield 216 → 56, accident 27 → 0, U-turn 20 → 7, jaywalking 52 → 41), and every true case we had found stayed.</li>
           <li>The first zones were wrong: the zebra is a narrow diagonal band, the crossing continues past the island, the stop line is diagonal. All re-measured on the sample frame.</li>
           <li>A false "accident": with detection thinned to one sample a second, a short speed window read 0, so a passing car "stopped dead". Speed windows now always reach the neighbouring samples.</li>
-          <li>The first risk model alarmed on 70% of a calm clip. Weighting by the braking needed to avoid a collision (DRAC) brought it to no alarms, peak 0.18, while a synthetic crash still alarms 1.5 s early.</li>
+          <li>The first risk model alarmed on 70% of a calm clip. Weighting by the braking needed to avoid a collision (DRAC) brought it to no alarms on the sample clip. On the organisers' four full videos it still alarmed 72 times in 18 minutes with no crash in them, so the alarm now needs a conflict about 0.6 s ahead instead of 2 s: 9 alarms. The map is monotone, so the ranking of frames (AP) is unchanged; the price is later warnings.</li>
         </ul>
       </article>
       <article>
@@ -272,11 +276,50 @@
         </ul>
       </article>
       <article>
+        <h3>Tested on other cameras</h3>
+        <ul>
+          <li>63 public CCTV clips (TAD; accident times from NVIDIA's AI City 2026 Track 3 annotations, CC-BY-4.0): 51 crashes, 12 calm clips, all from cameras we never calibrated on.</li>
+          <li>It found a real bug. The harness starts each video's clock after importing <code>solution.py</code>, and lazy model loading charged the first clip 84 s against a 22 s budget. The detectors now warm up at import.</li>
+          <li>It exposed a limit we chose to keep. A car moving more than its own length between detections never overlaps its last box, so the tracker loses it. Buffered IoU fixed that on TAD (Part B 0.000 → 0.096, 6 of 7 alarms right), but on the competition camera, with the fine-tuned detector, it swapped ids between neighbouring cars: a false accident, and risk 0.91 on a calm clip. We kept the plain tracker; the competition camera decides. As shipped, TAD scores 0.039 (alarms before 2 of 51 crashes, none on calm clips).</li>
+          <li>The accident rule (Part A) stays strict: 0 of 14 crashes on a subset, no false events. It needs both parties seen standing after contact, and a knocked-down pedestrian leaves the detector's view. Loosening it would fire on every car that stops in front of a pedestrian.</li>
+        </ul>
+      </article>
+      <article class="wide">
+        <h3>Ablations, with the numbers</h3>
+        <p><strong>Detector.</strong> 223 held-out full frames (the last 20 % of every sample video, never trained on), 1280 px as in the submission, against the YOLO11x teacher's labels.</p>
+        <div class="table-scroll"><table class="data numbers">
+          <thead><tr><th>Detector</th><th>mAP50</th><th>mAP50-95</th><th>Recall</th><th>Person AP50</th><th>Truck AP50</th></tr></thead>
+          <tbody>
+            <tr><td>YOLOv8s, COCO</td><td>0.714</td><td>0.559</td><td>0.658</td><td>0.818</td><td>0.569</td></tr>
+            <tr><td>YOLO11s, COCO</td><td>0.738</td><td>0.594</td><td>0.628</td><td>0.819</td><td>0.577</td></tr>
+            <tr><td>YOLO11s, fine-tuned (ours)</td><td>0.850</td><td>0.731</td><td>0.803</td><td>0.966</td><td>0.794</td></tr>
+          </tbody></table></div>
+        <p><strong>Tracker.</strong> Buffered IoU (boxes widened for matching) against plain ByteTrack, Part B.</p>
+        <div class="table-scroll"><table class="data numbers">
+          <thead><tr><th>Tracker</th><th>TAD Part B score</th><th>Crashes warned (of 51)</th><th>Peak risk, calm sample clip</th><th>Sample clip events</th></tr></thead>
+          <tbody>
+            <tr><td>Buffered IoU + re-linking</td><td>0.096</td><td>6</td><td>0.91</td><td>a false accident</td></tr>
+            <tr><td>Plain ByteTrack (shipped)</td><td>0.039</td><td>2</td><td>0.30</td><td>correct</td></tr>
+          </tbody></table></div>
+        <p><strong>Rules.</strong> Events on the organisers' four videos (18.4 min) before and after the calibration on contact sheets.</p>
+        <div class="table-scroll"><table class="data numbers">
+          <thead><tr><th>Class</th><th>Before</th><th>After</th><th>Main cause of the false ones</th></tr></thead>
+          <tbody>
+            <tr><td>accident</td><td>27</td><td>0</td><td>queues, red-light stops, cars leaving the frame</td></tr>
+            <tr><td>failure_to_yield</td><td>216</td><td>56</td><td>people waiting at the far kerb</td></tr>
+            <tr><td>jaywalking</td><td>52</td><td>41</td><td>crossing the island between zebras, walking beside the paint, bus passengers</td></tr>
+            <tr><td>illegal_u_turn</td><td>20</td><td>7</td><td>heading noise while a turning car waits</td></tr>
+            <tr><td>wrong_way</td><td>6</td><td>3</td><td>turns across one stream, a cyclist on a zebra</td></tr>
+            <tr><td>stopped_vehicle</td><td>6</td><td>off</td><td>queues beside a moving lane</td></tr>
+          </tbody></table></div>
+      </article>
+      <article>
         <h3>Limitations and next steps</h3>
         <ul>
-          <li>Thresholds are physically motivated and tested on synthetic trajectories; their final calibration needs our dev labels (<code>scripts/dev_eval.py</code>).</li>
+          <li>Thresholds were calibrated on contact sheets of every reported event on the organisers' four videos, not on full frame-by-frame labels: the frequent classes were reviewed on samples, so some of the 56 remaining failures to yield are surely false.</li>
+          <li>People waiting at a kerb are ignored by the yield rule, so a pedestrian just stepping onto the zebra as a car passes is missed.</li>
           <li>Every U-turn is reported as illegal: the rule cannot read signs.</li>
-          <li>Next: fine-tune the detector on this camera, confirm accident candidates with a small video classifier (DoTA, CCD), and add a homography to metres.</li>
+          <li>Next: label the four sample videos frame by frame and tune every threshold against <code>evaluate.py</code>; confirm accident candidates with a small video classifier trained on DoTA/CCD; add a homography to metres so speeds and gaps are physical.</li>
         </ul>
       </article>
     </div>

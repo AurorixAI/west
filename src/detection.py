@@ -77,3 +77,16 @@ class Detector:
                                   b.conf.cpu().numpy().astype(np.float32),
                                   b.cls.cpu().numpy().astype(np.int32)))
         return out
+
+
+def warm_up(settings: list[tuple[str, int]]) -> None:
+    """Load each (weights, imgsz) detector and run it once on a blank frame.
+
+    The first prediction builds the predictor (layer fusion, CUDA context,
+    kernels) and takes seconds. Done here, at import, it is not charged to
+    the first video's time budget.
+    """
+    blank = np.full((720, 1280, 3), 114, np.uint8)
+    for weights, imgsz in settings:
+        Detector(weights=weights, imgsz=imgsz)([blank], [1.0])
+

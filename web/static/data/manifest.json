@@ -1,13 +1,65 @@
 {
  "videos": [
   {
+   "video": "C3896.MP4",
+   "dir": "C3896",
+   "duration": 340.34,
+   "events": 30,
+   "labels": [
+    "failure_to_yield",
+    "illegal_u_turn",
+    "jaywalking",
+    "stop_line",
+    "wrong_way"
+   ]
+  },
+  {
+   "video": "C3897.MP4",
+   "dir": "C3897",
+   "duration": 317.82,
+   "events": 38,
+   "labels": [
+    "failure_to_yield",
+    "illegal_u_turn",
+    "jaywalking",
+    "red_light",
+    "stop_line"
+   ]
+  },
+  {
+   "video": "C3902.MP4",
+   "dir": "C3902",
+   "duration": 317.82,
+   "events": 26,
+   "labels": [
+    "failure_to_yield",
+    "illegal_u_turn",
+    "jaywalking",
+    "stop_line",
+    "wrong_way"
+   ]
+  },
+  {
+   "video": "C3905.MP4",
+   "dir": "C3905",
+   "duration": 127.63,
+   "events": 19,
+   "labels": [
+    "failure_to_yield",
+    "illegal_u_turn",
+    "jaywalking",
+    "red_light",
+    "stop_line"
+   ]
+  },
+  {
    "video": "sample_test.mp4",
    "dir": "sample_test",
    "duration": 20.02,
    "events": 3,
    "labels": [
-    "jaywalking",
-    "stopped_vehicle"
+    "failure_to_yield",
+    "jaywalking"
    ]
   }
  ],

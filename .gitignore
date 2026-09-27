@@ -3,6 +3,8 @@ __pycache__/
 *$py.class
 .DS_Store
 *.MP4
+# macOS ignores case: keep the website's rendered sample videos
+!web/static/data/**/annotated.mp4
 !dashboard/static/**
 !samples/*.mp4
 .venv/
@@ -12,3 +14,4 @@ env/
 .cache/
 .pytest_cache/
 predictions.json
+runs/

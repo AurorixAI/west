@@ -212,13 +212,18 @@ def main() -> int:
     ap.add_argument("--no-render", action="store_true", help="skip the annotated videos")
     args = ap.parse_args()
     pred = json.loads(args.pred.read_text()) if args.pred else None
-    videos = sorted(p for p in args.videos.iterdir() if p.suffix.lower() == ".mp4")
-    manifest = []
+    videos = [args.videos] if args.videos.is_file() else \
+        sorted(p for p in args.videos.iterdir() if p.suffix.lower() == ".mp4")
+    # videos built earlier (e.g. on another machine) stay listed unless rebuilt now
+    path = OUT / "manifest.json"
+    old = json.loads(path.read_text())["videos"] if path.exists() else []
+    manifest = {m["video"]: m for m in old}
     for v in videos:
         print(f"[{v.name}]", flush=True)
-        manifest.append(build(v, pred, not args.no_render))
-    (OUT / "manifest.json").write_text(json.dumps({"videos": manifest, "signal_names": list(NAMES.values())},
-                                                  indent=1))
+        m = build(v, pred, not args.no_render)
+        manifest[m["video"]] = m
+    path.write_text(json.dumps({"videos": sorted(manifest.values(), key=lambda m: m["video"]),
+                                "signal_names": list(NAMES.values())}, indent=1))
     print(f"wrote {OUT / 'manifest.json'}")
     return 0
 

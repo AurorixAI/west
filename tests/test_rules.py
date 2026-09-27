@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from src import rules
-from tests.synth import BICYCLE, CAR, DOG, PERSON, RED, Scene, times
+from tests.synth import BICYCLE, BUS, CAR, DOG, MOTORCYCLE, PERSON, RED, Scene, times
 
 
 def labels(segs, name):
@@ -92,6 +92,14 @@ def test_lane_following_is_not_a_u_turn(scene):
     assert rules.illegal_u_turn(scene.context()) == []
 
 
+def test_u_turn_off_the_carriageway_is_ignored(scene):
+    """Regression (sample clip, fine-tuned detector): a 'car' reflected in a glass facade."""
+    ang = np.linspace(-np.pi / 2, np.pi / 2, 30)
+    loop = [(3300 + 150 * np.cos(a), 400 + 150 * np.sin(a)) for a in ang]
+    scene.path("vehicle", CAR, 30.0, [(2900, 250)] + loop + [(2900, 550)], 300)
+    assert rules.illegal_u_turn(scene.context()) == []
+
+
 # -- stopped vehicle / congestion ---------------------------------------------
 def test_stopped_vehicle_while_traffic_flows_past(scene):
     scene.path("vehicle", CAR, 30.0, [(2000, 1800), (2600, 1800), (3800, 1800)], 400, dwell={1: 20})
@@ -175,7 +183,7 @@ def test_car_standing_on_the_zebra_then_driving_on_past_a_pedestrian(quiet_scene
     """Regression (real clip): the car stopped on the crossing and people walked round it."""
     scene = quiet_scene
     scene.path("vehicle", CAR, 60.0, [(900, 600), (900, 1280), (900, 2100)], 400, dwell={1: 10})
-    scene.path("person", PERSON, 62.0, [(700, 1300), (1150, 1240)], 30, size=150)
+    scene.path("person", PERSON, 63.0, [(700, 1300), (1150, 1240)], 50, size=150)   # a slow 0.33 heights/s
     ev = labels(rules.failure_to_yield(scene.context()), "failure_to_yield")
     assert len(ev) == 1 and ev[0][0] < 61.8 and ev[0][1] > 71.7
 
@@ -184,6 +192,15 @@ def test_queued_car_over_the_zebra_that_waits_for_people_is_not_failure_to_yield
     scene = quiet_scene
     scene.path("vehicle", CAR, 55.0, [(900, 600), (900, 1280), (900, 2100)], 400, dwell={1: 25})
     scene.path("person", PERSON, 58.0, [(700, 1300), (1150, 1240), (1400, 1100)], 60, size=150)
+    assert rules.failure_to_yield(scene.context()) == []
+
+
+def test_courier_wheeling_a_scooter_over_the_zebra_is_not_failure_to_yield(quiet_scene):
+    """Regression (sample clip, fine-tuned detector): the 'pedestrian' is the scooter's own rider."""
+    scene = quiet_scene
+    route = [(700, 1300), (1150, 1240)]
+    scene.path("vehicle", MOTORCYCLE, 60.0, route, 150, size=100)
+    scene.path("person", PERSON, 60.6, route, 150, size=150)    # walks 90 px behind it
     assert rules.failure_to_yield(scene.context()) == []
 
 
@@ -202,6 +219,18 @@ def test_side_impact_accident(scene):
     ev = labels(rules.accident(scene.context()), "accident")
     assert len(ev) == 1
     assert abs(ev[0][0] - 72.0) < 0.3 and 1.0 <= ev[0][1] - ev[0][0] < 3.0
+
+
+def test_accident_shortly_before_the_video_ends():
+    """The wrecks can only be seen standing for the 4 s the video has left."""
+    s = Scene(76.0)
+    s.background(0, 40, every=2.0)
+    s.path("vehicle", CAR, 72.0 - 930 / 400, [(2000, 1800), (2930, 1800), (2940, 1800), (2941, 1800)],
+           400, dwell={2: 30})
+    s.path("vehicle", CAR, 72.0 - 490 / 300, [(3000, 1300), (3000, 1790), (3003, 1800), (3004, 1800)],
+           300, dwell={2: 30})
+    ev = labels(rules.accident(s.context()), "accident")
+    assert len(ev) == 1 and abs(ev[0][0] - 72.0) < 0.3
 
 
 def test_joining_a_queue_is_not_an_accident(quiet_scene):
@@ -263,3 +292,32 @@ def test_post_process_merges_clamps_and_drops_blips():
 def test_merge_keeps_the_actors_of_merged_events():
     out = rules.merge([(1, 3, "jaywalking", (1,)), (2.5, 5, "jaywalking", (2,))], 60.0)
     assert out == [(1.0, 5.0, "jaywalking", (1, 2))]
+
+
+# -- calibration on the organisers' four videos (review-data) -------------------
+def test_pulling_up_fast_behind_a_standing_car_is_not_an_accident(quiet_scene):
+    """Regression: a car stopping sharply at the back of a red-light queue read as a crash."""
+    s = quiet_scene
+    t = times(40.0, 70.0)
+    s.add("vehicle", CAR, t, np.tile([[2600.0, 1800.0]], (len(t), 1)), 120)          # the queue's last car
+    t = times(45.0, 70.0)
+    x = np.where(t < 47.08, 2000 + 250 * (t - 45), 2520.0)                            # 2 sizes/s, then dead stop
+    s.add("vehicle", CAR, t, np.stack([x, np.full_like(t, 1800)], 1), 120)
+    assert rules.accident(s.context()) == []
+
+
+def test_pedestrian_waiting_at_the_kerb_end_of_the_zebra_is_not_failure_to_yield(quiet_scene):
+    """Regression: people standing at the far kerb of a crossing while cars drive past it."""
+    s = quiet_scene
+    t = times(50.0, 70.0)
+    s.add("person", PERSON, t, np.tile([[790.0, 1285.0]], (len(t), 1)), 150)        # on the zebra, by its left kerb
+    s.path("vehicle", CAR, 60.0, [(900, 600), (900, 2100)], 400)
+    assert rules.failure_to_yield(s.context()) == []
+
+
+def test_passenger_seen_through_a_bus_window_is_not_a_pedestrian(quiet_scene):
+    s = quiet_scene
+    t = times(50.0, 60.0)
+    s.add("vehicle", BUS, t, np.stack([2000 + 100 * (t - 50), np.full_like(t, 1800)], 1), 500)
+    s.add("person", PERSON, t, np.stack([2000 + 100 * (t - 50), np.full_like(t, 1650)], 1), 80)
+    assert s.context().pedestrians == []

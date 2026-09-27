@@ -1,22 +1,37 @@
 [
  {
-  "video": "sample_test.mp4",
-  "time": "0:00–0:20",
-  "text": "Two cars stand at the kerb by the bus stop for the whole clip while traffic passes them, and are reported as stopped_vehicle. That fits the definition literally; whether the annotators count a car waiting at a bus stop is open until the dev labels settle it."
+  "video": "C3896-2.MP4",
+  "time": "0:38–0:40",
+  "text": "Fixed. Two cars drive out of the right edge of the frame. A box cut by the frame edge stops moving while the car drives on, so the first accident rule saw two cars in contact stopping dead. Boxes at the frame edge no longer count, and a crash now needs a vehicle at road speed that stops within 0.8 s."
+ },
+ {
+  "video": "C3897.MP4",
+  "time": "1:19–1:20",
+  "text": "Fixed. A silver car pulls up behind a dark car half hidden by a bus in a queue; in the image their boxes overlap and the silver car stops sharply. The rule now also needs the other party to be moving or to be shoved by the blow: a car standing in a queue stays put. All 27 'accidents' on the four videos were of this kind or the one above."
+ },
+ {
+  "video": "C3896-2.MP4",
+  "time": "3:24–3:25",
+  "text": "Fixed. A group waits at the far kerb of the right-hand crossing while cars pass it; each car was a 'failure to yield'. The pedestrian must now walk along the crossing, at least one height from either kerb. 216 yield events became 56, and the true ones we had found stayed."
+ },
+ {
+  "video": "C3902-2.MP4",
+  "time": "1:09–1:11",
+  "text": "Fixed. A passenger seen through a bus window was a 'person' on the carriageway, so a jaywalker. A person whose box lies inside a car or bus box is now a passenger."
+ },
+ {
+  "video": "C3905.MP4",
+  "time": "1:26–1:39",
+  "text": "Open. A small truck turns, waits for pedestrians, and drives off; in the image its path bends by almost 180 degrees and it is reported as an illegal U-turn. The camera sees the ground at a steep angle, so turns and U-turns are hard to tell apart without a homography to the road plane."
  },
  {
   "video": "sample_test.mp4",
   "time": "0:01–0:17",
-  "text": "A car stands on the right-hand zebra for about 15 s while people walk round it, then pulls away right behind one of them. No event class fits (it neither drove through nor braked hard), so the video shows operator warnings instead: PEDESTRIAN AHEAD, then CLOSE PASS, and the risk curve rises to 0.28 without an alarm. An annotator may still call it a failure to yield."
+  "text": "Open. A car stands on the right-hand zebra for about 15 s while people walk round it, then pulls away right behind one of them. No event class fits (it neither drove through nor braked hard), so the video shows operator warnings instead: PEDESTRIAN AHEAD, then CLOSE PASS. An annotator may still call it a failure to yield."
  },
  {
-  "video": "sample_test.mp4",
-  "time": "0:18–0:20",
-  "text": "Two separate incidents, a car crossing the corner zebra at speed past a pedestrian and cars creeping through the right-hand zebra as a woman steps onto it, merge into one failure_to_yield segment, because concurrent events of one class are reported as one (the annotation convention)."
- },
- {
-  "video": "sample_test.mp4",
-  "time": "0:12–0:16",
-  "text": "Jaywalker 1 is caught only thanks to the traced carriageway: 20 s at a red light are not enough for the learned carriageway to cover the middle of the intersection."
+  "video": "TAD (other cameras)",
+  "time": "51 crashes",
+  "text": "Open. On public CCTV crashes from other cameras the accident rule found none it could time correctly: a knocked-down pedestrian leaves the detector's view, and the rule wants both parties seen standing after contact. Part B warns before 2 of 51 crashes, with no alarm on the calm clips."
  }
 ]
