@@ -20,7 +20,7 @@
       "name": "Sardorbek Bozorov",
       "role": "Researcher",
       "photo": "img/team/sardorbek.jpg",
-      "did": [],
+      "did": ["Research on traffic-event detection and accident anticipation", "Finding reference material for the team"],
       "projects": [{"name": "ALGO landing", "url": "https://github.com/AurorixAI/algo-landing"}],
       "links": {"GitHub": "", "LinkedIn": "", "Portfolio": ""}
     }

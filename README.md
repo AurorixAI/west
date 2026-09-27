@@ -275,6 +275,6 @@ Team ALGO (`589DBFF8`).
 |---|---|---|---|
 | Arslan Djemilov | CTO, team lead | pipeline, calibration, rules, risk model | [GitHub](https://github.com/arslan15114), [LinkedIn](https://www.linkedin.com/in/arslandjemilov) |
 | Temurmalik Irgashev | ML/Ops engineer | release, reproducibility check from a clean clone, website and demo deployment | [GitHub](https://github.com/temur023) |
-| Sardorbek Bozorov | Researcher | | |
+| Sardorbek Bozorov | Researcher | research on traffic-event detection and accident anticipation, reference material | |
 
 Previous work: [ALGO landing](https://github.com/AurorixAI/algo-landing). Details are also in `web/static/team.json`.
