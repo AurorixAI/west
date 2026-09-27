@@ -1,0 +1,4637 @@
+[
+ {
+  "video": "C3896-2.MP4",
+  "n": 1,
+  "label": "stopped_vehicle",
+  "start": 0.0,
+  "end": 340.24,
+  "actors": [
+   1618,
+   1619,
+   1620,
+   1621,
+   1623,
+   1624,
+   1625,
+   1626,
+   1627,
+   1630,
+   1632,
+   1634,
+   1636,
+   1637,
+   1640,
+   1642,
+   1647,
+   1649,
+   1652,
+   1654,
+   1662,
+   1663,
+   1665,
+   1669,
+   1671,
+   1680,
+   1681,
+   1682,
+   1684,
+   1690,
+   1691,
+   1694,
+   1696,
+   1703,
+   1705,
+   1715,
+   1719,
+   1729,
+   1731,
+   1746,
+   1750,
+   1754,
+   1761,
+   1766,
+   1767,
+   1768,
+   1769,
+   1772,
+   1773,
+   1775,
+   1777,
+   1779,
+   1780,
+   1781,
+   1782,
+   1789,
+   1793,
+   1796,
+   1799,
+   1810,
+   1814,
+   1845,
+   1848,
+   1858,
+   1866,
+   1873,
+   1877,
+   1884,
+   1897,
+   1910,
+   1919,
+   1927,
+   1932,
+   1935,
+   1936,
+   1959,
+   1966,
+   1975,
+   2044,
+   2062,
+   2070,
+   2071,
+   2072,
+   2075,
+   2077,
+   2083,
+   2098,
+   2106,
+   2107,
+   2135,
+   2151,
+   2157,
+   2168,
+   2172,
+   2178,
+   2182,
+   2185,
+   2186,
+   2189,
+   2192,
+   2206,
+   2207,
+   2209,
+   2212,
+   2214,
+   2216,
+   2220,
+   2221,
+   2223,
+   2231,
+   2240,
+   2241,
+   2243,
+   2246,
+   2247,
+   2259,
+   2260
+  ],
+  "sheet": "sheets/C3896-2_001_stopped_vehicle_0.0-340.2.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 2,
+  "label": "accident",
+  "start": 4.2,
+  "end": 7.11,
+  "actors": [
+   1655,
+   1656
+  ],
+  "sheet": "sheets/C3896-2_002_accident_4.2-7.1.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 3,
+  "label": "jaywalking",
+  "start": 6.51,
+  "end": 11.31,
+  "actors": [
+   2,
+   4,
+   6,
+   14
+  ],
+  "sheet": "sheets/C3896-2_003_jaywalking_6.5-11.3.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 4,
+  "label": "wrong_way",
+  "start": 6.91,
+  "end": 10.71,
+  "actors": [
+   1658
+  ],
+  "sheet": "sheets/C3896-2_004_wrong_way_6.9-10.7.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 5,
+  "label": "illegal_u_turn",
+  "start": 9.91,
+  "end": 10.71,
+  "actors": [
+   1627
+  ],
+  "sheet": "sheets/C3896-2_005_illegal_u_turn_9.9-10.7.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 6,
+  "label": "wrong_way",
+  "start": 13.21,
+  "end": 15.42,
+  "actors": [
+   1685
+  ],
+  "sheet": "sheets/C3896-2_006_wrong_way_13.2-15.4.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 7,
+  "label": "failure_to_yield",
+  "start": 13.61,
+  "end": 20.12,
+  "actors": [
+   1,
+   6,
+   1655,
+   1656,
+   1661,
+   1666,
+   1667,
+   1688,
+   1692,
+   1693
+  ],
+  "sheet": "sheets/C3896-2_007_failure_to_yield_13.6-20.1.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 8,
+  "label": "jaywalking",
+  "start": 22.22,
+  "end": 26.23,
+  "actors": [
+   1
+  ],
+  "sheet": "sheets/C3896-2_008_jaywalking_22.2-26.2.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 9,
+  "label": "illegal_u_turn",
+  "start": 31.13,
+  "end": 34.63,
+  "actors": [
+   1704
+  ],
+  "sheet": "sheets/C3896-2_009_illegal_u_turn_31.1-34.6.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 10,
+  "label": "accident",
+  "start": 38.34,
+  "end": 40.34,
+  "actors": [
+   1620,
+   1626
+  ],
+  "sheet": "sheets/C3896-2_010_accident_38.3-40.3.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 11,
+  "label": "illegal_u_turn",
+  "start": 44.74,
+  "end": 58.46,
+  "actors": [
+   1652
+  ],
+  "sheet": "sheets/C3896-2_011_illegal_u_turn_44.7-58.5.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 12,
+  "label": "failure_to_yield",
+  "start": 45.35,
+  "end": 49.85,
+  "actors": [
+   126,
+   2307
+  ],
+  "sheet": "sheets/C3896-2_012_failure_to_yield_45.4-49.9.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 13,
+  "label": "accident",
+  "start": 45.65,
+  "end": 46.65,
+  "actors": [
+   1636,
+   1652
+  ],
+  "sheet": "sheets/C3896-2_013_accident_45.6-46.6.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 14,
+  "label": "wrong_way",
+  "start": 47.25,
+  "end": 49.85,
+  "actors": [
+   2307
+  ],
+  "sheet": "sheets/C3896-2_014_wrong_way_47.2-49.9.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 15,
+  "label": "failure_to_yield",
+  "start": 54.15,
+  "end": 54.75,
+  "actors": [
+   169,
+   1654
+  ],
+  "sheet": "sheets/C3896-2_015_failure_to_yield_54.1-54.8.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 16,
+  "label": "jaywalking",
+  "start": 62.36,
+  "end": 66.87,
+  "actors": [
+   21
+  ],
+  "sheet": "sheets/C3896-2_016_jaywalking_62.4-66.9.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 17,
+  "label": "jaywalking",
+  "start": 68.87,
+  "end": 72.87,
+  "actors": [
+   248
+  ],
+  "sheet": "sheets/C3896-2_017_jaywalking_68.9-72.9.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 18,
+  "label": "failure_to_yield",
+  "start": 71.67,
+  "end": 72.87,
+  "actors": [
+   244,
+   1636
+  ],
+  "sheet": "sheets/C3896-2_018_failure_to_yield_71.7-72.9.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 19,
+  "label": "failure_to_yield",
+  "start": 79.58,
+  "end": 80.18,
+  "actors": [
+   105,
+   1767
+  ],
+  "sheet": "sheets/C3896-2_019_failure_to_yield_79.6-80.2.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 20,
+  "label": "failure_to_yield",
+  "start": 80.98,
+  "end": 81.78,
+  "actors": [
+   244,
+   1774
+  ],
+  "sheet": "sheets/C3896-2_020_failure_to_yield_81.0-81.8.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 21,
+  "label": "accident",
+  "start": 82.38,
+  "end": 83.38,
+  "actors": [
+   1775,
+   1776
+  ],
+  "sheet": "sheets/C3896-2_021_accident_82.4-83.4.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 22,
+  "label": "accident",
+  "start": 84.38,
+  "end": 86.19,
+  "actors": [
+   1775,
+   1776,
+   1778
+  ],
+  "sheet": "sheets/C3896-2_022_accident_84.4-86.2.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 23,
+  "label": "jaywalking",
+  "start": 88.89,
+  "end": 91.69,
+  "actors": [
+   316,
+   322,
+   332
+  ],
+  "sheet": "sheets/C3896-2_023_jaywalking_88.9-91.7.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 24,
+  "label": "wrong_way",
+  "start": 93.29,
+  "end": 96.2,
+  "actors": [
+   1795
+  ],
+  "sheet": "sheets/C3896-2_024_wrong_way_93.3-96.2.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 25,
+  "label": "failure_to_yield",
+  "start": 93.39,
+  "end": 97.5,
+  "actors": [
+   105,
+   332,
+   1775,
+   1776,
+   1778
+  ],
+  "sheet": "sheets/C3896-2_025_failure_to_yield_93.4-97.5.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 26,
+  "label": "jaywalking",
+  "start": 95.6,
+  "end": 98.1,
+  "actors": [
+   303,
+   316
+  ],
+  "sheet": "sheets/C3896-2_026_jaywalking_95.6-98.1.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 27,
+  "label": "failure_to_yield",
+  "start": 102.2,
+  "end": 103.4,
+  "actors": [
+   382,
+   1805,
+   1807
+  ],
+  "sheet": "sheets/C3896-2_027_failure_to_yield_102.2-103.4.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 28,
+  "label": "failure_to_yield",
+  "start": 104.3,
+  "end": 105.0,
+  "actors": [
+   382,
+   1808
+  ],
+  "sheet": "sheets/C3896-2_028_failure_to_yield_104.3-105.0.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 29,
+  "label": "jaywalking",
+  "start": 104.3,
+  "end": 121.62,
+  "actors": [
+   416
+  ],
+  "sheet": "sheets/C3896-2_029_jaywalking_104.3-121.6.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 30,
+  "label": "failure_to_yield",
+  "start": 105.91,
+  "end": 106.71,
+  "actors": [
+   382,
+   1809,
+   1812
+  ],
+  "sheet": "sheets/C3896-2_030_failure_to_yield_105.9-106.7.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 31,
+  "label": "failure_to_yield",
+  "start": 107.71,
+  "end": 108.61,
+  "actors": [
+   382,
+   1816
+  ],
+  "sheet": "sheets/C3896-2_031_failure_to_yield_107.7-108.6.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 32,
+  "label": "failure_to_yield",
+  "start": 109.31,
+  "end": 115.32,
+  "actors": [
+   382,
+   431,
+   1761,
+   1822,
+   1825,
+   1834,
+   1836,
+   2309
+  ],
+  "sheet": "sheets/C3896-2_032_failure_to_yield_109.3-115.3.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 33,
+  "label": "failure_to_yield",
+  "start": 123.62,
+  "end": 124.12,
+  "actors": [
+   382,
+   1870
+  ],
+  "sheet": "sheets/C3896-2_033_failure_to_yield_123.6-124.1.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 34,
+  "label": "jaywalking",
+  "start": 123.92,
+  "end": 126.13,
+  "actors": [
+   444
+  ],
+  "sheet": "sheets/C3896-2_034_jaywalking_123.9-126.1.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 35,
+  "label": "failure_to_yield",
+  "start": 124.82,
+  "end": 125.12,
+  "actors": [
+   382,
+   1874
+  ],
+  "sheet": "sheets/C3896-2_035_failure_to_yield_124.8-125.1.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 36,
+  "label": "failure_to_yield",
+  "start": 126.33,
+  "end": 126.73,
+  "actors": [
+   382,
+   1880
+  ],
+  "sheet": "sheets/C3896-2_036_failure_to_yield_126.3-126.7.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 37,
+  "label": "failure_to_yield",
+  "start": 128.03,
+  "end": 128.83,
+  "actors": [
+   380,
+   1877,
+   1883
+  ],
+  "sheet": "sheets/C3896-2_037_failure_to_yield_128.0-128.8.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 38,
+  "label": "jaywalking",
+  "start": 131.93,
+  "end": 143.54,
+  "actors": [
+   436,
+   535,
+   558
+  ],
+  "sheet": "sheets/C3896-2_038_jaywalking_131.9-143.5.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 39,
+  "label": "failure_to_yield",
+  "start": 135.03,
+  "end": 135.64,
+  "actors": [
+   461,
+   1896,
+   1898
+  ],
+  "sheet": "sheets/C3896-2_039_failure_to_yield_135.0-135.6.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 40,
+  "label": "failure_to_yield",
+  "start": 136.54,
+  "end": 137.74,
+  "actors": [
+   380,
+   461,
+   1899,
+   1900
+  ],
+  "sheet": "sheets/C3896-2_040_failure_to_yield_136.5-137.7.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 41,
+  "label": "illegal_u_turn",
+  "start": 137.14,
+  "end": 155.36,
+  "actors": [
+   1891
+  ],
+  "sheet": "sheets/C3896-2_041_illegal_u_turn_137.1-155.4.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 42,
+  "label": "failure_to_yield",
+  "start": 139.34,
+  "end": 139.84,
+  "actors": [
+   461,
+   1907
+  ],
+  "sheet": "sheets/C3896-2_042_failure_to_yield_139.3-139.8.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 43,
+  "label": "failure_to_yield",
+  "start": 142.74,
+  "end": 143.24,
+  "actors": [
+   461,
+   1913
+  ],
+  "sheet": "sheets/C3896-2_043_failure_to_yield_142.7-143.2.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 44,
+  "label": "failure_to_yield",
+  "start": 144.14,
+  "end": 144.64,
+  "actors": [
+   380,
+   1918
+  ],
+  "sheet": "sheets/C3896-2_044_failure_to_yield_144.1-144.6.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 45,
+  "label": "jaywalking",
+  "start": 145.95,
+  "end": 147.95,
+  "actors": [
+   414
+  ],
+  "sheet": "sheets/C3896-2_045_jaywalking_145.9-147.9.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 46,
+  "label": "jaywalking",
+  "start": 154.75,
+  "end": 157.36,
+  "actors": [
+   416,
+   461,
+   486,
+   610
+  ],
+  "sheet": "sheets/C3896-2_046_jaywalking_154.8-157.4.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 47,
+  "label": "failure_to_yield",
+  "start": 155.76,
+  "end": 158.76,
+  "actors": [
+   496,
+   592,
+   1891,
+   1924,
+   1926
+  ],
+  "sheet": "sheets/C3896-2_047_failure_to_yield_155.8-158.8.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 48,
+  "label": "jaywalking",
+  "start": 158.16,
+  "end": 159.86,
+  "actors": [
+   592
+  ],
+  "sheet": "sheets/C3896-2_048_jaywalking_158.2-159.9.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 49,
+  "label": "failure_to_yield",
+  "start": 159.96,
+  "end": 160.86,
+  "actors": [
+   496,
+   1925
+  ],
+  "sheet": "sheets/C3896-2_049_failure_to_yield_160.0-160.9.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 50,
+  "label": "failure_to_yield",
+  "start": 161.36,
+  "end": 163.16,
+  "actors": [
+   496,
+   612,
+   1931,
+   1937
+  ],
+  "sheet": "sheets/C3896-2_050_failure_to_yield_161.4-163.2.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 51,
+  "label": "jaywalking",
+  "start": 162.66,
+  "end": 172.17,
+  "actors": [
+   461,
+   486,
+   610
+  ],
+  "sheet": "sheets/C3896-2_051_jaywalking_162.7-172.2.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 52,
+  "label": "failure_to_yield",
+  "start": 164.06,
+  "end": 165.57,
+  "actors": [
+   496,
+   1940,
+   1942
+  ],
+  "sheet": "sheets/C3896-2_052_failure_to_yield_164.1-165.6.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 53,
+  "label": "failure_to_yield",
+  "start": 166.77,
+  "end": 168.17,
+  "actors": [
+   635,
+   1943,
+   1945
+  ],
+  "sheet": "sheets/C3896-2_053_failure_to_yield_166.8-168.2.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 54,
+  "label": "failure_to_yield",
+  "start": 168.97,
+  "end": 171.97,
+  "actors": [
+   612,
+   1952,
+   1953,
+   1955
+  ],
+  "sheet": "sheets/C3896-2_054_failure_to_yield_169.0-172.0.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 55,
+  "label": "failure_to_yield",
+  "start": 179.88,
+  "end": 180.18,
+  "actors": [
+   322,
+   1968
+  ],
+  "sheet": "sheets/C3896-2_055_failure_to_yield_179.9-180.2.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 56,
+  "label": "failure_to_yield",
+  "start": 188.99,
+  "end": 190.29,
+  "actors": [
+   612,
+   1986,
+   1989
+  ],
+  "sheet": "sheets/C3896-2_056_failure_to_yield_189.0-190.3.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 57,
+  "label": "accident",
+  "start": 191.49,
+  "end": 194.39,
+  "actors": [
+   610,
+   1975
+  ],
+  "sheet": "sheets/C3896-2_057_accident_191.5-194.4.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 58,
+  "label": "failure_to_yield",
+  "start": 193.49,
+  "end": 194.09,
+  "actors": [
+   612,
+   1992,
+   1997
+  ],
+  "sheet": "sheets/C3896-2_058_failure_to_yield_193.5-194.1.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 59,
+  "label": "failure_to_yield",
+  "start": 194.89,
+  "end": 196.2,
+  "actors": [
+   612,
+   1982,
+   2001
+  ],
+  "sheet": "sheets/C3896-2_059_failure_to_yield_194.9-196.2.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 60,
+  "label": "failure_to_yield",
+  "start": 198.8,
+  "end": 199.2,
+  "actors": [
+   612,
+   2016
+  ],
+  "sheet": "sheets/C3896-2_060_failure_to_yield_198.8-199.2.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 61,
+  "label": "jaywalking",
+  "start": 198.8,
+  "end": 203.9,
+  "actors": [
+   866
+  ],
+  "sheet": "sheets/C3896-2_061_jaywalking_198.8-203.9.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 62,
+  "label": "failure_to_yield",
+  "start": 200.3,
+  "end": 200.8,
+  "actors": [
+   612,
+   2021
+  ],
+  "sheet": "sheets/C3896-2_062_failure_to_yield_200.3-200.8.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 63,
+  "label": "failure_to_yield",
+  "start": 201.6,
+  "end": 203.7,
+  "actors": [
+   612,
+   2024,
+   2026,
+   2027
+  ],
+  "sheet": "sheets/C3896-2_063_failure_to_yield_201.6-203.7.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 64,
+  "label": "failure_to_yield",
+  "start": 204.5,
+  "end": 205.0,
+  "actors": [
+   612,
+   2030
+  ],
+  "sheet": "sheets/C3896-2_064_failure_to_yield_204.5-205.0.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 65,
+  "label": "failure_to_yield",
+  "start": 206.71,
+  "end": 207.21,
+  "actors": [
+   612,
+   2038
+  ],
+  "sheet": "sheets/C3896-2_065_failure_to_yield_206.7-207.2.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 66,
+  "label": "illegal_u_turn",
+  "start": 207.21,
+  "end": 221.62,
+  "actors": [
+   2039
+  ],
+  "sheet": "sheets/C3896-2_066_illegal_u_turn_207.2-221.6.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 67,
+  "label": "jaywalking",
+  "start": 207.61,
+  "end": 214.41,
+  "actors": [
+   973,
+   983
+  ],
+  "sheet": "sheets/C3896-2_067_jaywalking_207.6-214.4.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 68,
+  "label": "failure_to_yield",
+  "start": 208.21,
+  "end": 209.01,
+  "actors": [
+   612,
+   2041,
+   2042
+  ],
+  "sheet": "sheets/C3896-2_068_failure_to_yield_208.2-209.0.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 69,
+  "label": "failure_to_yield",
+  "start": 209.61,
+  "end": 211.61,
+  "actors": [
+   612,
+   2043,
+   2045,
+   2047
+  ],
+  "sheet": "sheets/C3896-2_069_failure_to_yield_209.6-211.6.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 70,
+  "label": "failure_to_yield",
+  "start": 212.71,
+  "end": 213.11,
+  "actors": [
+   612,
+   2051
+  ],
+  "sheet": "sheets/C3896-2_070_failure_to_yield_212.7-213.1.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 71,
+  "label": "failure_to_yield",
+  "start": 213.91,
+  "end": 214.31,
+  "actors": [
+   612,
+   2052
+  ],
+  "sheet": "sheets/C3896-2_071_failure_to_yield_213.9-214.3.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 72,
+  "label": "stop_line",
+  "start": 215.11,
+  "end": 252.05,
+  "actors": [
+   2015
+  ],
+  "sheet": "sheets/C3896-2_072_stop_line_215.1-252.1.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 73,
+  "label": "failure_to_yield",
+  "start": 215.32,
+  "end": 215.82,
+  "actors": [
+   612,
+   2053
+  ],
+  "sheet": "sheets/C3896-2_073_failure_to_yield_215.3-215.8.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 74,
+  "label": "failure_to_yield",
+  "start": 216.82,
+  "end": 217.42,
+  "actors": [
+   612,
+   2057
+  ],
+  "sheet": "sheets/C3896-2_074_failure_to_yield_216.8-217.4.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 75,
+  "label": "jaywalking",
+  "start": 218.02,
+  "end": 221.82,
+  "actors": [
+   1017
+  ],
+  "sheet": "sheets/C3896-2_075_jaywalking_218.0-221.8.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 76,
+  "label": "failure_to_yield",
+  "start": 218.22,
+  "end": 218.62,
+  "actors": [
+   612,
+   2061
+  ],
+  "sheet": "sheets/C3896-2_076_failure_to_yield_218.2-218.6.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 77,
+  "label": "failure_to_yield",
+  "start": 220.72,
+  "end": 221.42,
+  "actors": [
+   1040,
+   1990
+  ],
+  "sheet": "sheets/C3896-2_077_failure_to_yield_220.7-221.4.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 78,
+  "label": "failure_to_yield",
+  "start": 223.32,
+  "end": 223.62,
+  "actors": [
+   1004,
+   2039
+  ],
+  "sheet": "sheets/C3896-2_078_failure_to_yield_223.3-223.6.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 79,
+  "label": "jaywalking",
+  "start": 227.13,
+  "end": 260.26,
+  "actors": [
+   610,
+   926,
+   927,
+   984,
+   1017,
+   1019,
+   1034,
+   1040,
+   1062,
+   1063,
+   1069,
+   1079,
+   1088,
+   1091,
+   1120,
+   1126,
+   1246
+  ],
+  "sheet": "sheets/C3896-2_079_jaywalking_227.1-260.3.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 80,
+  "label": "accident",
+  "start": 227.53,
+  "end": 229.13,
+  "actors": [
+   2044,
+   2070,
+   2071
+  ],
+  "sheet": "sheets/C3896-2_080_accident_227.5-229.1.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 81,
+  "label": "failure_to_yield",
+  "start": 288.39,
+  "end": 289.49,
+  "actors": [
+   1335,
+   2176
+  ],
+  "sheet": "sheets/C3896-2_081_failure_to_yield_288.4-289.5.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 82,
+  "label": "failure_to_yield",
+  "start": 290.99,
+  "end": 291.39,
+  "actors": [
+   1352,
+   2191
+  ],
+  "sheet": "sheets/C3896-2_082_failure_to_yield_291.0-291.4.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 83,
+  "label": "failure_to_yield",
+  "start": 292.19,
+  "end": 292.99,
+  "actors": [
+   1352,
+   2193,
+   2194
+  ],
+  "sheet": "sheets/C3896-2_083_failure_to_yield_292.2-293.0.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 84,
+  "label": "failure_to_yield",
+  "start": 293.59,
+  "end": 293.99,
+  "actors": [
+   1352,
+   2195
+  ],
+  "sheet": "sheets/C3896-2_084_failure_to_yield_293.6-294.0.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 85,
+  "label": "accident",
+  "start": 293.79,
+  "end": 294.79,
+  "actors": [
+   2182,
+   2192
+  ],
+  "sheet": "sheets/C3896-2_085_accident_293.8-294.8.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 86,
+  "label": "failure_to_yield",
+  "start": 304.4,
+  "end": 305.81,
+  "actors": [
+   1352,
+   2213,
+   2215
+  ],
+  "sheet": "sheets/C3896-2_086_failure_to_yield_304.4-305.8.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 87,
+  "label": "jaywalking",
+  "start": 306.31,
+  "end": 308.21,
+  "actors": [
+   1352,
+   1353
+  ],
+  "sheet": "sheets/C3896-2_087_jaywalking_306.3-308.2.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 88,
+  "label": "accident",
+  "start": 320.92,
+  "end": 322.52,
+  "actors": [
+   1383,
+   2135
+  ],
+  "sheet": "sheets/C3896-2_088_accident_320.9-322.5.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 89,
+  "label": "accident",
+  "start": 327.13,
+  "end": 328.13,
+  "actors": [
+   1564,
+   2135
+  ],
+  "sheet": "sheets/C3896-2_089_accident_327.1-328.1.jpg"
+ },
+ {
+  "video": "C3896-2.MP4",
+  "n": 90,
+  "label": "accident",
+  "start": 329.93,
+  "end": 331.33,
+  "actors": [
+   2257,
+   2274
+  ],
+  "sheet": "sheets/C3896-2_090_accident_329.9-331.3.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 1,
+  "label": "jaywalking",
+  "start": 0.0,
+  "end": 23.62,
+  "actors": [
+   1,
+   4,
+   6,
+   9,
+   11,
+   13,
+   14,
+   19,
+   21,
+   25,
+   30,
+   34,
+   45,
+   115
+  ],
+  "sheet": "sheets/C3897_001_jaywalking_0.0-23.6.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 2,
+  "label": "stopped_vehicle",
+  "start": 0.0,
+  "end": 102.0,
+  "actors": [
+   1304,
+   1305,
+   1306,
+   1307,
+   1310,
+   1311,
+   1312,
+   1313,
+   1314,
+   1315,
+   1316,
+   1318,
+   1320,
+   1321,
+   1322,
+   1327,
+   1329,
+   1334,
+   1339,
+   1342,
+   1343,
+   1344,
+   1348,
+   1352,
+   1358,
+   1364,
+   1369,
+   1379,
+   1382,
+   1392,
+   1402,
+   1414,
+   1423,
+   1448,
+   1453,
+   1461,
+   1471,
+   1476,
+   1477,
+   1484,
+   1494
+  ],
+  "sheet": "sheets/C3897_002_stopped_vehicle_0.0-102.0.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 3,
+  "label": "illegal_u_turn",
+  "start": 1.2,
+  "end": 5.21,
+  "actors": [
+   1328
+  ],
+  "sheet": "sheets/C3897_003_illegal_u_turn_1.2-5.2.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 4,
+  "label": "accident",
+  "start": 16.22,
+  "end": 17.22,
+  "actors": [
+   1343,
+   1371
+  ],
+  "sheet": "sheets/C3897_004_accident_16.2-17.2.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 5,
+  "label": "jaywalking",
+  "start": 31.03,
+  "end": 32.63,
+  "actors": [
+   85
+  ],
+  "sheet": "sheets/C3897_005_jaywalking_31.0-32.6.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 6,
+  "label": "accident",
+  "start": 31.33,
+  "end": 32.33,
+  "actors": [
+   64,
+   1327
+  ],
+  "sheet": "sheets/C3897_006_accident_31.3-32.3.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 7,
+  "label": "failure_to_yield",
+  "start": 38.94,
+  "end": 39.64,
+  "actors": [
+   126,
+   1398,
+   1400
+  ],
+  "sheet": "sheets/C3897_007_failure_to_yield_38.9-39.6.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 8,
+  "label": "stop_line",
+  "start": 56.26,
+  "end": 94.69,
+  "actors": [
+   1431
+  ],
+  "sheet": "sheets/C3897_008_stop_line_56.3-94.7.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 9,
+  "label": "failure_to_yield",
+  "start": 58.66,
+  "end": 60.56,
+  "actors": [
+   134,
+   173,
+   196,
+   1425,
+   1439,
+   1452
+  ],
+  "sheet": "sheets/C3897_009_failure_to_yield_58.7-60.6.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 10,
+  "label": "failure_to_yield",
+  "start": 61.06,
+  "end": 62.36,
+  "actors": [
+   136,
+   180,
+   1455,
+   1456
+  ],
+  "sheet": "sheets/C3897_010_failure_to_yield_61.1-62.4.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 11,
+  "label": "failure_to_yield",
+  "start": 63.16,
+  "end": 63.66,
+  "actors": [
+   180,
+   1459
+  ],
+  "sheet": "sheets/C3897_011_failure_to_yield_63.2-63.7.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 12,
+  "label": "jaywalking",
+  "start": 64.86,
+  "end": 67.27,
+  "actors": [
+   137
+  ],
+  "sheet": "sheets/C3897_012_jaywalking_64.9-67.3.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 13,
+  "label": "failure_to_yield",
+  "start": 64.96,
+  "end": 65.97,
+  "actors": [
+   64,
+   1315
+  ],
+  "sheet": "sheets/C3897_013_failure_to_yield_65.0-66.0.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 14,
+  "label": "failure_to_yield",
+  "start": 66.57,
+  "end": 68.07,
+  "actors": [
+   136,
+   1379
+  ],
+  "sheet": "sheets/C3897_014_failure_to_yield_66.6-68.1.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 15,
+  "label": "jaywalking",
+  "start": 72.37,
+  "end": 90.39,
+  "actors": [
+   64,
+   134,
+   136,
+   148,
+   158,
+   167,
+   196,
+   203,
+   230,
+   234,
+   255,
+   258,
+   263
+  ],
+  "sheet": "sheets/C3897_015_jaywalking_72.4-90.4.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 16,
+  "label": "illegal_u_turn",
+  "start": 78.78,
+  "end": 86.99,
+  "actors": [
+   1314
+  ],
+  "sheet": "sheets/C3897_016_illegal_u_turn_78.8-87.0.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 17,
+  "label": "accident",
+  "start": 79.18,
+  "end": 80.38,
+  "actors": [
+   1471,
+   1476
+  ],
+  "sheet": "sheets/C3897_017_accident_79.2-80.4.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 18,
+  "label": "failure_to_yield",
+  "start": 82.68,
+  "end": 86.69,
+  "actors": [
+   148,
+   1470
+  ],
+  "sheet": "sheets/C3897_018_failure_to_yield_82.7-86.7.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 19,
+  "label": "failure_to_yield",
+  "start": 93.19,
+  "end": 94.09,
+  "actors": [
+   64,
+   1504
+  ],
+  "sheet": "sheets/C3897_019_failure_to_yield_93.2-94.1.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 20,
+  "label": "failure_to_yield",
+  "start": 106.51,
+  "end": 107.61,
+  "actors": [
+   316,
+   1512
+  ],
+  "sheet": "sheets/C3897_020_failure_to_yield_106.5-107.6.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 21,
+  "label": "failure_to_yield",
+  "start": 109.41,
+  "end": 110.21,
+  "actors": [
+   316,
+   1525
+  ],
+  "sheet": "sheets/C3897_021_failure_to_yield_109.4-110.2.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 22,
+  "label": "illegal_u_turn",
+  "start": 109.41,
+  "end": 124.92,
+  "actors": [
+   1527
+  ],
+  "sheet": "sheets/C3897_022_illegal_u_turn_109.4-124.9.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 23,
+  "label": "stopped_vehicle",
+  "start": 111.31,
+  "end": 190.89,
+  "actors": [
+   1515,
+   1527,
+   1530,
+   1575,
+   1583,
+   1585,
+   1587,
+   1594,
+   1601,
+   1603,
+   1610,
+   1614,
+   1616,
+   1622,
+   1642
+  ],
+  "sheet": "sheets/C3897_023_stopped_vehicle_111.3-190.9.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 24,
+  "label": "failure_to_yield",
+  "start": 124.72,
+  "end": 128.33,
+  "actors": [
+   325,
+   1574,
+   1585,
+   1590
+  ],
+  "sheet": "sheets/C3897_024_failure_to_yield_124.7-128.3.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 25,
+  "label": "failure_to_yield",
+  "start": 129.83,
+  "end": 138.94,
+  "actors": [
+   316,
+   325,
+   1579,
+   1594
+  ],
+  "sheet": "sheets/C3897_025_failure_to_yield_129.8-138.9.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 26,
+  "label": "illegal_u_turn",
+  "start": 131.33,
+  "end": 138.94,
+  "actors": [
+   1583
+  ],
+  "sheet": "sheets/C3897_026_illegal_u_turn_131.3-138.9.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 27,
+  "label": "jaywalking",
+  "start": 132.03,
+  "end": 138.94,
+  "actors": [
+   17,
+   452
+  ],
+  "sheet": "sheets/C3897_027_jaywalking_132.0-138.9.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 28,
+  "label": "red_light",
+  "start": 132.54,
+  "end": 137.64,
+  "actors": [
+   1602
+  ],
+  "sheet": "sheets/C3897_028_red_light_132.5-137.6.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 29,
+  "label": "jaywalking",
+  "start": 140.94,
+  "end": 159.46,
+  "actors": [
+   17,
+   158,
+   316,
+   325,
+   429,
+   443,
+   452,
+   453,
+   462,
+   475,
+   522
+  ],
+  "sheet": "sheets/C3897_029_jaywalking_140.9-159.5.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 30,
+  "label": "failure_to_yield",
+  "start": 156.66,
+  "end": 160.26,
+  "actors": [
+   330,
+   429,
+   1635,
+   1638,
+   1639
+  ],
+  "sheet": "sheets/C3897_030_failure_to_yield_156.7-160.3.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 31,
+  "label": "failure_to_yield",
+  "start": 161.06,
+  "end": 162.26,
+  "actors": [
+   429,
+   1644,
+   1646
+  ],
+  "sheet": "sheets/C3897_031_failure_to_yield_161.1-162.3.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 32,
+  "label": "jaywalking",
+  "start": 167.67,
+  "end": 171.57,
+  "actors": [
+   325
+  ],
+  "sheet": "sheets/C3897_032_jaywalking_167.7-171.6.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 33,
+  "label": "illegal_u_turn",
+  "start": 171.77,
+  "end": 173.47,
+  "actors": [
+   1909
+  ],
+  "sheet": "sheets/C3897_033_illegal_u_turn_171.8-173.5.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 34,
+  "label": "failure_to_yield",
+  "start": 174.07,
+  "end": 183.28,
+  "actors": [
+   336,
+   443,
+   1575,
+   1587,
+   1601,
+   1603,
+   1610,
+   1614,
+   1616,
+   1622,
+   1642,
+   1667,
+   1914
+  ],
+  "sheet": "sheets/C3897_034_failure_to_yield_174.1-183.3.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 35,
+  "label": "failure_to_yield",
+  "start": 184.98,
+  "end": 185.49,
+  "actors": [
+   443,
+   1672
+  ],
+  "sheet": "sheets/C3897_035_failure_to_yield_185.0-185.5.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 36,
+  "label": "failure_to_yield",
+  "start": 187.29,
+  "end": 188.19,
+  "actors": [
+   550,
+   1679
+  ],
+  "sheet": "sheets/C3897_036_failure_to_yield_187.3-188.2.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 37,
+  "label": "failure_to_yield",
+  "start": 188.79,
+  "end": 189.59,
+  "actors": [
+   443,
+   550,
+   1676,
+   1682,
+   1683
+  ],
+  "sheet": "sheets/C3897_037_failure_to_yield_188.8-189.6.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 38,
+  "label": "failure_to_yield",
+  "start": 190.29,
+  "end": 193.79,
+  "actors": [
+   443,
+   550,
+   674,
+   1680,
+   1681,
+   1686,
+   1687,
+   1689,
+   1916
+  ],
+  "sheet": "sheets/C3897_038_failure_to_yield_190.3-193.8.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 39,
+  "label": "stopped_vehicle",
+  "start": 191.59,
+  "end": 317.72,
+  "actors": [
+   1642,
+   1692,
+   1707,
+   1710,
+   1711,
+   1726,
+   1728,
+   1730,
+   1732,
+   1734,
+   1735,
+   1739,
+   1741,
+   1749,
+   1750,
+   1754,
+   1757,
+   1758,
+   1759,
+   1771,
+   1785,
+   1787,
+   1843,
+   1844,
+   1850,
+   1852,
+   1853,
+   1854,
+   1855,
+   1861,
+   1868
+  ],
+  "sheet": "sheets/C3897_039_stopped_vehicle_191.6-317.7.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 40,
+  "label": "failure_to_yield",
+  "start": 194.49,
+  "end": 198.1,
+  "actors": [
+   443,
+   550,
+   1685,
+   1688,
+   1690,
+   1693,
+   1698,
+   1699
+  ],
+  "sheet": "sheets/C3897_040_failure_to_yield_194.5-198.1.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 41,
+  "label": "failure_to_yield",
+  "start": 198.6,
+  "end": 199.0,
+  "actors": [
+   443,
+   1696
+  ],
+  "sheet": "sheets/C3897_041_failure_to_yield_198.6-199.0.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 42,
+  "label": "failure_to_yield",
+  "start": 202.2,
+  "end": 202.6,
+  "actors": [
+   443,
+   1704
+  ],
+  "sheet": "sheets/C3897_042_failure_to_yield_202.2-202.6.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 43,
+  "label": "failure_to_yield",
+  "start": 203.6,
+  "end": 205.41,
+  "actors": [
+   443,
+   550,
+   1706,
+   1708,
+   1709
+  ],
+  "sheet": "sheets/C3897_043_failure_to_yield_203.6-205.4.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 44,
+  "label": "illegal_u_turn",
+  "start": 205.61,
+  "end": 215.01,
+  "actors": [
+   1642,
+   1690
+  ],
+  "sheet": "sheets/C3897_044_illegal_u_turn_205.6-215.0.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 45,
+  "label": "failure_to_yield",
+  "start": 207.61,
+  "end": 208.51,
+  "actors": [
+   550,
+   1642
+  ],
+  "sheet": "sheets/C3897_045_failure_to_yield_207.6-208.5.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 46,
+  "label": "failure_to_yield",
+  "start": 210.31,
+  "end": 210.61,
+  "actors": [
+   550,
+   1713
+  ],
+  "sheet": "sheets/C3897_046_failure_to_yield_210.3-210.6.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 47,
+  "label": "failure_to_yield",
+  "start": 212.21,
+  "end": 213.01,
+  "actors": [
+   550,
+   1721,
+   1724
+  ],
+  "sheet": "sheets/C3897_047_failure_to_yield_212.2-213.0.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 48,
+  "label": "failure_to_yield",
+  "start": 214.31,
+  "end": 216.52,
+  "actors": [
+   550,
+   691,
+   1690,
+   1715,
+   1725
+  ],
+  "sheet": "sheets/C3897_048_failure_to_yield_214.3-216.5.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 49,
+  "label": "jaywalking",
+  "start": 215.92,
+  "end": 222.42,
+  "actors": [
+   682,
+   699,
+   765
+  ],
+  "sheet": "sheets/C3897_049_jaywalking_215.9-222.4.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 50,
+  "label": "failure_to_yield",
+  "start": 222.42,
+  "end": 223.02,
+  "actors": [
+   550,
+   1499
+  ],
+  "sheet": "sheets/C3897_050_failure_to_yield_222.4-223.0.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 51,
+  "label": "jaywalking",
+  "start": 225.83,
+  "end": 244.64,
+  "actors": [
+   443,
+   550,
+   662,
+   783,
+   828,
+   863,
+   882,
+   900
+  ],
+  "sheet": "sheets/C3897_051_jaywalking_225.8-244.6.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 52,
+  "label": "illegal_u_turn",
+  "start": 237.94,
+  "end": 242.94,
+  "actors": [
+   1761
+  ],
+  "sheet": "sheets/C3897_052_illegal_u_turn_237.9-242.9.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 53,
+  "label": "failure_to_yield",
+  "start": 238.34,
+  "end": 239.94,
+  "actors": [
+   949,
+   1748,
+   1773
+  ],
+  "sheet": "sheets/C3897_053_failure_to_yield_238.3-239.9.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 54,
+  "label": "failure_to_yield",
+  "start": 240.54,
+  "end": 244.04,
+  "actors": [
+   949,
+   1775,
+   1779,
+   1783
+  ],
+  "sheet": "sheets/C3897_054_failure_to_yield_240.5-244.0.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 55,
+  "label": "failure_to_yield",
+  "start": 245.55,
+  "end": 260.66,
+  "actors": [
+   662,
+   863,
+   949,
+   1710,
+   1711,
+   1726,
+   1728,
+   1732,
+   1735,
+   1739,
+   1741,
+   1749,
+   1750,
+   1754,
+   1756,
+   1757,
+   1758,
+   1759,
+   1770,
+   1781,
+   1787,
+   1789,
+   1797,
+   1804,
+   1805,
+   1807,
+   1808,
+   1809
+  ],
+  "sheet": "sheets/C3897_055_failure_to_yield_245.6-260.7.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 56,
+  "label": "failure_to_yield",
+  "start": 261.36,
+  "end": 263.06,
+  "actors": [
+   863,
+   949,
+   1802,
+   1812,
+   1814,
+   1815
+  ],
+  "sheet": "sheets/C3897_056_failure_to_yield_261.4-263.1.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 57,
+  "label": "failure_to_yield",
+  "start": 264.06,
+  "end": 264.46,
+  "actors": [
+   949,
+   1817
+  ],
+  "sheet": "sheets/C3897_057_failure_to_yield_264.1-264.5.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 58,
+  "label": "failure_to_yield",
+  "start": 265.26,
+  "end": 266.27,
+  "actors": [
+   949,
+   1818,
+   1819
+  ],
+  "sheet": "sheets/C3897_058_failure_to_yield_265.3-266.3.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 59,
+  "label": "failure_to_yield",
+  "start": 267.37,
+  "end": 267.67,
+  "actors": [
+   949,
+   1822
+  ],
+  "sheet": "sheets/C3897_059_failure_to_yield_267.4-267.7.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 60,
+  "label": "failure_to_yield",
+  "start": 268.47,
+  "end": 268.87,
+  "actors": [
+   949,
+   1823
+  ],
+  "sheet": "sheets/C3897_060_failure_to_yield_268.5-268.9.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 61,
+  "label": "failure_to_yield",
+  "start": 270.17,
+  "end": 270.77,
+  "actors": [
+   949,
+   1920
+  ],
+  "sheet": "sheets/C3897_061_failure_to_yield_270.2-270.8.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 62,
+  "label": "failure_to_yield",
+  "start": 272.37,
+  "end": 273.87,
+  "actors": [
+   949,
+   1825,
+   1826,
+   1827
+  ],
+  "sheet": "sheets/C3897_062_failure_to_yield_272.4-273.9.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 63,
+  "label": "failure_to_yield",
+  "start": 276.88,
+  "end": 277.28,
+  "actors": [
+   949,
+   1831
+  ],
+  "sheet": "sheets/C3897_063_failure_to_yield_276.9-277.3.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 64,
+  "label": "failure_to_yield",
+  "start": 278.18,
+  "end": 279.28,
+  "actors": [
+   863,
+   949,
+   1829,
+   1835
+  ],
+  "sheet": "sheets/C3897_064_failure_to_yield_278.2-279.3.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 65,
+  "label": "jaywalking",
+  "start": 278.18,
+  "end": 282.28,
+  "actors": [
+   1156
+  ],
+  "sheet": "sheets/C3897_065_jaywalking_278.2-282.3.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 66,
+  "label": "failure_to_yield",
+  "start": 279.78,
+  "end": 280.48,
+  "actors": [
+   863,
+   1828
+  ],
+  "sheet": "sheets/C3897_066_failure_to_yield_279.8-280.5.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 67,
+  "label": "failure_to_yield",
+  "start": 281.18,
+  "end": 281.48,
+  "actors": [
+   949,
+   1841
+  ],
+  "sheet": "sheets/C3897_067_failure_to_yield_281.2-281.5.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 68,
+  "label": "failure_to_yield",
+  "start": 282.08,
+  "end": 282.48,
+  "actors": [
+   863,
+   1833
+  ],
+  "sheet": "sheets/C3897_068_failure_to_yield_282.1-282.5.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 69,
+  "label": "failure_to_yield",
+  "start": 283.28,
+  "end": 283.58,
+  "actors": [
+   949,
+   1847
+  ],
+  "sheet": "sheets/C3897_069_failure_to_yield_283.3-283.6.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 70,
+  "label": "failure_to_yield",
+  "start": 285.69,
+  "end": 286.39,
+  "actors": [
+   949,
+   1732
+  ],
+  "sheet": "sheets/C3897_070_failure_to_yield_285.7-286.4.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 71,
+  "label": "accident",
+  "start": 288.69,
+  "end": 289.69,
+  "actors": [
+   1844,
+   1850
+  ],
+  "sheet": "sheets/C3897_071_accident_288.7-289.7.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 72,
+  "label": "failure_to_yield",
+  "start": 289.69,
+  "end": 290.79,
+  "actors": [
+   962,
+   1853
+  ],
+  "sheet": "sheets/C3897_072_failure_to_yield_289.7-290.8.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 73,
+  "label": "jaywalking",
+  "start": 291.69,
+  "end": 314.71,
+  "actors": [
+   863,
+   882,
+   962,
+   1204,
+   1210,
+   1213,
+   1232,
+   1252,
+   1268
+  ],
+  "sheet": "sheets/C3897_073_jaywalking_291.7-314.7.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 74,
+  "label": "failure_to_yield",
+  "start": 298.5,
+  "end": 299.0,
+  "actors": [
+   962,
+   1863
+  ],
+  "sheet": "sheets/C3897_074_failure_to_yield_298.5-299.0.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 75,
+  "label": "failure_to_yield",
+  "start": 305.51,
+  "end": 307.01,
+  "actors": [
+   1201,
+   1875
+  ],
+  "sheet": "sheets/C3897_075_failure_to_yield_305.5-307.0.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 76,
+  "label": "failure_to_yield",
+  "start": 307.51,
+  "end": 309.81,
+  "actors": [
+   1201,
+   1866,
+   1885
+  ],
+  "sheet": "sheets/C3897_076_failure_to_yield_307.5-309.8.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 77,
+  "label": "accident",
+  "start": 309.81,
+  "end": 310.81,
+  "actors": [
+   1842,
+   1889
+  ],
+  "sheet": "sheets/C3897_077_accident_309.8-310.8.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 78,
+  "label": "failure_to_yield",
+  "start": 310.71,
+  "end": 312.51,
+  "actors": [
+   1268,
+   1891
+  ],
+  "sheet": "sheets/C3897_078_failure_to_yield_310.7-312.5.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 79,
+  "label": "failure_to_yield",
+  "start": 313.31,
+  "end": 315.11,
+  "actors": [
+   1268,
+   1890
+  ],
+  "sheet": "sheets/C3897_079_failure_to_yield_313.3-315.1.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 80,
+  "label": "jaywalking",
+  "start": 315.92,
+  "end": 317.72,
+  "actors": [
+   1268
+  ],
+  "sheet": "sheets/C3897_080_jaywalking_315.9-317.7.jpg"
+ },
+ {
+  "video": "C3897.MP4",
+  "n": 81,
+  "label": "failure_to_yield",
+  "start": 317.02,
+  "end": 317.32,
+  "actors": [
+   863,
+   1905
+  ],
+  "sheet": "sheets/C3897_081_failure_to_yield_317.0-317.3.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 1,
+  "label": "failure_to_yield",
+  "start": 0.0,
+  "end": 1.0,
+  "actors": [
+   51,
+   2668,
+   2675
+  ],
+  "sheet": "sheets/C3902-2_001_failure_to_yield_0.0-1.0.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 2,
+  "label": "stopped_vehicle",
+  "start": 0.0,
+  "end": 317.72,
+  "actors": [
+   2649,
+   2650,
+   2652,
+   2654,
+   2656,
+   2657,
+   2658,
+   2659,
+   2662,
+   2664,
+   2666,
+   2667,
+   2674,
+   2679,
+   2680,
+   2682,
+   2699,
+   2755,
+   2762,
+   2764,
+   2773,
+   2815,
+   2829,
+   2833,
+   2838,
+   2841,
+   2843,
+   2848,
+   2849,
+   2853,
+   2855,
+   2858,
+   2859,
+   2862,
+   2865,
+   2866,
+   2870,
+   2876,
+   2884,
+   2887,
+   2891,
+   2895,
+   2897,
+   2899,
+   2900,
+   2903,
+   2904,
+   2908,
+   2910,
+   2921,
+   2922,
+   2924,
+   2928,
+   2930,
+   2989,
+   2991,
+   2997,
+   3006,
+   3028,
+   3029,
+   3030,
+   3034,
+   3038,
+   3041,
+   3043,
+   3048,
+   3050,
+   3057,
+   3059,
+   3062,
+   3064,
+   3065,
+   3066,
+   3072,
+   3079,
+   3081,
+   3082,
+   3087,
+   3089,
+   3093,
+   3099,
+   3106,
+   3143,
+   3153,
+   3190,
+   3227,
+   3245,
+   3249,
+   3270,
+   3273,
+   3286,
+   3294,
+   3297,
+   3301,
+   3302,
+   3304,
+   3307,
+   3314,
+   3316,
+   3319,
+   3323,
+   3326,
+   3327,
+   3329,
+   3333,
+   3337,
+   3338,
+   3345,
+   3352,
+   3366,
+   3367,
+   3391,
+   3505
+  ],
+  "sheet": "sheets/C3902-2_002_stopped_vehicle_0.0-317.7.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 3,
+  "label": "accident",
+  "start": 1.6,
+  "end": 3.9,
+  "actors": [
+   2650,
+   2654,
+   2656,
+   2662,
+   2664
+  ],
+  "sheet": "sheets/C3902-2_003_accident_1.6-3.9.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 4,
+  "label": "failure_to_yield",
+  "start": 4.9,
+  "end": 6.21,
+  "actors": [
+   53,
+   2683,
+   2689
+  ],
+  "sheet": "sheets/C3902-2_004_failure_to_yield_4.9-6.2.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 5,
+  "label": "wrong_way",
+  "start": 9.41,
+  "end": 17.92,
+  "actors": [
+   3489
+  ],
+  "sheet": "sheets/C3902-2_005_wrong_way_9.4-17.9.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 6,
+  "label": "failure_to_yield",
+  "start": 12.21,
+  "end": 12.81,
+  "actors": [
+   51,
+   2695
+  ],
+  "sheet": "sheets/C3902-2_006_failure_to_yield_12.2-12.8.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 7,
+  "label": "jaywalking",
+  "start": 13.01,
+  "end": 15.02,
+  "actors": [
+   2
+  ],
+  "sheet": "sheets/C3902-2_007_jaywalking_13.0-15.0.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 8,
+  "label": "jaywalking",
+  "start": 21.82,
+  "end": 23.32,
+  "actors": [
+   51,
+   141
+  ],
+  "sheet": "sheets/C3902-2_008_jaywalking_21.8-23.3.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 9,
+  "label": "failure_to_yield",
+  "start": 22.92,
+  "end": 24.52,
+  "actors": [
+   1,
+   2696
+  ],
+  "sheet": "sheets/C3902-2_009_failure_to_yield_22.9-24.5.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 10,
+  "label": "jaywalking",
+  "start": 23.82,
+  "end": 33.63,
+  "actors": [
+   1,
+   51,
+   53,
+   59,
+   141,
+   169
+  ],
+  "sheet": "sheets/C3902-2_010_jaywalking_23.8-33.6.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 11,
+  "label": "failure_to_yield",
+  "start": 25.33,
+  "end": 39.94,
+  "actors": [
+   51,
+   59,
+   124,
+   2701,
+   2709,
+   3492
+  ],
+  "sheet": "sheets/C3902-2_011_failure_to_yield_25.3-39.9.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 12,
+  "label": "failure_to_yield",
+  "start": 53.05,
+  "end": 54.35,
+  "actors": [
+   59,
+   2736
+  ],
+  "sheet": "sheets/C3902-2_012_failure_to_yield_53.0-54.4.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 13,
+  "label": "failure_to_yield",
+  "start": 58.36,
+  "end": 58.76,
+  "actors": [
+   1,
+   2791
+  ],
+  "sheet": "sheets/C3902-2_013_failure_to_yield_58.4-58.8.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 14,
+  "label": "failure_to_yield",
+  "start": 59.26,
+  "end": 59.76,
+  "actors": [
+   1,
+   2699
+  ],
+  "sheet": "sheets/C3902-2_014_failure_to_yield_59.3-59.8.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 15,
+  "label": "failure_to_yield",
+  "start": 60.56,
+  "end": 61.66,
+  "actors": [
+   1,
+   2804,
+   2807
+  ],
+  "sheet": "sheets/C3902-2_015_failure_to_yield_60.6-61.7.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 16,
+  "label": "accident",
+  "start": 62.16,
+  "end": 63.56,
+  "actors": [
+   2743,
+   2774,
+   2781,
+   2783,
+   2785,
+   2792
+  ],
+  "sheet": "sheets/C3902-2_016_accident_62.2-63.6.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 17,
+  "label": "failure_to_yield",
+  "start": 62.46,
+  "end": 62.86,
+  "actors": [
+   1,
+   2810
+  ],
+  "sheet": "sheets/C3902-2_017_failure_to_yield_62.5-62.9.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 18,
+  "label": "jaywalking",
+  "start": 63.66,
+  "end": 67.17,
+  "actors": [
+   401
+  ],
+  "sheet": "sheets/C3902-2_018_jaywalking_63.7-67.2.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 19,
+  "label": "failure_to_yield",
+  "start": 64.76,
+  "end": 65.27,
+  "actors": [
+   462,
+   2818
+  ],
+  "sheet": "sheets/C3902-2_019_failure_to_yield_64.8-65.3.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 20,
+  "label": "failure_to_yield",
+  "start": 65.77,
+  "end": 66.17,
+  "actors": [
+   462,
+   2821
+  ],
+  "sheet": "sheets/C3902-2_020_failure_to_yield_65.8-66.2.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 21,
+  "label": "failure_to_yield",
+  "start": 68.47,
+  "end": 68.87,
+  "actors": [
+   462,
+   2831
+  ],
+  "sheet": "sheets/C3902-2_021_failure_to_yield_68.5-68.9.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 22,
+  "label": "jaywalking",
+  "start": 69.07,
+  "end": 70.57,
+  "actors": [
+   497
+  ],
+  "sheet": "sheets/C3902-2_022_jaywalking_69.1-70.6.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 23,
+  "label": "failure_to_yield",
+  "start": 69.57,
+  "end": 69.97,
+  "actors": [
+   462,
+   2834
+  ],
+  "sheet": "sheets/C3902-2_023_failure_to_yield_69.6-70.0.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 24,
+  "label": "failure_to_yield",
+  "start": 71.47,
+  "end": 72.37,
+  "actors": [
+   462,
+   2842,
+   2846
+  ],
+  "sheet": "sheets/C3902-2_024_failure_to_yield_71.5-72.4.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 25,
+  "label": "failure_to_yield",
+  "start": 72.97,
+  "end": 73.47,
+  "actors": [
+   462,
+   2851
+  ],
+  "sheet": "sheets/C3902-2_025_failure_to_yield_73.0-73.5.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 26,
+  "label": "failure_to_yield",
+  "start": 74.67,
+  "end": 75.48,
+  "actors": [
+   462,
+   2861,
+   2863
+  ],
+  "sheet": "sheets/C3902-2_026_failure_to_yield_74.7-75.5.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 27,
+  "label": "accident",
+  "start": 75.28,
+  "end": 76.28,
+  "actors": [
+   2815,
+   2849
+  ],
+  "sheet": "sheets/C3902-2_027_accident_75.3-76.3.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 28,
+  "label": "failure_to_yield",
+  "start": 75.98,
+  "end": 82.08,
+  "actors": [
+   460,
+   462,
+   2798,
+   2868,
+   2871,
+   2873,
+   2878
+  ],
+  "sheet": "sheets/C3902-2_028_failure_to_yield_76.0-82.1.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 29,
+  "label": "stop_line",
+  "start": 77.78,
+  "end": 117.22,
+  "actors": [
+   2798
+  ],
+  "sheet": "sheets/C3902-2_029_stop_line_77.8-117.2.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 30,
+  "label": "jaywalking",
+  "start": 80.28,
+  "end": 82.18,
+  "actors": [
+   587
+  ],
+  "sheet": "sheets/C3902-2_030_jaywalking_80.3-82.2.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 31,
+  "label": "accident",
+  "start": 82.98,
+  "end": 85.99,
+  "actors": [
+   2829,
+   2876,
+   2887,
+   2891
+  ],
+  "sheet": "sheets/C3902-2_031_accident_83.0-86.0.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 32,
+  "label": "jaywalking",
+  "start": 83.28,
+  "end": 105.11,
+  "actors": [
+   76,
+   302,
+   313,
+   363,
+   432,
+   460,
+   562,
+   571,
+   574,
+   701,
+   708
+  ],
+  "sheet": "sheets/C3902-2_032_jaywalking_83.3-105.1.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 33,
+  "label": "failure_to_yield",
+  "start": 90.79,
+  "end": 91.09,
+  "actors": [
+   59,
+   2781
+  ],
+  "sheet": "sheets/C3902-2_033_failure_to_yield_90.8-91.1.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 34,
+  "label": "failure_to_yield",
+  "start": 93.59,
+  "end": 93.89,
+  "actors": [
+   59,
+   2919
+  ],
+  "sheet": "sheets/C3902-2_034_failure_to_yield_93.6-93.9.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 35,
+  "label": "accident",
+  "start": 102.1,
+  "end": 103.1,
+  "actors": [
+   2862,
+   2928
+  ],
+  "sheet": "sheets/C3902-2_035_accident_102.1-103.1.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 36,
+  "label": "illegal_u_turn",
+  "start": 105.71,
+  "end": 113.21,
+  "actors": [
+   2932,
+   2935
+  ],
+  "sheet": "sheets/C3902-2_036_illegal_u_turn_105.7-113.2.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 37,
+  "label": "jaywalking",
+  "start": 106.71,
+  "end": 112.91,
+  "actors": [
+   401,
+   432,
+   562
+  ],
+  "sheet": "sheets/C3902-2_037_jaywalking_106.7-112.9.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 38,
+  "label": "failure_to_yield",
+  "start": 107.41,
+  "end": 115.52,
+  "actors": [
+   725,
+   2822,
+   2923,
+   2926,
+   2927,
+   2931,
+   2938,
+   2939,
+   2941
+  ],
+  "sheet": "sheets/C3902-2_038_failure_to_yield_107.4-115.5.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 39,
+  "label": "failure_to_yield",
+  "start": 116.32,
+  "end": 117.42,
+  "actors": [
+   725,
+   2942,
+   2944
+  ],
+  "sheet": "sheets/C3902-2_039_failure_to_yield_116.3-117.4.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 40,
+  "label": "failure_to_yield",
+  "start": 118.62,
+  "end": 120.92,
+  "actors": [
+   725,
+   2947,
+   2948
+  ],
+  "sheet": "sheets/C3902-2_040_failure_to_yield_118.6-120.9.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 41,
+  "label": "failure_to_yield",
+  "start": 121.82,
+  "end": 122.52,
+  "actors": [
+   59,
+   2853
+  ],
+  "sheet": "sheets/C3902-2_041_failure_to_yield_121.8-122.5.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 42,
+  "label": "failure_to_yield",
+  "start": 126.93,
+  "end": 127.33,
+  "actors": [
+   725,
+   2966
+  ],
+  "sheet": "sheets/C3902-2_042_failure_to_yield_126.9-127.3.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 43,
+  "label": "wrong_way",
+  "start": 129.23,
+  "end": 133.63,
+  "actors": [
+   2971
+  ],
+  "sheet": "sheets/C3902-2_043_wrong_way_129.2-133.6.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 44,
+  "label": "failure_to_yield",
+  "start": 129.83,
+  "end": 130.93,
+  "actors": [
+   725,
+   2970,
+   2972
+  ],
+  "sheet": "sheets/C3902-2_044_failure_to_yield_129.8-130.9.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 45,
+  "label": "jaywalking",
+  "start": 130.33,
+  "end": 147.35,
+  "actors": [
+   432,
+   897
+  ],
+  "sheet": "sheets/C3902-2_045_jaywalking_130.3-147.3.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 46,
+  "label": "failure_to_yield",
+  "start": 131.53,
+  "end": 133.53,
+  "actors": [
+   725,
+   893,
+   2963,
+   2974,
+   2978
+  ],
+  "sheet": "sheets/C3902-2_046_failure_to_yield_131.5-133.5.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 47,
+  "label": "failure_to_yield",
+  "start": 134.53,
+  "end": 134.93,
+  "actors": [
+   725,
+   2983
+  ],
+  "sheet": "sheets/C3902-2_047_failure_to_yield_134.5-134.9.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 48,
+  "label": "failure_to_yield",
+  "start": 136.24,
+  "end": 136.64,
+  "actors": [
+   724,
+   2987
+  ],
+  "sheet": "sheets/C3902-2_048_failure_to_yield_136.2-136.6.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 49,
+  "label": "failure_to_yield",
+  "start": 137.24,
+  "end": 137.74,
+  "actors": [
+   725,
+   2988
+  ],
+  "sheet": "sheets/C3902-2_049_failure_to_yield_137.2-137.7.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 50,
+  "label": "failure_to_yield",
+  "start": 139.04,
+  "end": 139.44,
+  "actors": [
+   724,
+   2993
+  ],
+  "sheet": "sheets/C3902-2_050_failure_to_yield_139.0-139.4.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 51,
+  "label": "failure_to_yield",
+  "start": 140.54,
+  "end": 140.94,
+  "actors": [
+   724,
+   2995
+  ],
+  "sheet": "sheets/C3902-2_051_failure_to_yield_140.5-140.9.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 52,
+  "label": "failure_to_yield",
+  "start": 141.54,
+  "end": 142.14,
+  "actors": [
+   724,
+   2998,
+   2999
+  ],
+  "sheet": "sheets/C3902-2_052_failure_to_yield_141.5-142.1.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 53,
+  "label": "failure_to_yield",
+  "start": 142.84,
+  "end": 143.34,
+  "actors": [
+   724,
+   3001
+  ],
+  "sheet": "sheets/C3902-2_053_failure_to_yield_142.8-143.3.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 54,
+  "label": "failure_to_yield",
+  "start": 143.84,
+  "end": 144.54,
+  "actors": [
+   724,
+   3002,
+   3005
+  ],
+  "sheet": "sheets/C3902-2_054_failure_to_yield_143.8-144.5.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 55,
+  "label": "failure_to_yield",
+  "start": 145.45,
+  "end": 146.05,
+  "actors": [
+   724,
+   3008,
+   3010
+  ],
+  "sheet": "sheets/C3902-2_055_failure_to_yield_145.4-146.1.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 56,
+  "label": "failure_to_yield",
+  "start": 147.05,
+  "end": 147.45,
+  "actors": [
+   724,
+   3012
+  ],
+  "sheet": "sheets/C3902-2_056_failure_to_yield_147.1-147.4.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 57,
+  "label": "accident",
+  "start": 147.55,
+  "end": 149.65,
+  "actors": [
+   2922,
+   3501
+  ],
+  "sheet": "sheets/C3902-2_057_accident_147.6-149.7.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 58,
+  "label": "failure_to_yield",
+  "start": 148.65,
+  "end": 149.15,
+  "actors": [
+   724,
+   3015
+  ],
+  "sheet": "sheets/C3902-2_058_failure_to_yield_148.7-149.2.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 59,
+  "label": "failure_to_yield",
+  "start": 151.55,
+  "end": 152.15,
+  "actors": [
+   724,
+   3019
+  ],
+  "sheet": "sheets/C3902-2_059_failure_to_yield_151.6-152.2.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 60,
+  "label": "failure_to_yield",
+  "start": 152.65,
+  "end": 153.05,
+  "actors": [
+   724,
+   3023
+  ],
+  "sheet": "sheets/C3902-2_060_failure_to_yield_152.7-153.1.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 61,
+  "label": "failure_to_yield",
+  "start": 154.25,
+  "end": 154.75,
+  "actors": [
+   724,
+   3025
+  ],
+  "sheet": "sheets/C3902-2_061_failure_to_yield_154.2-154.8.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 62,
+  "label": "jaywalking",
+  "start": 155.86,
+  "end": 193.39,
+  "actors": [
+   709,
+   724,
+   751,
+   786,
+   918,
+   954,
+   979,
+   1044,
+   1055,
+   1057,
+   1069,
+   1075,
+   1088,
+   1104,
+   1124,
+   1140,
+   1149,
+   1181,
+   1184,
+   1189,
+   1207,
+   1222,
+   1244,
+   1245,
+   1246,
+   1318
+  ],
+  "sheet": "sheets/C3902-2_062_jaywalking_155.9-193.4.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 63,
+  "label": "failure_to_yield",
+  "start": 155.96,
+  "end": 157.06,
+  "actors": [
+   724,
+   3026,
+   3031
+  ],
+  "sheet": "sheets/C3902-2_063_failure_to_yield_156.0-157.1.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 64,
+  "label": "failure_to_yield",
+  "start": 158.16,
+  "end": 158.66,
+  "actors": [
+   724,
+   3035
+  ],
+  "sheet": "sheets/C3902-2_064_failure_to_yield_158.2-158.7.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 65,
+  "label": "failure_to_yield",
+  "start": 159.46,
+  "end": 162.06,
+  "actors": [
+   724,
+   3039,
+   3042,
+   3044,
+   3046,
+   3047
+  ],
+  "sheet": "sheets/C3902-2_065_failure_to_yield_159.5-162.1.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 66,
+  "label": "failure_to_yield",
+  "start": 162.96,
+  "end": 163.36,
+  "actors": [
+   724,
+   3054
+  ],
+  "sheet": "sheets/C3902-2_066_failure_to_yield_163.0-163.4.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 67,
+  "label": "accident",
+  "start": 167.47,
+  "end": 170.67,
+  "actors": [
+   3028,
+   3048,
+   3057,
+   3062
+  ],
+  "sheet": "sheets/C3902-2_067_accident_167.5-170.7.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 68,
+  "label": "failure_to_yield",
+  "start": 171.57,
+  "end": 172.77,
+  "actors": [
+   709,
+   3067
+  ],
+  "sheet": "sheets/C3902-2_068_failure_to_yield_171.6-172.8.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 69,
+  "label": "failure_to_yield",
+  "start": 174.37,
+  "end": 175.38,
+  "actors": [
+   1075,
+   3080
+  ],
+  "sheet": "sheets/C3902-2_069_failure_to_yield_174.4-175.4.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 70,
+  "label": "accident",
+  "start": 180.78,
+  "end": 181.78,
+  "actors": [
+   2855,
+   2895,
+   3102
+  ],
+  "sheet": "sheets/C3902-2_070_accident_180.8-181.8.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 71,
+  "label": "failure_to_yield",
+  "start": 182.28,
+  "end": 185.89,
+  "actors": [
+   1280,
+   3088,
+   3094,
+   3096
+  ],
+  "sheet": "sheets/C3902-2_071_failure_to_yield_182.3-185.9.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 72,
+  "label": "failure_to_yield",
+  "start": 189.19,
+  "end": 189.59,
+  "actors": [
+   979,
+   3114
+  ],
+  "sheet": "sheets/C3902-2_072_failure_to_yield_189.2-189.6.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 73,
+  "label": "failure_to_yield",
+  "start": 192.99,
+  "end": 193.89,
+  "actors": [
+   979,
+   1277,
+   3122,
+   3124,
+   3125
+  ],
+  "sheet": "sheets/C3902-2_073_failure_to_yield_193.0-193.9.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 74,
+  "label": "failure_to_yield",
+  "start": 195.3,
+  "end": 196.8,
+  "actors": [
+   1277,
+   3128,
+   3131
+  ],
+  "sheet": "sheets/C3902-2_074_failure_to_yield_195.3-196.8.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 75,
+  "label": "failure_to_yield",
+  "start": 198.1,
+  "end": 200.3,
+  "actors": [
+   1277,
+   3134,
+   3135,
+   3136
+  ],
+  "sheet": "sheets/C3902-2_075_failure_to_yield_198.1-200.3.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 76,
+  "label": "failure_to_yield",
+  "start": 201.4,
+  "end": 203.0,
+  "actors": [
+   1407,
+   3139,
+   3143
+  ],
+  "sheet": "sheets/C3902-2_076_failure_to_yield_201.4-203.0.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 77,
+  "label": "illegal_u_turn",
+  "start": 204.7,
+  "end": 206.91,
+  "actors": [
+   3082
+  ],
+  "sheet": "sheets/C3902-2_077_illegal_u_turn_204.7-206.9.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 78,
+  "label": "failure_to_yield",
+  "start": 207.91,
+  "end": 208.31,
+  "actors": [
+   1327,
+   3166
+  ],
+  "sheet": "sheets/C3902-2_078_failure_to_yield_207.9-208.3.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 79,
+  "label": "failure_to_yield",
+  "start": 209.41,
+  "end": 209.91,
+  "actors": [
+   1327,
+   3170,
+   3172
+  ],
+  "sheet": "sheets/C3902-2_079_failure_to_yield_209.4-209.9.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 80,
+  "label": "failure_to_yield",
+  "start": 211.31,
+  "end": 212.41,
+  "actors": [
+   1327,
+   3178,
+   3183
+  ],
+  "sheet": "sheets/C3902-2_080_failure_to_yield_211.3-212.4.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 81,
+  "label": "failure_to_yield",
+  "start": 214.51,
+  "end": 215.11,
+  "actors": [
+   1407,
+   3193,
+   3194
+  ],
+  "sheet": "sheets/C3902-2_081_failure_to_yield_214.5-215.1.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 82,
+  "label": "failure_to_yield",
+  "start": 215.62,
+  "end": 216.02,
+  "actors": [
+   1327,
+   3199
+  ],
+  "sheet": "sheets/C3902-2_082_failure_to_yield_215.6-216.0.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 83,
+  "label": "failure_to_yield",
+  "start": 216.62,
+  "end": 217.12,
+  "actors": [
+   1327,
+   3200
+  ],
+  "sheet": "sheets/C3902-2_083_failure_to_yield_216.6-217.1.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 84,
+  "label": "failure_to_yield",
+  "start": 220.32,
+  "end": 222.42,
+  "actors": [
+   1327,
+   1611,
+   3208,
+   3210,
+   3213
+  ],
+  "sheet": "sheets/C3902-2_084_failure_to_yield_220.3-222.4.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 85,
+  "label": "failure_to_yield",
+  "start": 223.42,
+  "end": 223.82,
+  "actors": [
+   1327,
+   3218
+  ],
+  "sheet": "sheets/C3902-2_085_failure_to_yield_223.4-223.8.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 86,
+  "label": "failure_to_yield",
+  "start": 224.92,
+  "end": 225.43,
+  "actors": [
+   1327,
+   3221
+  ],
+  "sheet": "sheets/C3902-2_086_failure_to_yield_224.9-225.4.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 87,
+  "label": "failure_to_yield",
+  "start": 227.43,
+  "end": 229.03,
+  "actors": [
+   1327,
+   3230,
+   3232,
+   3237
+  ],
+  "sheet": "sheets/C3902-2_087_failure_to_yield_227.4-229.0.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 88,
+  "label": "failure_to_yield",
+  "start": 231.13,
+  "end": 231.93,
+  "actors": [
+   1327,
+   3242,
+   3244
+  ],
+  "sheet": "sheets/C3902-2_088_failure_to_yield_231.1-231.9.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 89,
+  "label": "failure_to_yield",
+  "start": 233.03,
+  "end": 233.43,
+  "actors": [
+   1327,
+   3247
+  ],
+  "sheet": "sheets/C3902-2_089_failure_to_yield_233.0-233.4.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 90,
+  "label": "failure_to_yield",
+  "start": 234.23,
+  "end": 234.63,
+  "actors": [
+   1327,
+   3250
+  ],
+  "sheet": "sheets/C3902-2_090_failure_to_yield_234.2-234.6.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 91,
+  "label": "failure_to_yield",
+  "start": 235.64,
+  "end": 235.94,
+  "actors": [
+   1327,
+   3235
+  ],
+  "sheet": "sheets/C3902-2_091_failure_to_yield_235.6-235.9.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 92,
+  "label": "jaywalking",
+  "start": 237.84,
+  "end": 240.74,
+  "actors": [
+   1650
+  ],
+  "sheet": "sheets/C3902-2_092_jaywalking_237.8-240.7.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 93,
+  "label": "failure_to_yield",
+  "start": 238.14,
+  "end": 238.54,
+  "actors": [
+   1327,
+   3268
+  ],
+  "sheet": "sheets/C3902-2_093_failure_to_yield_238.1-238.5.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 94,
+  "label": "failure_to_yield",
+  "start": 239.34,
+  "end": 239.74,
+  "actors": [
+   1327,
+   3271
+  ],
+  "sheet": "sheets/C3902-2_094_failure_to_yield_239.3-239.7.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 95,
+  "label": "failure_to_yield",
+  "start": 240.24,
+  "end": 240.54,
+  "actors": [
+   1327,
+   3274
+  ],
+  "sheet": "sheets/C3902-2_095_failure_to_yield_240.2-240.5.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 96,
+  "label": "failure_to_yield",
+  "start": 241.34,
+  "end": 242.24,
+  "actors": [
+   1280,
+   1700,
+   3206,
+   3277
+  ],
+  "sheet": "sheets/C3902-2_096_failure_to_yield_241.3-242.2.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 97,
+  "label": "failure_to_yield",
+  "start": 243.34,
+  "end": 244.14,
+  "actors": [
+   1327,
+   3048
+  ],
+  "sheet": "sheets/C3902-2_097_failure_to_yield_243.3-244.1.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 98,
+  "label": "failure_to_yield",
+  "start": 244.64,
+  "end": 245.25,
+  "actors": [
+   1327,
+   1396,
+   3234,
+   3253
+  ],
+  "sheet": "sheets/C3902-2_098_failure_to_yield_244.6-245.2.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 99,
+  "label": "jaywalking",
+  "start": 247.15,
+  "end": 248.95,
+  "actors": [
+   1650
+  ],
+  "sheet": "sheets/C3902-2_099_jaywalking_247.2-248.9.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 100,
+  "label": "jaywalking",
+  "start": 250.75,
+  "end": 268.27,
+  "actors": [
+   1280,
+   1515,
+   1611,
+   1650,
+   1667,
+   1724,
+   1853,
+   1873,
+   2017,
+   2049,
+   2057
+  ],
+  "sheet": "sheets/C3902-2_100_jaywalking_250.8-268.3.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 101,
+  "label": "illegal_u_turn",
+  "start": 253.75,
+  "end": 257.86,
+  "actors": [
+   3300
+  ],
+  "sheet": "sheets/C3902-2_101_illegal_u_turn_253.8-257.9.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 102,
+  "label": "accident",
+  "start": 257.26,
+  "end": 259.16,
+  "actors": [
+   3305,
+   3310
+  ],
+  "sheet": "sheets/C3902-2_102_accident_257.3-259.2.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 103,
+  "label": "failure_to_yield",
+  "start": 267.77,
+  "end": 269.07,
+  "actors": [
+   2109,
+   3305
+  ],
+  "sheet": "sheets/C3902-2_103_failure_to_yield_267.8-269.1.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 104,
+  "label": "accident",
+  "start": 269.07,
+  "end": 271.97,
+  "actors": [
+   3327,
+   3352
+  ],
+  "sheet": "sheets/C3902-2_104_accident_269.1-272.0.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 105,
+  "label": "failure_to_yield",
+  "start": 270.17,
+  "end": 270.67,
+  "actors": [
+   1280,
+   3347
+  ],
+  "sheet": "sheets/C3902-2_105_failure_to_yield_270.2-270.7.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 106,
+  "label": "jaywalking",
+  "start": 272.07,
+  "end": 274.77,
+  "actors": [
+   2107
+  ],
+  "sheet": "sheets/C3902-2_106_jaywalking_272.1-274.8.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 107,
+  "label": "illegal_u_turn",
+  "start": 272.07,
+  "end": 276.38,
+  "actors": [
+   3336
+  ],
+  "sheet": "sheets/C3902-2_107_illegal_u_turn_272.1-276.4.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 108,
+  "label": "failure_to_yield",
+  "start": 285.49,
+  "end": 287.09,
+  "actors": [
+   2275,
+   3329
+  ],
+  "sheet": "sheets/C3902-2_108_failure_to_yield_285.5-287.1.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 109,
+  "label": "failure_to_yield",
+  "start": 288.29,
+  "end": 289.49,
+  "actors": [
+   2275,
+   3270
+  ],
+  "sheet": "sheets/C3902-2_109_failure_to_yield_288.3-289.5.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 110,
+  "label": "failure_to_yield",
+  "start": 290.99,
+  "end": 292.19,
+  "actors": [
+   2303,
+   3398,
+   3405
+  ],
+  "sheet": "sheets/C3902-2_110_failure_to_yield_291.0-292.2.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 111,
+  "label": "failure_to_yield",
+  "start": 295.09,
+  "end": 295.6,
+  "actors": [
+   2303,
+   3422
+  ],
+  "sheet": "sheets/C3902-2_111_failure_to_yield_295.1-295.6.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 112,
+  "label": "failure_to_yield",
+  "start": 296.4,
+  "end": 296.8,
+  "actors": [
+   2303,
+   3427
+  ],
+  "sheet": "sheets/C3902-2_112_failure_to_yield_296.4-296.8.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 113,
+  "label": "failure_to_yield",
+  "start": 299.2,
+  "end": 299.7,
+  "actors": [
+   2303,
+   3434
+  ],
+  "sheet": "sheets/C3902-2_113_failure_to_yield_299.2-299.7.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 114,
+  "label": "failure_to_yield",
+  "start": 300.3,
+  "end": 301.7,
+  "actors": [
+   2303,
+   3441,
+   3443
+  ],
+  "sheet": "sheets/C3902-2_114_failure_to_yield_300.3-301.7.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 115,
+  "label": "failure_to_yield",
+  "start": 302.4,
+  "end": 302.9,
+  "actors": [
+   2303,
+   3450
+  ],
+  "sheet": "sheets/C3902-2_115_failure_to_yield_302.4-302.9.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 116,
+  "label": "failure_to_yield",
+  "start": 304.9,
+  "end": 307.81,
+  "actors": [
+   2303,
+   2399,
+   3367,
+   3458,
+   3460,
+   3465
+  ],
+  "sheet": "sheets/C3902-2_116_failure_to_yield_304.9-307.8.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 117,
+  "label": "failure_to_yield",
+  "start": 309.01,
+  "end": 309.41,
+  "actors": [
+   2303,
+   3470
+  ],
+  "sheet": "sheets/C3902-2_117_failure_to_yield_309.0-309.4.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 118,
+  "label": "failure_to_yield",
+  "start": 310.31,
+  "end": 310.81,
+  "actors": [
+   2303,
+   3472,
+   3473
+  ],
+  "sheet": "sheets/C3902-2_118_failure_to_yield_310.3-310.8.jpg"
+ },
+ {
+  "video": "C3902-2.MP4",
+  "n": 119,
+  "label": "failure_to_yield",
+  "start": 317.42,
+  "end": 317.72,
+  "actors": [
+   2303,
+   3487
+  ],
+  "sheet": "sheets/C3902-2_119_failure_to_yield_317.4-317.7.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 1,
+  "label": "stopped_vehicle",
+  "start": 3.7,
+  "end": 127.53,
+  "actors": [
+   1058,
+   1062,
+   1079,
+   1085,
+   1098,
+   1099,
+   1101,
+   1102,
+   1103,
+   1108,
+   1138,
+   1167,
+   1191,
+   1218,
+   1240,
+   1255,
+   1256,
+   1260,
+   1262,
+   1272,
+   1276,
+   1311,
+   1316,
+   1334,
+   1366
+  ],
+  "sheet": "sheets/C3905_001_stopped_vehicle_3.7-127.5.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 2,
+  "label": "jaywalking",
+  "start": 6.41,
+  "end": 16.22,
+  "actors": [
+   2,
+   5,
+   10,
+   13,
+   14
+  ],
+  "sheet": "sheets/C3905_002_jaywalking_6.4-16.2.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 3,
+  "label": "jaywalking",
+  "start": 17.42,
+  "end": 22.02,
+  "actors": [
+   10,
+   194
+  ],
+  "sheet": "sheets/C3905_003_jaywalking_17.4-22.0.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 4,
+  "label": "failure_to_yield",
+  "start": 17.92,
+  "end": 21.82,
+  "actors": [
+   70,
+   169,
+   1087,
+   1097,
+   1107,
+   1108,
+   1114
+  ],
+  "sheet": "sheets/C3905_004_failure_to_yield_17.9-21.8.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 5,
+  "label": "failure_to_yield",
+  "start": 23.22,
+  "end": 24.82,
+  "actors": [
+   169,
+   1113
+  ],
+  "sheet": "sheets/C3905_005_failure_to_yield_23.2-24.8.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 6,
+  "label": "failure_to_yield",
+  "start": 25.43,
+  "end": 27.03,
+  "actors": [
+   169,
+   1092,
+   1131
+  ],
+  "sheet": "sheets/C3905_006_failure_to_yield_25.4-27.0.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 7,
+  "label": "jaywalking",
+  "start": 26.43,
+  "end": 28.53,
+  "actors": [
+   169
+  ],
+  "sheet": "sheets/C3905_007_jaywalking_26.4-28.5.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 8,
+  "label": "red_light",
+  "start": 33.75,
+  "end": 39.44,
+  "actors": [
+   1436
+  ],
+  "sheet": "sheets/C3905_008_red_light_33.8-39.4.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 9,
+  "label": "illegal_u_turn",
+  "start": 34.43,
+  "end": 37.44,
+  "actors": [
+   1144
+  ],
+  "sheet": "sheets/C3905_009_illegal_u_turn_34.4-37.4.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 10,
+  "label": "failure_to_yield",
+  "start": 35.44,
+  "end": 38.34,
+  "actors": [
+   169,
+   1098,
+   1099,
+   1102,
+   1436
+  ],
+  "sheet": "sheets/C3905_010_failure_to_yield_35.4-38.3.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 11,
+  "label": "failure_to_yield",
+  "start": 38.94,
+  "end": 40.14,
+  "actors": [
+   70,
+   169,
+   1109,
+   1160
+  ],
+  "sheet": "sheets/C3905_011_failure_to_yield_38.9-40.1.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 12,
+  "label": "failure_to_yield",
+  "start": 42.44,
+  "end": 43.54,
+  "actors": [
+   241,
+   1056
+  ],
+  "sheet": "sheets/C3905_012_failure_to_yield_42.4-43.5.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 13,
+  "label": "failure_to_yield",
+  "start": 44.94,
+  "end": 46.25,
+  "actors": [
+   241,
+   1059
+  ],
+  "sheet": "sheets/C3905_013_failure_to_yield_44.9-46.2.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 14,
+  "label": "failure_to_yield",
+  "start": 48.75,
+  "end": 49.25,
+  "actors": [
+   287,
+   1213
+  ],
+  "sheet": "sheets/C3905_014_failure_to_yield_48.8-49.2.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 15,
+  "label": "failure_to_yield",
+  "start": 49.95,
+  "end": 50.35,
+  "actors": [
+   287,
+   1217
+  ],
+  "sheet": "sheets/C3905_015_failure_to_yield_50.0-50.4.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 16,
+  "label": "failure_to_yield",
+  "start": 53.15,
+  "end": 54.75,
+  "actors": [
+   287,
+   1222,
+   1229,
+   1232
+  ],
+  "sheet": "sheets/C3905_016_failure_to_yield_53.1-54.8.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 17,
+  "label": "failure_to_yield",
+  "start": 56.66,
+  "end": 57.66,
+  "actors": [
+   287,
+   1228,
+   1248
+  ],
+  "sheet": "sheets/C3905_017_failure_to_yield_56.7-57.7.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 18,
+  "label": "illegal_u_turn",
+  "start": 57.36,
+  "end": 59.16,
+  "actors": [
+   1184
+  ],
+  "sheet": "sheets/C3905_018_illegal_u_turn_57.4-59.2.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 19,
+  "label": "failure_to_yield",
+  "start": 62.26,
+  "end": 62.76,
+  "actors": [
+   287,
+   1263
+  ],
+  "sheet": "sheets/C3905_019_failure_to_yield_62.3-62.8.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 20,
+  "label": "failure_to_yield",
+  "start": 63.46,
+  "end": 63.86,
+  "actors": [
+   287,
+   1266
+  ],
+  "sheet": "sheets/C3905_020_failure_to_yield_63.5-63.9.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 21,
+  "label": "failure_to_yield",
+  "start": 65.17,
+  "end": 65.57,
+  "actors": [
+   287,
+   1271
+  ],
+  "sheet": "sheets/C3905_021_failure_to_yield_65.2-65.6.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 22,
+  "label": "failure_to_yield",
+  "start": 66.87,
+  "end": 67.27,
+  "actors": [
+   287,
+   1275
+  ],
+  "sheet": "sheets/C3905_022_failure_to_yield_66.9-67.3.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 23,
+  "label": "failure_to_yield",
+  "start": 68.37,
+  "end": 69.37,
+  "actors": [
+   287,
+   1279,
+   1284
+  ],
+  "sheet": "sheets/C3905_023_failure_to_yield_68.4-69.4.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 24,
+  "label": "jaywalking",
+  "start": 68.47,
+  "end": 78.68,
+  "actors": [
+   480
+  ],
+  "sheet": "sheets/C3905_024_jaywalking_68.5-78.7.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 25,
+  "label": "failure_to_yield",
+  "start": 69.87,
+  "end": 70.37,
+  "actors": [
+   287,
+   1285,
+   1287
+  ],
+  "sheet": "sheets/C3905_025_failure_to_yield_69.9-70.4.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 26,
+  "label": "failure_to_yield",
+  "start": 72.47,
+  "end": 72.97,
+  "actors": [
+   287,
+   1293
+  ],
+  "sheet": "sheets/C3905_026_failure_to_yield_72.5-73.0.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 27,
+  "label": "failure_to_yield",
+  "start": 74.57,
+  "end": 75.08,
+  "actors": [
+   287,
+   1298
+  ],
+  "sheet": "sheets/C3905_027_failure_to_yield_74.6-75.1.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 28,
+  "label": "failure_to_yield",
+  "start": 75.68,
+  "end": 76.08,
+  "actors": [
+   287,
+   1299
+  ],
+  "sheet": "sheets/C3905_028_failure_to_yield_75.7-76.1.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 29,
+  "label": "stop_line",
+  "start": 76.78,
+  "end": 114.51,
+  "actors": [
+   1256,
+   1272
+  ],
+  "sheet": "sheets/C3905_029_stop_line_76.8-114.5.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 30,
+  "label": "failure_to_yield",
+  "start": 76.88,
+  "end": 77.38,
+  "actors": [
+   287,
+   1303
+  ],
+  "sheet": "sheets/C3905_030_failure_to_yield_76.9-77.4.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 31,
+  "label": "failure_to_yield",
+  "start": 77.98,
+  "end": 78.48,
+  "actors": [
+   287,
+   1307,
+   1308
+  ],
+  "sheet": "sheets/C3905_031_failure_to_yield_78.0-78.5.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 32,
+  "label": "jaywalking",
+  "start": 79.48,
+  "end": 81.58,
+  "actors": [
+   643,
+   682
+  ],
+  "sheet": "sheets/C3905_032_jaywalking_79.5-81.6.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 33,
+  "label": "failure_to_yield",
+  "start": 80.68,
+  "end": 85.19,
+  "actors": [
+   287,
+   1218,
+   1317
+  ],
+  "sheet": "sheets/C3905_033_failure_to_yield_80.7-85.2.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 34,
+  "label": "illegal_u_turn",
+  "start": 86.49,
+  "end": 99.2,
+  "actors": [
+   1317
+  ],
+  "sheet": "sheets/C3905_034_illegal_u_turn_86.5-99.2.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 35,
+  "label": "jaywalking",
+  "start": 86.89,
+  "end": 100.2,
+  "actors": [
+   576,
+   621,
+   685,
+   740,
+   781,
+   784,
+   821,
+   847
+  ],
+  "sheet": "sheets/C3905_035_jaywalking_86.9-100.2.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 36,
+  "label": "failure_to_yield",
+  "start": 88.99,
+  "end": 100.6,
+  "actors": [
+   576,
+   1317
+  ],
+  "sheet": "sheets/C3905_036_failure_to_yield_89.0-100.6.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 37,
+  "label": "accident",
+  "start": 98.2,
+  "end": 101.3,
+  "actors": [
+   781,
+   1272
+  ],
+  "sheet": "sheets/C3905_037_accident_98.2-101.3.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 38,
+  "label": "jaywalking",
+  "start": 100.7,
+  "end": 114.51,
+  "actors": [
+   378,
+   621,
+   733,
+   825,
+   858,
+   885,
+   891,
+   912,
+   938,
+   943
+  ],
+  "sheet": "sheets/C3905_038_jaywalking_100.7-114.5.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 39,
+  "label": "failure_to_yield",
+  "start": 101.2,
+  "end": 102.9,
+  "actors": [
+   576,
+   1343,
+   1344
+  ],
+  "sheet": "sheets/C3905_039_failure_to_yield_101.2-102.9.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 40,
+  "label": "failure_to_yield",
+  "start": 108.01,
+  "end": 111.01,
+  "actors": [
+   378,
+   858,
+   1359,
+   1367,
+   1374
+  ],
+  "sheet": "sheets/C3905_040_failure_to_yield_108.0-111.0.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 41,
+  "label": "illegal_u_turn",
+  "start": 112.01,
+  "end": 116.72,
+  "actors": [
+   1377
+  ],
+  "sheet": "sheets/C3905_041_illegal_u_turn_112.0-116.7.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 42,
+  "label": "jaywalking",
+  "start": 123.42,
+  "end": 126.53,
+  "actors": [
+   781
+  ],
+  "sheet": "sheets/C3905_042_jaywalking_123.4-126.5.jpg"
+ },
+ {
+  "video": "C3905.MP4",
+  "n": 43,
+  "label": "failure_to_yield",
+  "start": 125.23,
+  "end": 125.63,
+  "actors": [
+   1008,
+   1427
+  ],
+  "sheet": "sheets/C3905_043_failure_to_yield_125.2-125.6.jpg"
+ }
+]
