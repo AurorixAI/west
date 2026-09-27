@@ -367,5 +367,10 @@ ul.links a { display: inline-block; padding: 9px 16px; border: 1px solid var(--l
     color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
   }
 }
+/* Phones: event cards form one swipeable row instead of a column of dozens of screens. */
+@media (max-width: 600px) {
+  .events { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; padding-bottom: 6px; }
+  .events > .event { flex: 0 0 72%; scroll-snap-align: start; }
+}
 .report-grid > .wide { grid-column: 1 / -1; }
 .report-grid > * { min-width: 0; }
