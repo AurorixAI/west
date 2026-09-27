@@ -1,4 +1,4 @@
-# Team WEST: traffic event detection and accident anticipation
+# Team ALGO: traffic event detection and accident anticipation
 
 WIUT Hackathon 2026, Computer Vision track. For a fixed road camera, `solution.py` returns every
 traffic event as `[start_sec, end_sec, label]` (Part A) and a causal per-frame accident risk
@@ -269,10 +269,12 @@ cp runs/west_11s/weights/best.pt weights/west_yolo11s.pt
 
 ## Team
 
-| Member | Role | Contributions |
-|---|---|---|
-| Arslan | Team lead, computer vision | pipeline, calibration, rules, risk model |
-| _Member 2_ | ML and evaluation | dev labels, threshold tuning |
-| _Member 3_ | website and visualisation | website, demo, EDA |
+Team ALGO (`589DBFF8`).
 
-_Names, contributions and links are to be completed by the team (also in `web/static/team.json`)._
+| Member | Role | Contributions | Links |
+|---|---|---|---|
+| Arslan Djemilov | CTO, team lead | pipeline, calibration, rules, risk model | [GitHub](https://github.com/arslan15114), [LinkedIn](https://www.linkedin.com/in/arslandjemilov) |
+| Temurmalik Irgashev | ML/Ops engineer | release, reproducibility check from a clean clone, website and demo deployment | [GitHub](https://github.com/temur023) |
+| Sardorbek Bozorov | Researcher | | |
+
+Previous work: [ALGO landing](https://github.com/AurorixAI/algo-landing). Details are also in `web/static/team.json`.

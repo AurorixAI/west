@@ -1,28 +1,28 @@
 {
   "members": [
     {
-      "name": "Arslan",
-      "role": "Team lead, computer vision",
+      "name": "Arslan Djemilov",
+      "role": "CTO, team lead",
+      "photo": "img/team/arslan.jpg",
       "did": ["Pipeline design and scene calibration", "Detection, tracking and rule engine", "Accident-risk model"],
-      "projects": [],
-      "links": {"GitHub": "https://github.com/arslan15114", "LinkedIn": "", "Portfolio": ""},
-      "todo": "Add LinkedIn, portfolio and previous projects."
+      "projects": [{"name": "ALGO landing", "url": "https://github.com/AurorixAI/algo-landing"}],
+      "links": {"GitHub": "https://github.com/arslan15114", "LinkedIn": "https://www.linkedin.com/in/arslandjemilov", "Portfolio": ""}
     },
     {
-      "name": "Member 2",
-      "role": "ML and evaluation",
-      "did": ["Dev labels of the sample videos", "Threshold tuning with scripts/dev_eval.py"],
-      "projects": [],
-      "links": {"GitHub": "", "LinkedIn": "", "Portfolio": ""},
-      "todo": "Fill in name, contributions and links."
+      "name": "Temurmalik Irgashev",
+      "role": "ML/Ops engineer",
+      "photo": "img/team/temurmalik.jpg",
+      "did": ["Release engineering: merge, tag and submission package", "Reproducibility check from a clean clone against predictions_samples.json", "Deployment of the website and the live demo"],
+      "projects": [{"name": "ALGO landing", "url": "https://github.com/AurorixAI/algo-landing"}, {"name": "SQB Process Hub (private)"}],
+      "links": {"GitHub": "https://github.com/temur023", "LinkedIn": "", "Portfolio": ""}
     },
     {
-      "name": "Member 3",
-      "role": "Website and visualisation",
-      "did": ["Website and live demo", "EDA and result visualisations"],
-      "projects": [],
-      "links": {"GitHub": "", "LinkedIn": "", "Portfolio": ""},
-      "todo": "Fill in name, contributions and links."
+      "name": "Sardorbek Bozorov",
+      "role": "Researcher",
+      "photo": "img/team/sardorbek.jpg",
+      "did": [],
+      "projects": [{"name": "ALGO landing", "url": "https://github.com/AurorixAI/algo-landing"}],
+      "links": {"GitHub": "", "LinkedIn": "", "Portfolio": ""}
     }
   ],
   "links": [

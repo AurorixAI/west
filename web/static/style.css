@@ -303,6 +303,7 @@ table.data td:first-child, table.data td:first-child code { color: var(--ink); }
 .member-head { display: flex; align-items: center; gap: 14px; }
 .avatar { flex: none; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center;
   font: 700 1.3rem var(--font-display); letter-spacing: 0.04em; color: var(--on-paint); background: var(--paint); }
+img.avatar { width: 64px; height: 64px; object-fit: cover; }
 .member h3 { font-size: 1.5rem; }
 .member .role { color: var(--muted); font-size: 0.92rem; }
 .member ul { padding-left: 18px; margin: 0; color: var(--ink-2); font-size: 0.95rem; }

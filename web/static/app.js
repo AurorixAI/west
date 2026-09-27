@@ -554,11 +554,15 @@ async function team() {
     const links = el("div", { class: "links" });
     for (const [k, url] of Object.entries(m.links || {})) if (url) links.append(el("a", { href: url, rel: "noopener" }, k));
     const initials = m.name.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+    const avatar = m.photo ? el("img", { class: "avatar", src: m.photo, alt: m.name, loading: "lazy" })
+      : el("div", { class: "avatar", "aria-hidden": "true" }, initials);
+    const projects = (m.projects || []).flatMap((p, i) =>
+      [i ? "; " : "", p.url ? el("a", { href: p.url, rel: "noopener" }, p.name) : p.name]);
     box.append(el("div", { class: "member" },
-      el("div", { class: "member-head" }, el("div", { class: "avatar", "aria-hidden": "true" }, initials),
+      el("div", { class: "member-head" }, avatar,
         el("div", {}, el("h3", {}, m.name), el("div", { class: "role" }, m.role))),
       el("ul", {}, ...(m.did || []).map((x) => el("li", {}, x))),
-      m.projects && m.projects.length ? el("p", { class: "muted" }, `Proud of: ${m.projects.join("; ")}`) : null, links,
+      projects.length ? el("p", { class: "muted" }, "Proud of: ", ...projects) : null, links,
       m.todo ? el("p", { class: "todo" }, m.todo) : null));
   }
   const ul = $("links");
