@@ -127,7 +127,8 @@ def _scene(geom, w: int, h: int) -> dict | None:
         n = lambda pts: [[int(x / w * 1e4), int(y / h * 1e4)] for x, y in pts]  # noqa: E731
         return {"crosswalks": [n(cw) for cw in geom.crosswalks],
                 "stop_line": n(geom.stop_line) if geom.stop_line is not None else None,
-                "signals": [n([(x1, y1), (x2, y2)]) for x1, y1, x2, y2 in geom.signal_heads.values()]}
+                "signals": [n([(x1, y1), (x2, y2)]) for x1, y1, x2, y2 in geom.signal_heads.values()],
+                "signs": [[name, n([(x1, y1), (x2, y2)])] for name, (x1, y1, x2, y2) in geom.road_signs.items()]}
     except Exception:                                  # the overlay is optional; never fail the job for it
         traceback.print_exc()
         return None

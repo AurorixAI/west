@@ -372,7 +372,35 @@ function plaque(ctx, text, x, y, bg, font) {
 }
 
 // Crossings, stop line and signal heads, as src/viz.py draws them into the sample videos.
-function drawScene(ctx, sc, signal, t, ox, oy, vw, vh) {
+function signalAt(signal, t) {
+  const phase = signal.find(([a, b]) => a <= t && t <= b);
+  return phase ? phase[2] : "UNKNOWN";
+}
+const SIGNAL_HEX = { RED: "#eb4848", GREEN: "#46c85a" };
+
+// The strip on top of the sample videos: clock, signal, counts and risk (src/viz.py draw_hud).
+function drawHud(ctx, t, state, nVeh, nPpl, risk, ox, oy, vw) {
+  ctx.fillStyle = "rgba(16,18,20,0.78)";
+  ctx.fillRect(ox, oy, vw, 30);
+  ctx.font = "600 13px Barlow, system-ui, sans-serif";
+  ctx.fillStyle = "#ebebeb";
+  ctx.fillText(`${String(Math.floor(t / 60)).padStart(2, "0")}:${(t % 60).toFixed(2).padStart(5, "0")}`, ox + 12, oy + 20);
+  ctx.fillStyle = SIGNAL_HEX[state] || "#8c8c8c";
+  ctx.beginPath(); ctx.arc(ox + 84, oy + 15, 5, 0, 2 * Math.PI); ctx.fill();
+  ctx.fillStyle = "#e1e1e1";
+  ctx.fillText(state === "UNKNOWN" ? "SIGNAL --" : `SIGNAL ${state}`, ox + 94, oy + 20);
+  ctx.fillStyle = "#b9b9b9";
+  ctx.fillText(`${nVeh} VEHICLES   ${nPpl} PEOPLE`, ox + 200, oy + 20);
+  const x0 = ox + vw - 196;
+  if (x0 > ox + 370) {
+    ctx.fillText("RISK", x0, oy + 20);
+    ctx.fillStyle = "#46423e"; ctx.fillRect(x0 + 40, oy + 10, 140, 10);
+    ctx.fillStyle = risk >= 0.5 ? "#e64848" : risk >= 0.2 ? "#f2b01e" : "#46be5a";
+    ctx.fillRect(x0 + 40, oy + 10, Math.max(2, 140 * risk), 10);
+  }
+}
+
+function drawScene(ctx, sc, state, ox, oy, vw, vh) {
   const P = ([x, y]) => [ox + (x / 1e4) * vw, oy + (y / 1e4) * vh];
   ctx.lineWidth = 1;
   ctx.strokeStyle = "rgba(235,235,235,0.8)";
@@ -386,14 +414,18 @@ function drawScene(ctx, sc, signal, t, ox, oy, vw, vh) {
     ctx.strokeStyle = "#e64646"; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(...P(sc.stop_line[0])); ctx.lineTo(...P(sc.stop_line[1])); ctx.stroke();
   }
-  const phase = signal.find(([a, b]) => a <= t && t <= b);
-  const state = phase ? phase[2] : "UNKNOWN";
-  const color = { RED: "#eb4848", GREEN: "#46c85a" }[state] || "#aaaaaa";
+  const color = SIGNAL_HEX[state] || "#aaaaaa";
   for (const [p1, p2] of sc.signals || []) {
     const [x1, y1] = P(p1), [x2, y2] = P(p2);
     ctx.strokeStyle = color; ctx.lineWidth = 2;
     ctx.strokeRect(x1 - 3, y1 - 3, x2 - x1 + 6, y2 - y1 + 6);
     plaque(ctx, state === "UNKNOWN" ? "--" : state, x1 - 3, y1 - 6, color, "600 11px Barlow, system-ui, sans-serif");
+  }
+  for (const [name, [p1, p2]] of sc.signs || []) {
+    const [x1, y1] = P(p1), [x2, y2] = P(p2);
+    ctx.strokeStyle = "rgba(240,240,240,0.9)"; ctx.lineWidth = 1;
+    ctx.strokeRect(x1 - 2, y1 - 2, x2 - x1 + 4, y2 - y1 + 4);
+    plaque(ctx, name.toUpperCase(), x2 + 4, y2 + 2, "#5b8fd9", "600 10px Barlow, system-ui, sans-serif");
   }
 }
 
@@ -411,7 +443,8 @@ function drawOverlayLoop(video, canvas, res) {
     // letterboxing inside the <video> element
     const ar = res.video.width / res.video.height, vw = Math.min(w, h * ar), vh = vw / ar;
     const ox = (w - vw) / 2, oy = (h - vh) / 2;
-    if (res.scene) drawScene(ctx, res.scene, res.signal || [], t, ox, oy, vw, vh);
+    const state = signalAt(res.signal || [], t);
+    if (res.scene) drawScene(ctx, res.scene, state, ox, oy, vw, vh);
     let lo = 0, hi = ov.t.length - 1;
     while (lo < hi) { const m = (lo + hi) >> 1; if (ov.t[m] < t) lo = m + 1; else hi = m; }
     if (lo > 0 && Math.abs(ov.t[lo - 1] - t) < Math.abs(ov.t[lo] - t)) lo -= 1;
@@ -448,7 +481,11 @@ function drawOverlayLoop(video, canvas, res) {
         plaque(ctx, `${text}  ${id}`, X, Y - 3, hexOf(label), "600 12px Barlow, system-ui, sans-serif");
       }
     }
-    active.forEach((e, k) => plaque(ctx, pretty(e.label).toUpperCase(), ox + 12, oy + 34 + k * 30, hexOf(e.label),
+    const cur = ov.t.length && Math.abs(ov.t[lo] - t) < 0.3 ? ov.boxes[lo] : [];
+    let risk = 0;
+    for (const [rt, rv] of res.risk || []) { if (rt > t) break; risk = rv; }
+    drawHud(ctx, t, state, cur.filter((b) => b[5] === 0).length, cur.filter((b) => b[5] === 1).length, risk, ox, oy, vw);
+    active.forEach((e, k) => plaque(ctx, pretty(e.label).toUpperCase(), ox + 12, oy + 66 + k * 30, hexOf(e.label),
       "600 15px Barlow, system-ui, sans-serif"));
     requestAnimationFrame(draw);
   };

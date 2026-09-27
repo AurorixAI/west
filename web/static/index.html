@@ -65,7 +65,7 @@
     <header class="section-head">
       <p class="eyebrow">Live demo</p>
       <h2>Upload a clip, get the events back.</h2>
-      <p class="lede">The server runs the same pipeline as the submission, on CPU. You get the event timeline,
+      <p class="lede">The server runs the same pipeline as the submission, on a T4 GPU as in the evaluation. You get the event timeline,
         the risk curve, and your own video played back with our tracks drawn over it.</p>
     </header>
     <div class="demo-grid">
@@ -76,9 +76,9 @@
         <span class="drop-limits">up to 10 min · up to 5 GB · H.264 plays in every browser</span>
       </label>
       <ul class="demo-notes">
-        <li><strong>Speed.</strong> About one to two minutes per minute of 1080p video, about three for 4K.</li>
+        <li><strong>Speed.</strong> On the GPU, analysis takes about 0.8 of the video length (a 5-minute 4K clip in about 4 minutes), plus the upload.</li>
         <li><strong>Privacy.</strong> Playback uses the file in your browser. The server deletes its copy after two hours.</li>
-        <li><strong>Model.</strong> The CPU profile: YOLOv8n at 5 fps. The GPU submission runs our fine-tuned YOLO11s at 10 fps.</li>
+        <li><strong>Model.</strong> Our fine-tuned YOLO11s at 10 fps, the profile the submission runs. If no GPU is free, the CPU profile (YOLOv8n at 5 fps) runs instead and finds fewer events.</li>
       </ul>
     </div>
     <div class="progress" id="progress" hidden>
