@@ -362,7 +362,7 @@ const hexOf = (label) => FAMILY_HEX[CLASS_FAMILY[label] || "flow"];
 
 function plaque(ctx, text, x, y, bg, font) {
   ctx.font = font;
-  const w = ctx.measureText(text).width + 12, h = parseInt(font, 10) + 10;
+  const w = ctx.measureText(text).width + 12, h = parseInt(font.match(/(\d+)px/)[1], 10) + 10;  // "600 12px …": the size, not the weight
   x = Math.max(0, Math.min(x, ctx.canvas.width - w));
   y = Math.max(h, y);
   ctx.fillStyle = bg;
