@@ -183,7 +183,7 @@ def test_car_standing_on_the_zebra_then_driving_on_past_a_pedestrian(quiet_scene
     """Regression (real clip): the car stopped on the crossing and people walked round it."""
     scene = quiet_scene
     scene.path("vehicle", CAR, 60.0, [(900, 600), (900, 1280), (900, 2100)], 400, dwell={1: 10})
-    scene.path("person", PERSON, 62.0, [(700, 1300), (1150, 1240)], 30, size=150)
+    scene.path("person", PERSON, 63.0, [(700, 1300), (1150, 1240)], 50, size=150)   # a slow 0.33 heights/s
     ev = labels(rules.failure_to_yield(scene.context()), "failure_to_yield")
     assert len(ev) == 1 and ev[0][0] < 61.8 and ev[0][1] > 71.7
 

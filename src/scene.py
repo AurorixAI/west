@@ -83,6 +83,14 @@ class SceneGeometry:
             inside &= ~in_poly(p, pts, island_margin)
         return inside
 
+    def on_island(self, pts: np.ndarray, margin: float | np.ndarray = 0.0) -> np.ndarray:
+        """On a traced island or median (grown by ``margin`` pixels)."""
+        pts = np.atleast_2d(pts)
+        out = np.zeros(len(pts), bool)
+        for p in self.not_carriageway:
+            out |= in_poly(p, pts, margin)
+        return out
+
     def vehicle_crosswalk_index(self, box: np.ndarray) -> np.ndarray:
         """Crossing each vehicle box's ground footprint touches, -1 if none.
 
@@ -98,6 +106,35 @@ class SceneGeometry:
             idx = self.crosswalk_index(np.stack([cx, box[:, 3] - f * h], 1))
             out = np.where(out < 0, idx, out)
         return out
+
+    def crossing_end_distance(self, k: int, pt: np.ndarray) -> float:
+        """Pixels from pt to the nearer end (kerb edge) of crossing k."""
+        cw = self.crosswalks[k]
+        best = np.inf
+        for e in C.CROSSWALK_END_EDGES[k]:
+            a, b = cw[e], cw[(e + 1) % len(cw)]
+            ab = b - a
+            u = np.clip(np.dot(pt - a, ab) / max(float(ab @ ab), 1e-9), 0.0, 1.0)
+            best = min(best, float(np.linalg.norm(pt - (a + u * ab))))
+        return best
+
+    def crossing_direction(self, k: int, pt: np.ndarray) -> np.ndarray:
+        """Unit vector of the walking line of crossing k near point pt (sign arbitrary)."""
+        cw = self.crosswalks[k]
+        best, best_d = np.array([1.0, 0.0]), np.inf
+        for e in range(len(cw)):
+            if e in C.CROSSWALK_END_EDGES[k]:
+                continue
+            a, b = cw[e], cw[(e + 1) % len(cw)]
+            ab = b - a
+            L = float(np.linalg.norm(ab))
+            if L < 1e-6:
+                continue
+            u = np.clip(np.dot(pt - a, ab) / L ** 2, 0.0, 1.0)
+            d = float(np.linalg.norm(pt - (a + u * ab)))
+            if d < best_d:
+                best, best_d = ab / L, d
+        return best
 
     def crosswalk_index(self, pts: np.ndarray, margin: float | np.ndarray = 0.0) -> np.ndarray:
         """Index of the crossing each point is on, -1 if none."""

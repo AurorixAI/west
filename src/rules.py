@@ -62,7 +62,8 @@ class Context:
         for tr in self.tracks:
             for i, t in enumerate(tr.t):
                 self.at[self.key(t)].append((tr, i))
-        self.pedestrians = [t for t in self.tracks if t.category == "person" and not self._is_rider(t)]
+        self.pedestrians = [t for t in self.tracks
+                            if t.category == "person" and not self._is_rider(t) and not self._is_passenger(t)]
 
     def on_road(self, pts: np.ndarray, core: bool = False, inset: float | np.ndarray = 0.0,
                 island_margin: float | np.ndarray = 0.0) -> np.ndarray:
@@ -71,7 +72,10 @@ class Context:
         The trace covers a short clip at a red light, where the learned mask is
         still thin; the learned mask covers any road the trace missed.
         """
-        return self.geom.on_carriageway(pts, inset, island_margin) | self.flow.is_road(pts, core)
+        # The learned mask spreads over an island that turning cars brush past;
+        # the traced islands always win.
+        return (self.geom.on_carriageway(pts, inset, island_margin) | self.flow.is_road(pts, core)) \
+            & ~self.geom.on_island(pts, island_margin)
 
     @staticmethod
     def key(t: float) -> int:
@@ -89,6 +93,19 @@ class Context:
                     x1, y1, x2, y2 = tr.box[j]
                     mx, my = 0.2 * (x2 - x1), 0.2 * (y2 - y1)
                     if x1 - mx <= fx <= x2 + mx and y1 - my <= fy <= y2 + my:
+                        hits += 1
+                        break
+        return hits >= 0.5 * len(p.t)
+
+    def _is_passenger(self, p: Track) -> bool:
+        """A 'person' whose whole box lies inside a car or bus box: seen through its windows."""
+        hits = 0
+        for i, t in enumerate(p.t):
+            px1, py1, px2, py2 = p.box[i]
+            for tr, j in self.at.get(self.key(t), ()):
+                if tr.category == "vehicle" and tr.cls not in C.COCO_TWO_WHEELER:
+                    x1, y1, x2, y2 = tr.box[j]
+                    if x1 <= px1 and px2 <= x2 and y1 <= py1 and py2 <= y2:
                         hits += 1
                         break
         return hits >= 0.5 * len(p.t)
@@ -210,6 +227,22 @@ def failure_to_yield(ctx: Context) -> list[Segment]:
     return out
 
 
+def _across(ctx: Context, p: Track, j: int, k: int) -> bool:
+    """The pedestrian walks along crossing k (across the road), not along the kerb past its end."""
+    m = np.abs(p.t - p.t[j]) <= 1.0
+    d = p.foot[m][-1] - p.foot[m][0]
+    n = float(np.linalg.norm(d))
+    if n < 1e-6:
+        return False
+    return abs(float(np.dot(d / n, ctx.geom.crossing_direction(k, p.foot[j])))) >= C.YIELD_ACROSS_COS
+
+
+def _walking(p: Track, j: int) -> bool:
+    """The pedestrian is on the move around sample j (median speed over ~2 s)."""
+    m = np.abs(p.t - p.t[j]) <= 1.0
+    return float(np.median(p.speed[m])) >= C.YIELD_PED_MIN_SPEED
+
+
 def _pedestrian_while_moving(ctx: Context, v: Track, k: int, i0: int, i1: int) -> int | None:
     """Track id of a pedestrian on the carriageway part of crossing k, near the vehicle
     at a moment the vehicle is moving; None if there is none."""
@@ -222,8 +255,11 @@ def _pedestrian_while_moving(ctx: Context, v: Track, k: int, i0: int, i1: int) -
         for p, j in ctx.at.get(ctx.key(v.t[i]), ()):
             if id(p) not in peds:
                 continue
+            if not _walking(p, j):
+                continue                      # standing at the kerb, or a post read as a person
             pf = p.foot[j:j + 1]
-            if ctx.geom.crosswalk_index(pf)[0] != k or \
+            if ctx.geom.crosswalk_index(pf)[0] != k or not _across(ctx, p, j, k) or \
+                    ctx.geom.crossing_end_distance(k, pf[0]) < C.YIELD_END_MARGIN * p.size[j] or \
                     not ctx.on_road(pf, inset=C.YIELD_KERB_INSET * p.size[j], island_margin=0.0)[0]:
                 continue                      # waiting on the kerb or the island
             dist = np.linalg.norm(pf[0] - v.foot[i])
@@ -312,6 +348,15 @@ def wrong_way(ctx: Context) -> list[Segment]:
     return out
 
 
+def _leg(v: Track, moving: np.ndarray, lo: float, hi: float) -> np.ndarray | None:
+    """Displacement over the moving samples in [lo, hi], if it covers UTURN_LEG_SIZES lengths."""
+    k = moving & (v.t >= lo) & (v.t <= hi)
+    if k.sum() < 3:
+        return None
+    d = v.foot[k][-1] - v.foot[k][0]
+    return d if np.linalg.norm(d) >= C.UTURN_LEG_SIZES * float(np.median(v.size[k])) else None
+
+
 def illegal_u_turn(ctx: Context) -> list[Segment]:
     out = []
     for v in ctx.vehicles:
@@ -340,6 +385,10 @@ def illegal_u_turn(ctx: Context) -> list[Segment]:
             continue
         if ctx.on_road(v.foot[m][s:e + 1]).mean() < C.UTURN_MIN_ON_ROAD:
             continue                          # off the carriageway: a car park, or a reflection in a facade
+        before, after = _leg(v, m, t[s] - C.UTURN_LEG_SEC, t[s]), _leg(v, m, t[e], t[e] + C.UTURN_LEG_SEC)
+        if before is None or after is None or \
+                before @ after / (np.linalg.norm(before) * np.linalg.norm(after)) > C.UTURN_REVERSE_COS:
+            continue                          # a turn, or heading noise while waiting: not driving back the other way
         out.append((t[s], t[e], "illegal_u_turn", (v.tid,)))
     return out
 
@@ -410,23 +459,30 @@ def accident(ctx: Context) -> list[Segment]:
             if ground > 0.8:
                 continue
             t = key / 1000.0
-            if _collision(ta, fast[id(ta)], tb, fast[id(tb)], t, ctx.duration):
+            if _collision(ta, fast[id(ta)], tb, fast[id(tb)], t, ctx.duration, (ctx.flow.width, ctx.flow.height)):
                 done.add(pair)
                 settle = max(_settle_time(ta, t), _settle_time(tb, t))
                 out.append((t, max(settle, t + 1.0), "accident", pair))
     return out
 
 
-def _collision(ta: Track, sa: np.ndarray, tb: Track, sb: np.ndarray, t: float, end: float) -> bool:
+def _collision(ta: Track, sa: np.ndarray, tb: Track, sb: np.ndarray, t: float, end: float,
+               frame: tuple[int, int]) -> bool:
     def mean_in(tr, s, lo, hi):
         m = (tr.t >= t + lo) & (tr.t <= t + hi)
         return float(s[m].mean()) if m.any() else np.nan
 
+    # A vehicle at road speed stops dead within a second. Joining a queue,
+    # stopping at a red light or a pedestrian halting beside a car are slower
+    # or start slower (checked on the organisers' four videos).
+    # The other party was moving too (side or head-on impact) or is shoved by
+    # the blow; a car standing in a queue stays put when another stops behind it.
     struck = False
-    for tr, s in ((ta, sa), (tb, sb)):
-        before, after = mean_in(tr, s, -1.5, -0.2), mean_in(tr, s, 0.3, 1.5)
-        if before >= 2 * C.MOVE_SPEED and after <= C.ACCIDENT_DROP_RATIO * before:
-            struck = True
+    for (tr, s), (other, so) in (((ta, sa), (tb, sb)), ((tb, sb), (ta, sa))):
+        before, after = mean_in(tr, s, -1.5, -0.2), mean_in(tr, s, 0.3, C.ACCIDENT_STOP_SEC)
+        if tr.category == "vehicle" and before >= C.ACCIDENT_MIN_SPEED and after <= C.ACCIDENT_DROP_RATIO * before:
+            if max(mean_in(other, so, -1.5, -0.2), mean_in(other, so, 0.0, C.ACCIDENT_STOP_SEC)) >= C.MOVE_SPEED:
+                struck = True
     if not struck:
         return False
     # both are seen standing where they collided; when the video ends soon
@@ -441,7 +497,17 @@ def _collision(ta: Track, sa: np.ndarray, tb: Track, sb: np.ndarray, t: float, e
         if m.sum() < 2 or tr.t[m][-1] - tr.t[m][0] < 0.5 * (hi - lo) \
                 or np.median(tr.speed[m]) > C.STOP_SPEED:
             return False
+        # a box cut by the frame edge stops moving while the car drives on out of view
+        if _at_frame_edge(tr.box[(tr.t >= t - 0.5) & (tr.t <= hi)], frame):
+            return False
     return True
+
+
+def _at_frame_edge(box: np.ndarray, frame: tuple[int, int]) -> bool:
+    """Any of these boxes touches the image border (within 0.5 % of the width)."""
+    w, h = frame
+    m = 0.005 * w
+    return bool(((box[:, 0] <= m) | (box[:, 1] <= m) | (box[:, 2] >= w - m) | (box[:, 3] >= h - m)).any())
 
 
 def _settle_time(tr: Track, t: float) -> float:
