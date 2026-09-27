@@ -367,3 +367,4 @@ ul.links a { display: inline-block; padding: 9px 16px; border: 1px solid var(--l
   }
 }
 .report-grid > .wide { grid-column: 1 / -1; }
+.report-grid > * { min-width: 0; }
