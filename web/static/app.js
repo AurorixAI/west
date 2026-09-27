@@ -249,7 +249,7 @@ function linkPlayer(video, charts) {
 }
 
 /* --------------------------------------------------------------- live demo */
-const demo = { result: null, url: null };
+const demo = { result: null, url: null, maxMb: 5120, maxSec: 600 };  // limits: the server's /api/health wins
 
 function setupDemo() {
   const drop = $("drop"), input = $("file");
@@ -276,7 +276,7 @@ function startDemo(file) {
   $("demoError").hidden = true;
   $("demoResult").hidden = true;
   if (!/\.mp4$/i.test(file.name)) return demoError("Please choose an .mp4 file.");
-  if (file.size > 500 * 2 ** 20) return demoError("The demo accepts files up to 500 MB.");
+  if (file.size > demo.maxMb * 2 ** 20) return demoError(`The demo accepts files up to ${sizeLabel(demo.maxMb)}.`);
   $("dropText").textContent = file.name;
   if (demo.url) URL.revokeObjectURL(demo.url);
   demo.url = URL.createObjectURL(file);
@@ -620,10 +620,24 @@ function setupLabel() {
 
 /* The live demo needs the Python server (web/app.py); a static copy of the
    site (e.g. a preview page) says so instead of offering a dead upload box. */
+function sizeLabel(mb) { return mb >= 1024 ? `${+(mb / 1024).toFixed(1)} GB` : `${mb} MB`; }
+function showLimits() {
+  const min = demo.maxSec / 60;
+  const len = min >= 1 ? `${+min.toFixed(1)} min` : `${demo.maxSec} s`;
+  const span = document.querySelector(".drop-limits");
+  if (span) span.textContent = `up to ${len} · up to ${sizeLabel(demo.maxMb)} · H.264 plays in every browser`;
+}
+
 async function checkBackend() {
   try {
     const r = await fetch("api/health");
-    if (r.ok && (await r.json()).ok) return;
+    const h = r.ok ? await r.json() : null;
+    if (h && h.ok) {
+      if (h.max_mb) demo.maxMb = h.max_mb;
+      if (h.max_sec) demo.maxSec = h.max_sec;
+      showLimits();
+      return;
+    }
   } catch (_) { /* no server */ }
   $("drop").hidden = true;
   const n = el("div", { class: "notice" },

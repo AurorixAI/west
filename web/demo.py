@@ -1,6 +1,7 @@
 """Live-demo jobs: one uploaded video -> events, risk curve, playback overlay, thumbnails."""
 from __future__ import annotations
 
+import os
 import shutil
 import threading
 import time
@@ -17,8 +18,10 @@ from src.risk import CPU_SETTINGS, CausalRiskEstimator
 from src.video import probe, stride_for
 
 JOBS_DIR = Path("/tmp/west_jobs")
-MAX_MB = 500
-MAX_SEC = 150.0
+# Several minutes of the organisers' 4K footage (about 5 MB/s). On a free CPU Space
+# a video takes roughly as long to analyse as it lasts; jobs queue one at a time.
+MAX_MB = int(os.environ.get("WEST_DEMO_MAX_MB", 5 * 1024))
+MAX_SEC = float(os.environ.get("WEST_DEMO_MAX_SEC", 600))
 KEEP_SEC = 2 * 3600
 CATEGORY_CODE = {"vehicle": 0, "person": 1, "animal": 2}
 
