@@ -6,8 +6,8 @@
    "duration": 20.02,
    "events": 3,
    "labels": [
-    "jaywalking",
-    "stopped_vehicle"
+    "failure_to_yield",
+    "jaywalking"
    ]
   }
  ],

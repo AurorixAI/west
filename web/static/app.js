@@ -646,6 +646,15 @@ async function checkBackend() {
   $("drop").after(n);
 }
 
+/* Each cell carries its column name, shown above it when a phone stacks the table. */
+function labelTables() {
+  for (const t of document.querySelectorAll("table.data")) {
+    const names = [...t.querySelectorAll("thead th")].map((th) => th.textContent.trim());
+    for (const tr of t.querySelectorAll("tbody tr"))
+      [...tr.children].forEach((td, i) => { if (names[i]) td.dataset.label = names[i]; });
+  }
+}
+
 /* -------------------------------------------------------------------- boot */
 checkBackend();
 setupDemo();
@@ -653,3 +662,4 @@ diagram();
 team();
 setupSamples();
 setupLabel();
+labelTables();
